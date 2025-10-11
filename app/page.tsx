@@ -14,6 +14,7 @@ import {
 import { keyframes } from '@emotion/react'
 import { Music, Brain, Zap, BookOpen, Sparkles, ArrowRight, TrendingUp, Users, Headphones, Clock, Star, CheckCircle, ChevronDown } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useAuth } from './contexts/AuthContext'
 
 const float = keyframes`
   0%, 100% { transform: translateY(0px); }
@@ -37,6 +38,15 @@ const bounce = keyframes`
 
 export default function Home() {
   const router = useRouter()
+  const { user } = useAuth()
+
+  const handleGetStarted = () => {
+    if (user) {
+      router.push('/create')
+    } else {
+      router.push('/auth')
+    }
+  }
 
   return (
     <Box minH="100vh" bg="#0f0f1a" position="relative" overflow="hidden">
@@ -121,7 +131,7 @@ export default function Home() {
                 fontSize="xl"
                 fontWeight="700"
                 rightIcon={<ArrowRight size={24} />}
-                onClick={() => router.push('/create')}
+                onClick={handleGetStarted}
                 _hover={{
                   bgGradient: "linear(135deg, brand.600 0%, accent.600 100%)",
                   transform: "translateY(-4px)",
@@ -130,7 +140,7 @@ export default function Home() {
                 transition="all 0.3s"
                 animation={`${glow} 3s ease-in-out infinite`}
               >
-                Start Creating Free
+                Start Creating Now
               </Button>
               <Button
                 bg="rgba(26, 26, 46, 0.8)"
@@ -203,7 +213,7 @@ export default function Home() {
             </SimpleGrid>
 
             {/* Scroll Indicator */}
-            <VStack pt={12} spacing={2}>
+            <VStack pt={6} spacing={2}>
               <Text fontSize="xs" color="whiteAlpha.500" fontWeight="500" textTransform="uppercase" letterSpacing="wider">
                 Scroll to explore
               </Text>
@@ -574,6 +584,225 @@ export default function Home() {
             </SimpleGrid>
           </VStack>
 
+          {/* Pricing Section */}
+          <VStack spacing={12} pt={16}>
+            <VStack spacing={3} textAlign="center">
+              <Badge colorScheme="green" fontSize="sm" px={3} py={1} borderRadius="full">
+                PRICING
+              </Badge>
+              <Heading
+                fontSize={{ base: "3xl", md: "5xl" }}
+                fontWeight="900"
+                color="white"
+              >
+                Choose Your Plan
+              </Heading>
+              <Text fontSize="lg" color="whiteAlpha.600" maxW="3xl">
+                Start free, upgrade when you&apos;re ready
+              </Text>
+            </VStack>
+
+            <SimpleGrid columns={{ base: 1, md: 3 }} spacing={8} w="100%" maxW="1200px">
+              {/* Free Tier */}
+              <Box
+                bg="rgba(26, 26, 46, 0.6)"
+                p={8}
+                borderRadius="2xl"
+                borderWidth={2}
+                borderColor="rgba(217, 70, 239, 0.2)"
+                transition="all 0.3s"
+                _hover={{
+                  transform: "translateY(-4px)",
+                  borderColor: "rgba(217, 70, 239, 0.4)",
+                  boxShadow: "0 20px 40px rgba(217, 70, 239, 0.2)"
+                }}
+              >
+                <VStack align="stretch" spacing={6}>
+                  <VStack align="start" spacing={2}>
+                    <Text fontSize="xl" fontWeight="700" color="whiteAlpha.800">
+                      Free
+                    </Text>
+                    <HStack align="baseline">
+                      <Heading size="2xl" color="white" fontWeight="900">
+                        $0
+                      </Heading>
+                      <Text color="whiteAlpha.600" fontSize="md">/month</Text>
+                    </HStack>
+                  </VStack>
+                  <VStack align="start" spacing={3}>
+                    <HStack>
+                      <Box color="green.400">✓</Box>
+                      <Text color="whiteAlpha.800" fontSize="sm">1 study set</Text>
+                    </HStack>
+                    <HStack>
+                      <Box color="green.400">✓</Box>
+                      <Text color="whiteAlpha.800" fontSize="sm">Up to 10 terms</Text>
+                    </HStack>
+                    <HStack>
+                      <Box color="green.400">✓</Box>
+                      <Text color="whiteAlpha.800" fontSize="sm">All genres</Text>
+                    </HStack>
+                  </VStack>
+                  <Button
+                    w="100%"
+                    variant="outline"
+                    colorScheme="brand"
+                    borderColor="rgba(217, 70, 239, 0.5)"
+                    color="brand.300"
+                    _hover={{
+                      bg: "rgba(217, 70, 239, 0.1)",
+                      borderColor: "brand.400"
+                    }}
+                    onClick={handleGetStarted}
+                  >
+                    Get Started
+                  </Button>
+                </VStack>
+              </Box>
+
+              {/* Pro Tier */}
+              <Box
+                bg="rgba(26, 26, 46, 0.8)"
+                p={8}
+                borderRadius="2xl"
+                borderWidth={3}
+                borderColor="brand.500"
+                position="relative"
+                transition="all 0.3s"
+                _hover={{
+                  transform: "translateY(-4px)",
+                  boxShadow: "0 20px 40px rgba(217, 70, 239, 0.4)"
+                }}
+              >
+                <Badge
+                  position="absolute"
+                  top={-3}
+                  right={6}
+                  colorScheme="purple"
+                  fontSize="xs"
+                  px={3}
+                  py={1}
+                  borderRadius="full"
+                >
+                  POPULAR
+                </Badge>
+                <VStack align="stretch" spacing={6}>
+                  <VStack align="start" spacing={2}>
+                    <Text fontSize="xl" fontWeight="700" color="white">
+                      Pro
+                    </Text>
+                    <HStack align="baseline">
+                      <Heading size="2xl" color="white" fontWeight="900">
+                        $10
+                      </Heading>
+                      <Text color="whiteAlpha.700" fontSize="md">/month</Text>
+                    </HStack>
+                  </VStack>
+                  <VStack align="start" spacing={3}>
+                    <HStack>
+                      <Box color="green.400">✓</Box>
+                      <Text color="white" fontSize="sm" fontWeight="600">10 study sets</Text>
+                    </HStack>
+                    <HStack>
+                      <Box color="green.400">✓</Box>
+                      <Text color="white" fontSize="sm" fontWeight="600">Up to 15 terms each</Text>
+                    </HStack>
+                    <HStack>
+                      <Box color="green.400">✓</Box>
+                      <Text color="white" fontSize="sm" fontWeight="600">All genres</Text>
+                    </HStack>
+                    <HStack>
+                      <Box color="green.400">✓</Box>
+                      <Text color="white" fontSize="sm" fontWeight="600">Priority support</Text>
+                    </HStack>
+                  </VStack>
+                  <Button
+                    w="100%"
+                    bgGradient="linear(135deg, brand.500 0%, accent.500 100%)"
+                    color="white"
+                    fontWeight="700"
+                    _hover={{
+                      bgGradient: "linear(135deg, brand.600 0%, accent.600 100%)",
+                      transform: "translateY(-2px)"
+                    }}
+                    onClick={handleGetStarted}
+                  >
+                    Upgrade to Pro
+                  </Button>
+                </VStack>
+              </Box>
+
+              {/* Premium Tier */}
+              <Box
+                bg="rgba(26, 26, 46, 0.6)"
+                p={8}
+                borderRadius="2xl"
+                borderWidth={2}
+                borderColor="rgba(251, 146, 60, 0.5)"
+                transition="all 0.3s"
+                _hover={{
+                  transform: "translateY(-4px)",
+                  borderColor: "accent.500",
+                  boxShadow: "0 20px 40px rgba(251, 146, 60, 0.3)"
+                }}
+              >
+                <VStack align="stretch" spacing={6}>
+                  <VStack align="start" spacing={2}>
+                    <HStack spacing={2}>
+                      <Text fontSize="xl" fontWeight="700" color="whiteAlpha.800">
+                        Premium
+                      </Text>
+                      <Sparkles size={18} color="#f97316" />
+                    </HStack>
+                    <HStack align="baseline">
+                      <Heading size="2xl" color="white" fontWeight="900">
+                        $14
+                      </Heading>
+                      <Text color="whiteAlpha.600" fontSize="md">/month</Text>
+                    </HStack>
+                  </VStack>
+                  <VStack align="start" spacing={3}>
+                    <HStack>
+                      <Box color="green.400">✓</Box>
+                      <Text color="whiteAlpha.800" fontSize="sm" fontWeight="600">Unlimited study sets</Text>
+                    </HStack>
+                    <HStack>
+                      <Box color="green.400">✓</Box>
+                      <Text color="whiteAlpha.800" fontSize="sm" fontWeight="600">Unlimited terms</Text>
+                    </HStack>
+                    <HStack>
+                      <Box color="green.400">✓</Box>
+                      <Text color="whiteAlpha.800" fontSize="sm" fontWeight="600">All genres</Text>
+                    </HStack>
+                    <HStack>
+                      <Box color="green.400">✓</Box>
+                      <Text color="whiteAlpha.800" fontSize="sm" fontWeight="600">Premium support</Text>
+                    </HStack>
+                    <HStack>
+                      <Box color="green.400">✓</Box>
+                      <Text color="whiteAlpha.800" fontSize="sm" fontWeight="600">Early access to features</Text>
+                    </HStack>
+                  </VStack>
+                  <Button
+                    w="100%"
+                    bg="rgba(251, 146, 60, 0.1)"
+                    borderWidth={2}
+                    borderColor="accent.500"
+                    color="accent.400"
+                    fontWeight="700"
+                    _hover={{
+                      bg: "rgba(251, 146, 60, 0.2)",
+                      borderColor: "accent.400"
+                    }}
+                    onClick={handleGetStarted}
+                  >
+                    Go Premium
+                  </Button>
+                </VStack>
+              </Box>
+            </SimpleGrid>
+          </VStack>
+
           {/* Final CTA Section */}
           <Box
             bg="rgba(26, 26, 46, 0.6)"
@@ -634,7 +863,7 @@ export default function Home() {
                 </Text>
               </Heading>
               <Text fontSize="xl" color="whiteAlpha.700" maxW="3xl" lineHeight="tall">
-                Join 10,000+ students already using Numo AI to transform their studying. No credit card required.
+                Join 10,000+ students already using Numo AI to transform their studying. Start free, upgrade anytime.
               </Text>
               <HStack spacing={4} pt={4}>
                 <Button
@@ -646,7 +875,7 @@ export default function Home() {
                   fontSize="xl"
                   fontWeight="700"
                   rightIcon={<ArrowRight size={24} />}
-                  onClick={() => router.push('/create')}
+                  onClick={handleGetStarted}
                   _hover={{
                     bgGradient: "linear(135deg, brand.600 0%, accent.600 100%)",
                     transform: "translateY(-4px)",
@@ -658,7 +887,7 @@ export default function Home() {
                 </Button>
               </HStack>
               <Text fontSize="sm" color="whiteAlpha.500">
-                💳 No credit card • ⚡ Instant access • 🎵 Unlimited jingles
+                💳 No credit card • ⚡ Instant access • 🎵 Sick jingles
               </Text>
             </VStack>
           </Box>

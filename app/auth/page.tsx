@@ -1,0 +1,462 @@
+'use client'
+
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import {
+  Box,
+  Container,
+  VStack,
+  Heading,
+  Text,
+  Input,
+  Button,
+  useToast,
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel,
+  FormControl,
+  FormLabel,
+  Link,
+  HStack,
+} from '@chakra-ui/react'
+import { Music, Mail, Lock, User, ArrowRight } from 'lucide-react'
+import { supabase } from '../lib/supabase'
+
+export default function AuthPage() {
+  const router = useRouter()
+  const toast = useToast()
+  const [loading, setLoading] = useState(false)
+  const [tabIndex, setTabIndex] = useState(0)
+
+  // Sign up state
+  const [signupEmail, setSignupEmail] = useState('')
+  const [signupPassword, setSignupPassword] = useState('')
+  const [signupName, setSignupName] = useState('')
+
+  // Sign in state
+  const [signinEmail, setSigninEmail] = useState('')
+  const [signinPassword, setSigninPassword] = useState('')
+
+  // Forgot password state
+  const [forgotEmail, setForgotEmail] = useState('')
+  const [showForgotPassword, setShowForgotPassword] = useState(false)
+
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!supabase) {
+      toast({
+        title: 'Error',
+        description: 'Authentication not configured',
+        status: 'error',
+        duration: 3000,
+      })
+      return
+    }
+
+    setLoading(true)
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: signupEmail,
+        password: signupPassword,
+        options: {
+          data: {
+            full_name: signupName,
+          },
+        },
+      })
+
+      if (error) throw error
+
+      toast({
+        title: 'Success!',
+        description: 'Check your email to verify your account',
+        status: 'success',
+        duration: 5000,
+      })
+      
+      // Clear form
+      setSignupEmail('')
+      setSignupPassword('')
+      setSignupName('')
+    } catch (error: any) {
+      toast({
+        title: 'Sign up failed',
+        description: error.message || 'An error occurred',
+        status: 'error',
+        duration: 5000,
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!supabase) {
+      toast({
+        title: 'Error',
+        description: 'Authentication not configured',
+        status: 'error',
+        duration: 3000,
+      })
+      return
+    }
+
+    setLoading(true)
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: signinEmail,
+        password: signinPassword,
+      })
+
+      if (error) throw error
+
+      toast({
+        title: 'Welcome back!',
+        description: 'Redirecting to your study sets...',
+        status: 'success',
+        duration: 2000,
+      })
+
+      router.push('/my-sets')
+    } catch (error: any) {
+      toast({
+        title: 'Sign in failed',
+        description: error.message || 'Invalid email or password',
+        status: 'error',
+        duration: 5000,
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!supabase) {
+      toast({
+        title: 'Error',
+        description: 'Authentication not configured',
+        status: 'error',
+        duration: 3000,
+      })
+      return
+    }
+
+    setLoading(true)
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail, {
+        redirectTo: `${window.location.origin}/auth/reset-password`,
+      })
+
+      if (error) throw error
+
+      toast({
+        title: 'Check your email',
+        description: 'Password reset instructions have been sent',
+        status: 'success',
+        duration: 5000,
+      })
+      
+      setShowForgotPassword(false)
+      setForgotEmail('')
+    } catch (error: any) {
+      toast({
+        title: 'Error',
+        description: error.message || 'An error occurred',
+        status: 'error',
+        duration: 5000,
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <Box minH="100vh" bg="#0f0f1a" py={{ base: 8, md: 16 }}>
+      <Container maxW="500px">
+        <VStack spacing={8}>
+          {/* Logo & Header */}
+          <VStack spacing={4} textAlign="center">
+            <Box
+              w="60px"
+              h="60px"
+              bgGradient="linear(135deg, brand.500 0%, accent.500 100%)"
+              borderRadius="xl"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              boxShadow="0 4px 20px rgba(217, 70, 239, 0.4)"
+            >
+              <Music size={32} color="#ffffff" strokeWidth={2.5} />
+            </Box>
+            <Heading
+              size="xl"
+              fontWeight="900"
+              bgGradient="linear(135deg, brand.400 0%, accent.400 100%)"
+              bgClip="text"
+            >
+              Welcome to Numo AI
+            </Heading>
+            <Text color="whiteAlpha.600" fontSize="lg">
+              Turn study notes into memorable jingles
+            </Text>
+          </VStack>
+
+          {/* Auth Form */}
+          <Box
+            w="100%"
+            bg="rgba(26, 26, 46, 0.8)"
+            p={8}
+            borderRadius="2xl"
+            borderWidth={2}
+            borderColor="rgba(217, 70, 239, 0.3)"
+            boxShadow="0 10px 40px rgba(0, 0, 0, 0.3)"
+          >
+            {!showForgotPassword ? (
+              <Tabs index={tabIndex} onChange={setTabIndex} colorScheme="purple" variant="soft-rounded">
+                <TabList mb={6}>
+                  <Tab
+                    flex={1}
+                    color="whiteAlpha.600"
+                    _selected={{
+                      color: 'white',
+                      bg: 'rgba(217, 70, 239, 0.2)',
+                    }}
+                    fontWeight="600"
+                  >
+                    Sign In
+                  </Tab>
+                  <Tab
+                    flex={1}
+                    color="whiteAlpha.600"
+                    _selected={{
+                      color: 'white',
+                      bg: 'rgba(217, 70, 239, 0.2)',
+                    }}
+                    fontWeight="600"
+                  >
+                    Sign Up
+                  </Tab>
+                </TabList>
+
+                <TabPanels>
+                  {/* Sign In Panel */}
+                  <TabPanel p={0}>
+                    <form onSubmit={handleSignIn}>
+                      <VStack spacing={4}>
+                        <FormControl isRequired>
+                          <FormLabel color="whiteAlpha.800" fontSize="sm" fontWeight="600">
+                            Email
+                          </FormLabel>
+                          <Input
+                            type="email"
+                            placeholder="your@email.com"
+                            value={signinEmail}
+                            onChange={(e) => setSigninEmail(e.target.value)}
+                            bg="rgba(42, 42, 64, 0.6)"
+                            borderColor="rgba(217, 70, 239, 0.2)"
+                            color="white"
+                            _hover={{ borderColor: 'brand.500' }}
+                            _focus={{ borderColor: 'brand.500', boxShadow: '0 0 0 1px #d946ef' }}
+                            size="lg"
+                          />
+                        </FormControl>
+
+                        <FormControl isRequired>
+                          <FormLabel color="whiteAlpha.800" fontSize="sm" fontWeight="600">
+                            Password
+                          </FormLabel>
+                          <Input
+                            type="password"
+                            placeholder="••••••••"
+                            value={signinPassword}
+                            onChange={(e) => setSigninPassword(e.target.value)}
+                            bg="rgba(42, 42, 64, 0.6)"
+                            borderColor="rgba(217, 70, 239, 0.2)"
+                            color="white"
+                            _hover={{ borderColor: 'brand.500' }}
+                            _focus={{ borderColor: 'brand.500', boxShadow: '0 0 0 1px #d946ef' }}
+                            size="lg"
+                          />
+                        </FormControl>
+
+                        <Button
+                          type="submit"
+                          w="100%"
+                          size="lg"
+                          bgGradient="linear(135deg, brand.500 0%, accent.500 100%)"
+                          color="white"
+                          fontWeight="700"
+                          rightIcon={<ArrowRight size={20} />}
+                          isLoading={loading}
+                          _hover={{
+                            bgGradient: 'linear(135deg, brand.600 0%, accent.600 100%)',
+                          }}
+                        >
+                          Sign In
+                        </Button>
+
+                        <Link
+                          color="brand.300"
+                          fontSize="sm"
+                          onClick={() => setShowForgotPassword(true)}
+                          cursor="pointer"
+                          _hover={{ color: 'brand.400' }}
+                        >
+                          Forgot password?
+                        </Link>
+                      </VStack>
+                    </form>
+                  </TabPanel>
+
+                  {/* Sign Up Panel */}
+                  <TabPanel p={0}>
+                    <form onSubmit={handleSignUp}>
+                      <VStack spacing={4}>
+                        <FormControl isRequired>
+                          <FormLabel color="whiteAlpha.800" fontSize="sm" fontWeight="600">
+                            Full Name
+                          </FormLabel>
+                          <Input
+                            type="text"
+                            placeholder="John Doe"
+                            value={signupName}
+                            onChange={(e) => setSignupName(e.target.value)}
+                            bg="rgba(42, 42, 64, 0.6)"
+                            borderColor="rgba(217, 70, 239, 0.2)"
+                            color="white"
+                            _hover={{ borderColor: 'brand.500' }}
+                            _focus={{ borderColor: 'brand.500', boxShadow: '0 0 0 1px #d946ef' }}
+                            size="lg"
+                          />
+                        </FormControl>
+
+                        <FormControl isRequired>
+                          <FormLabel color="whiteAlpha.800" fontSize="sm" fontWeight="600">
+                            Email
+                          </FormLabel>
+                          <Input
+                            type="email"
+                            placeholder="your@email.com"
+                            value={signupEmail}
+                            onChange={(e) => setSignupEmail(e.target.value)}
+                            bg="rgba(42, 42, 64, 0.6)"
+                            borderColor="rgba(217, 70, 239, 0.2)"
+                            color="white"
+                            _hover={{ borderColor: 'brand.500' }}
+                            _focus={{ borderColor: 'brand.500', boxShadow: '0 0 0 1px #d946ef' }}
+                            size="lg"
+                          />
+                        </FormControl>
+
+                        <FormControl isRequired>
+                          <FormLabel color="whiteAlpha.800" fontSize="sm" fontWeight="600">
+                            Password
+                          </FormLabel>
+                          <Input
+                            type="password"
+                            placeholder="••••••••"
+                            value={signupPassword}
+                            onChange={(e) => setSignupPassword(e.target.value)}
+                            bg="rgba(42, 42, 64, 0.6)"
+                            borderColor="rgba(217, 70, 239, 0.2)"
+                            color="white"
+                            _hover={{ borderColor: 'brand.500' }}
+                            _focus={{ borderColor: 'brand.500', boxShadow: '0 0 0 1px #d946ef' }}
+                            size="lg"
+                          />
+                        </FormControl>
+
+                        <Button
+                          type="submit"
+                          w="100%"
+                          size="lg"
+                          bgGradient="linear(135deg, brand.500 0%, accent.500 100%)"
+                          color="white"
+                          fontWeight="700"
+                          rightIcon={<ArrowRight size={20} />}
+                          isLoading={loading}
+                          _hover={{
+                            bgGradient: 'linear(135deg, brand.600 0%, accent.600 100%)',
+                          }}
+                        >
+                          Create Account
+                        </Button>
+
+                        <Text color="whiteAlpha.600" fontSize="xs" textAlign="center">
+                          By signing up, you agree to our Terms of Service
+                        </Text>
+                      </VStack>
+                    </form>
+                  </TabPanel>
+                </TabPanels>
+              </Tabs>
+            ) : (
+              <VStack spacing={6}>
+                <VStack spacing={2} textAlign="center">
+                  <Heading size="md" color="white">
+                    Reset Password
+                  </Heading>
+                  <Text color="whiteAlpha.600" fontSize="sm">
+                    Enter your email to receive reset instructions
+                  </Text>
+                </VStack>
+
+                <form onSubmit={handleForgotPassword} style={{ width: '100%' }}>
+                  <VStack spacing={4}>
+                    <FormControl isRequired>
+                      <FormLabel color="whiteAlpha.800" fontSize="sm" fontWeight="600">
+                        Email
+                      </FormLabel>
+                      <Input
+                        type="email"
+                        placeholder="your@email.com"
+                        value={forgotEmail}
+                        onChange={(e) => setForgotEmail(e.target.value)}
+                        bg="rgba(42, 42, 64, 0.6)"
+                        borderColor="rgba(217, 70, 239, 0.2)"
+                        color="white"
+                        _hover={{ borderColor: 'brand.500' }}
+                        _focus={{ borderColor: 'brand.500', boxShadow: '0 0 0 1px #d946ef' }}
+                        size="lg"
+                      />
+                    </FormControl>
+
+                    <Button
+                      type="submit"
+                      w="100%"
+                      size="lg"
+                      bgGradient="linear(135deg, brand.500 0%, accent.500 100%)"
+                      color="white"
+                      fontWeight="700"
+                      isLoading={loading}
+                      _hover={{
+                        bgGradient: 'linear(135deg, brand.600 0%, accent.600 100%)',
+                      }}
+                    >
+                      Send Reset Link
+                    </Button>
+
+                    <Link
+                      color="brand.300"
+                      fontSize="sm"
+                      onClick={() => setShowForgotPassword(false)}
+                      cursor="pointer"
+                      _hover={{ color: 'brand.400' }}
+                    >
+                      Back to sign in
+                    </Link>
+                  </VStack>
+                </form>
+              </VStack>
+            )}
+          </Box>
+        </VStack>
+      </Container>
+    </Box>
+  )
+}
+
