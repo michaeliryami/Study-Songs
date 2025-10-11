@@ -75,43 +75,38 @@ export default function CreatePage() {
     setProgress(10)
 
     try {
-      // Extract terms
+      // Split notes into lines (each line should be "Term — Definition")
       setProgress(20)
-      const termsResponse = await fetch('/api/generate-terms', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          subject: subject ? `${subject}\n\nStudy Notes:\n${notes}` : `Study Notes:\n${notes}`,
-        }),
-      })
-
-      if (!termsResponse.ok) {
-        throw new Error('Failed to extract terms')
-      }
-
-      const { terms } = await termsResponse.json()
-      const termsList = terms.split('\n').filter((t: string) => t.trim())
+      const fullNotes = subject ? `${subject}\n\n${notes}` : notes
+      const termsList = notes.split('\n').filter((line: string) => line.trim())
       setProgress(40)
 
-      // Generate jingles for each term
+      // Generate jingles for each term with full context
       const jingles: any[] = []
       for (let i = 0; i < termsList.length; i++) {
+        const line = termsList[i].trim()
+        
+        // Send the full line (with definition) to generate the song
         const songResponse = await fetch('/api/generate-song', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            studyNotes: termsList[i],
+            studyNotes: fullNotes.includes('\n\n') 
+              ? `${subject}\n\n${line}` 
+              : line,
             genre,
           }),
         })
 
         if (songResponse.ok) {
           const data = await songResponse.json()
+          // Extract just the term name from "Term — Definition"
+          const termName = line.split(/[—:-]/)[0]?.trim() || line.split(' ')[0]
           jingles.push({
-            term: termsList[i].split(/[—:-]/)[0]?.trim() || termsList[i],
+            term: termName,
             lyrics: data.lyrics || '',
             audioUrl: data.audioUrl || null,
-            notes: termsList[i],
+            notes: line,
             genre,
           })
         }
