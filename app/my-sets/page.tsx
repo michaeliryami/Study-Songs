@@ -25,6 +25,7 @@ import { Music, ChevronLeft, ChevronRight, Save, Trash2, Plus, Folder, Calendar,
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '../lib/supabase'
+import { useAuth } from '../contexts/AuthContext'
 import ShareButton from '../components/ShareButton'
 
 interface Jingle {
@@ -67,30 +68,30 @@ export default function MySetsPage() {
   const cancelTermRef = useRef<HTMLButtonElement>(null)
   const toast = useToast()
   const router = useRouter()
+  const { user, loading: authLoading } = useAuth()
+
+  // Redirect if not logged in
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/auth')
+    }
+  }, [user, authLoading, router])
 
   useEffect(() => {
-    loadSavedSets()
-    
-    // Check for newly created study set from sessionStorage
-    const newSet = sessionStorage.getItem('newStudySet')
-    if (newSet) {
-      const parsedSet = JSON.parse(newSet)
-      setSubject(parsedSet.subject)
-      setJingles(parsedSet.jingles)
-      setCurrentIndex(0)
-      setCurrentSetId(null) // It's new, not saved yet
-      sessionStorage.removeItem('newStudySet')
+    if (user) {
+      loadSavedSets()
     }
-  }, [])
+  }, [user])
 
   const loadSavedSets = async () => {
-    if (!supabase) return
+    if (!supabase || !user) return
 
     setLoadingSets(true)
     try {
       const { data, error } = await supabase
         .from('sets')
         .select('*')
+        .eq('created_by', user.id)
         .order('created_at', { ascending: false })
 
       if (error) throw error
@@ -592,6 +593,20 @@ export default function MySetsPage() {
   }
 
   const currentJingle = jingles[currentIndex]
+
+  // Show loading while checking auth
+  if (authLoading) {
+    return (
+      <Box minH="100vh" bg="#0f0f1a" display="flex" alignItems="center" justifyContent="center">
+        <Text color="white" fontSize="lg">Loading...</Text>
+      </Box>
+    )
+  }
+
+  // Don't render if not authenticated (will redirect)
+  if (!user) {
+    return null
+  }
 
   return (
     <Box minH="100vh" bg="#0f0f1a" py={{ base: 8, md: 12 }}>

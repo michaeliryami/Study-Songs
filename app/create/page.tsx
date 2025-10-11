@@ -81,7 +81,7 @@ export default function CreatePage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          studyNotes: subject ? `${subject}\n\nStudy Notes:\n${notes}` : `Study Notes:\n${notes}`,
+          subject: subject ? `${subject}\n\nStudy Notes:\n${notes}` : `Study Notes:\n${notes}`,
         }),
       })
 
@@ -90,16 +90,17 @@ export default function CreatePage() {
       }
 
       const { terms } = await termsResponse.json()
+      const termsList = terms.split('\n').filter((t: string) => t.trim())
       setProgress(40)
 
       // Generate jingles for each term
       const jingles: any[] = []
-      for (let i = 0; i < terms.length; i++) {
+      for (let i = 0; i < termsList.length; i++) {
         const songResponse = await fetch('/api/generate-song', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            studyNotes: terms[i],
+            studyNotes: termsList[i],
             genre,
           }),
         })
@@ -107,15 +108,15 @@ export default function CreatePage() {
         if (songResponse.ok) {
           const data = await songResponse.json()
           jingles.push({
-            term: terms[i].split(/[—:-]/)[0]?.trim() || terms[i],
+            term: termsList[i].split(/[—:-]/)[0]?.trim() || termsList[i],
             lyrics: data.lyrics || '',
             audioUrl: data.audioUrl || null,
-            notes: terms[i],
+            notes: termsList[i],
             genre,
           })
         }
 
-        setProgress(40 + ((i + 1) / terms.length) * 50)
+        setProgress(40 + ((i + 1) / termsList.length) * 50)
       }
 
       setProgress(95)

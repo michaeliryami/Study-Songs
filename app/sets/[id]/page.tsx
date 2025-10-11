@@ -1,9 +1,10 @@
 'use client'
 
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { Box, Container, Spinner, Text, VStack } from '@chakra-ui/react'
 import { supabase } from '../../lib/supabase'
+import { useAuth } from '../../contexts/AuthContext'
 import FlashcardPlayer from '../../components/FlashcardPlayer'
 
 interface Jingle {
@@ -21,16 +22,29 @@ interface StudySet {
 
 export default function SetPage() {
   const params = useParams()
+  const router = useRouter()
+  const { user, loading: authLoading } = useAuth()
   const id = params.id as string
   const [studySet, setStudySet] = useState<StudySet | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  // Redirect if not logged in
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/auth')
+    }
+  }, [user, authLoading, router])
 
   useEffect(() => {
     async function loadSet() {
       try {
         if (!supabase) {
           throw new Error('Database not configured')
+        }
+
+        if (!user) {
+          return // Wait for auth
         }
 
         const { data, error } = await supabase
@@ -49,12 +63,12 @@ export default function SetPage() {
       }
     }
 
-    if (id) {
+    if (id && user) {
       loadSet()
     }
-  }, [id])
+  }, [id, user])
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <Box minH="100vh" bg="#0f0f1a" display="flex" alignItems="center" justifyContent="center">
         <VStack spacing={4}>
@@ -63,6 +77,10 @@ export default function SetPage() {
         </VStack>
       </Box>
     )
+  }
+
+  if (!user) {
+    return null // Will redirect
   }
 
   if (error || !studySet) {
