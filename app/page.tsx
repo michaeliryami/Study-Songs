@@ -221,7 +221,7 @@ export default function Home() {
             </SimpleGrid>
 
             {/* Scroll Indicator */}
-            <VStack pt={6} spacing={2}>
+            <VStack pt={2} spacing={2}>
               <Text fontSize="xs" color="whiteAlpha.500" fontWeight="500" textTransform="uppercase" letterSpacing="wider">
                 Scroll to explore
               </Text>
