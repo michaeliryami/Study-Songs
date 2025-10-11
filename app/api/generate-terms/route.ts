@@ -129,7 +129,6 @@ ${subject}`,
       .split('\n')
       .map(line => line.replace(/^\d+[\.\)]\s*/, '').replace(/^[-•*]\s*/, '').trim())
       .filter(line => line.length > 0)
-      .join('\n')
 
     return NextResponse.json({ terms: cleanedTerms })
   } catch (error) {
