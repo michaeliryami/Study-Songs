@@ -189,12 +189,14 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
         genre: editedGenre,
       } as any
 
-      const { error } = await supabase
-        .from('sets')
-        .update({ jingles: updatedJingles })
-        .eq('id', studySet.id)
+      if (supabase) {
+        const { error } = await supabase
+          .from('sets')
+          .update({ jingles: updatedJingles })
+          .eq('id', studySet.id)
 
-      if (error) throw error
+        if (error) throw error
+      }
 
       setStudySet({ ...studySet, jingles: updatedJingles })
       setIsEditing(false) // Close edit mode after successful regeneration
@@ -230,12 +232,14 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
     try {
       const updatedJingles = studySet.jingles.filter((_, i) => i !== currentIndex)
 
-      const { error } = await supabase
-        .from('sets')
-        .update({ jingles: updatedJingles })
-        .eq('id', studySet.id)
+      if (supabase) {
+        const { error } = await supabase
+          .from('sets')
+          .update({ jingles: updatedJingles })
+          .eq('id', studySet.id)
 
-      if (error) throw error
+        if (error) throw error
+      }
 
       setStudySet({ ...studySet, jingles: updatedJingles })
       if (currentIndex >= updatedJingles.length) {
@@ -323,12 +327,14 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
 
       const updatedJingles = [...studySet.jingles, ...newJingles]
 
-      const { error } = await supabase
-        .from('sets')
-        .update({ jingles: updatedJingles })
-        .eq('id', studySet.id)
+      if (supabase) {
+        const { error } = await supabase
+          .from('sets')
+          .update({ jingles: updatedJingles })
+          .eq('id', studySet.id)
 
-      if (error) throw error
+        if (error) throw error
+      }
 
       setStudySet({ ...studySet, jingles: updatedJingles })
       setNewTerms('')
