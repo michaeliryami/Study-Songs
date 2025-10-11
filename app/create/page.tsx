@@ -250,7 +250,7 @@ Format: Term — Definition (one per line)"
             </Box>
 
             <Button
-              leftIcon={<Sparkles size={{ base: 18, sm: 22 }} />}
+              leftIcon={<Sparkles size={22} />}
               onClick={handleGenerate}
               isLoading={generating}
               loadingText="Generating mnemonics..."

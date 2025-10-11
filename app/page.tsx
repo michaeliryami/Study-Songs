@@ -170,6 +170,7 @@ export default function Home() {
                 View Demo
               </Button>
             </HStack>
+            </VStack>
 
             {/* Social Proof Stats */}
             <SimpleGrid columns={{ base: 2, md: 4 }} spacing={8} pt={12} w="100%">

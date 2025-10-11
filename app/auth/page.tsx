@@ -190,7 +190,7 @@ export default function AuthPage() {
               justifyContent="center"
               boxShadow="0 4px 20px rgba(217, 70, 239, 0.4)"
             >
-              <Music size={{ base: 28, sm: 32 }} color="#ffffff" strokeWidth={2.5} />
+              <Music size={32} color="#ffffff" strokeWidth={2.5} />
             </Box>
             <Heading
               size={{ base: "lg", sm: "xl" }}
@@ -296,7 +296,7 @@ export default function AuthPage() {
                           bgGradient="linear(135deg, brand.500 0%, accent.500 100%)"
                           color="white"
                           fontWeight="700"
-                          rightIcon={<ArrowRight size={{ base: 18, sm: 20 }} />}
+                          rightIcon={<ArrowRight size={20} />}
                           isLoading={loading}
                           fontSize={{ base: "sm", sm: "md" }}
                           _hover={{

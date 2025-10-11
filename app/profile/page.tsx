@@ -216,7 +216,7 @@ export default function ProfilePage() {
                     bg="rgba(217, 70, 239, 0.1)"
                     borderRadius="lg"
                   >
-                    <BookOpen size={{ base: 20, sm: 24 }} color="#d946ef" />
+                    <BookOpen size={24} color="#d946ef" />
                   </Box>
                   <VStack align="start" spacing={1}>
                     <Text fontSize={{ base: "xs", sm: "sm" }} color="whiteAlpha.600" fontWeight="600" textTransform="uppercase">
@@ -408,7 +408,7 @@ export default function ProfilePage() {
               color="white"
               fontWeight="700"
               fontSize={{ base: "md", sm: "lg" }}
-              leftIcon={<Sparkles size={{ base: 18, sm: 20 }} />}
+              leftIcon={<Sparkles size={20} />}
               onClick={() => router.push('/create')}
               _hover={{
                 bgGradient: 'linear(135deg, brand.600 0%, accent.600 100%)',
@@ -424,7 +424,7 @@ export default function ProfilePage() {
               color="brand.300"
               fontWeight="700"
               fontSize={{ base: "md", sm: "lg" }}
-              leftIcon={<Music size={{ base: 18, sm: 20 }} />}
+              leftIcon={<Music size={20} />}
               borderWidth={2}
               borderColor="brand.500"
               onClick={() => router.push('/my-sets')}
