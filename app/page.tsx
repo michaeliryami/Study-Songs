@@ -92,10 +92,11 @@ export default function Home() {
             </Badge>
             
             <Heading
-              fontSize={{ base: "5xl", md: "7xl", lg: "8xl" }}
+              fontSize={{ base: "3xl", sm: "5xl", md: "7xl", lg: "8xl" }}
               fontWeight="900"
               letterSpacing="-0.04em"
               lineHeight="0.95"
+              px={{ base: 2, sm: 0 }}
             >
               <Text
                 as="span"
@@ -111,47 +112,53 @@ export default function Home() {
             </Heading>
             
             <Text
-              fontSize={{ base: "lg", md: "2xl" }}
+              fontSize={{ base: "md", sm: "lg", md: "2xl" }}
               color="whiteAlpha.700"
               fontWeight="500"
-              maxW="4xl"
+              maxW={{ base: "100%", sm: "4xl" }}
               mx="auto"
               lineHeight="1.6"
+              px={{ base: 4, sm: 0 }}
             >
               Turn any study material into catchy, memorable jingles. Let your brain&apos;s love for music supercharge your learning and retention.
             </Text>
 
-            <HStack spacing={4} pt={6} flexWrap="wrap" justify="center">
-              <Button
-                bgGradient="linear(135deg, brand.500 0%, accent.500 100%)"
-                color="white"
-                size="lg"
-                h="72px"
-                px={10}
-                fontSize="xl"
-                fontWeight="700"
-                rightIcon={<ArrowRight size={24} />}
-                onClick={handleGetStarted}
-                _hover={{
-                  bgGradient: "linear(135deg, brand.600 0%, accent.600 100%)",
-                  transform: "translateY(-4px)",
-                  boxShadow: "0 20px 60px rgba(217, 70, 239, 0.5)"
-                }}
-                transition="all 0.3s"
-                animation={`${glow} 3s ease-in-out infinite`}
-              >
-                Start Creating Now
-              </Button>
-              <Button
-                bg="rgba(26, 26, 46, 0.8)"
-                color="white"
-                size="lg"
-                h="72px"
-                px={10}
-                fontSize="xl"
-                fontWeight="600"
-                borderWidth={2}
-                borderColor="rgba(217, 70, 239, 0.3)"
+            <VStack spacing={4} pt={6} w="full" maxW={{ base: "100%", sm: "auto" }}>
+              <HStack spacing={4} flexWrap="wrap" justify="center" w="full">
+                <Button
+                  bgGradient="linear(135deg, brand.500 0%, accent.500 100%)"
+                  color="white"
+                  size={{ base: "md", sm: "lg" }}
+                  h={{ base: "56px", sm: "72px" }}
+                  px={{ base: 6, sm: 10 }}
+                  fontSize={{ base: "lg", sm: "xl" }}
+                  fontWeight="700"
+                  rightIcon={<ArrowRight size={{ base: 20, sm: 24 }} />}
+                  onClick={handleGetStarted}
+                  _hover={{
+                    bgGradient: "linear(135deg, brand.600 0%, accent.600 100%)",
+                    transform: "translateY(-4px)",
+                    boxShadow: "0 20px 60px rgba(217, 70, 239, 0.5)"
+                  }}
+                  transition="all 0.3s"
+                  animation={`${glow} 3s ease-in-out infinite`}
+                  w={{ base: "full", sm: "auto" }}
+                  minW={{ base: "280px", sm: "auto" }}
+                >
+                  Start Creating Now
+                </Button>
+                <Button
+                  bg="rgba(26, 26, 46, 0.8)"
+                  color="white"
+                  size={{ base: "md", sm: "lg" }}
+                  h={{ base: "56px", sm: "72px" }}
+                  px={{ base: 6, sm: 10 }}
+                  fontSize={{ base: "lg", sm: "xl" }}
+                  fontWeight="600"
+                  borderWidth={2}
+                  borderColor="rgba(217, 70, 239, 0.3)"
+                  w={{ base: "full", sm: "auto" }}
+                  minW={{ base: "280px", sm: "auto" }}
                 onClick={() => router.push('/my-sets')}
                 _hover={{
                   bg: "rgba(37, 37, 64, 0.9)",

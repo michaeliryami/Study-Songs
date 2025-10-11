@@ -385,29 +385,36 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
       <audio ref={audioRef} />
 
       {/* Header */}
-      <HStack justify="space-between" align="center">
+      <HStack justify="space-between" align="center" spacing={{ base: 2, sm: 4 }}>
         <IconButton
           aria-label="Back"
-          icon={<ArrowLeft size={20} />}
+          icon={<ArrowLeft size={{ base: 18, sm: 20 }} />}
           onClick={() => router.push('/my-sets')}
           bg="rgba(26, 26, 46, 0.6)"
           color="whiteAlpha.700"
           _hover={{ bg: 'rgba(37, 37, 64, 0.8)' }}
-          size="md"
+          size={{ base: "sm", sm: "md" }}
           borderRadius="xl"
         />
-        <Heading size="lg" color="white" textAlign="center" flex={1}>
+        <Heading 
+          size={{ base: "md", sm: "lg" }} 
+          color="white" 
+          textAlign="center" 
+          flex={1}
+          px={{ base: 2, sm: 0 }}
+          isTruncated
+        >
           {studySet.subject}
         </Heading>
         <HStack>
           <IconButton
             aria-label="Add terms"
-            icon={<Plus size={20} />}
+            icon={<Plus size={{ base: 18, sm: 20 }} />}
             onClick={() => setIsAddingTerms(!isAddingTerms)}
             bg={isAddingTerms ? 'brand.500' : 'rgba(26, 26, 46, 0.6)'}
             color="white"
             _hover={{ bg: isAddingTerms ? 'brand.600' : 'rgba(37, 37, 64, 0.8)' }}
-            size="md"
+            size={{ base: "sm", sm: "md" }}
             borderRadius="xl"
           />
         </HStack>
@@ -417,17 +424,17 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
       {isAddingTerms && (
         <Box
           bg="rgba(26, 26, 46, 0.6)"
-          p={6}
+          p={{ base: 4, sm: 6 }}
           borderRadius="2xl"
           borderWidth={2}
           borderColor="brand.500"
         >
-          <VStack spacing={5} align="stretch">
+          <VStack spacing={{ base: 4, sm: 5 }} align="stretch">
             <VStack align="start" spacing={3}>
-              <Heading size="sm" color="white">
+              <Heading size={{ base: "xs", sm: "sm" }} color="white">
                 Add More Terms
               </Heading>
-              <Text color="whiteAlpha.600" fontSize="sm">
+              <Text color="whiteAlpha.600" fontSize={{ base: "xs", sm: "sm" }}>
                 Add new terms with definitions to generate more mnemonics. Format: <Text as="span" color="brand.400" fontWeight="600">Term — Definition</Text>
               </Text>
               
@@ -513,10 +520,10 @@ Format: Term — Definition (one per line)"
       {/* Progress Bar */}
       <Box mb={2}>
         <HStack justify="space-between" mb={1}>
-          <Text color="whiteAlpha.600" fontSize="sm" fontWeight="500">
+          <Text color="whiteAlpha.600" fontSize={{ base: "xs", sm: "sm" }} fontWeight="500">
             {currentIndex + 1} of {studySet.jingles.length}
           </Text>
-          <Text color="whiteAlpha.600" fontSize="sm" fontWeight="500">
+          <Text color="whiteAlpha.600" fontSize={{ base: "xs", sm: "sm" }} fontWeight="500">
             {Math.round(((currentIndex + 1) / studySet.jingles.length) * 100)}%
           </Text>
         </HStack>
@@ -525,7 +532,7 @@ Format: Term — Definition (one per line)"
           colorScheme="brand"
           bg="rgba(26, 26, 46, 0.6)"
           borderRadius="full"
-          height="8px"
+          height={{ base: "6px", sm: "8px" }}
           sx={{
             '& > div': {
               background: 'linear-gradient(135deg, #d946ef 0%, #f97316 100%)',
@@ -555,17 +562,17 @@ Format: Term — Definition (one per line)"
         w="100%"
       >
         {isEditing ? (
-          <VStack spacing={4} w="100%" align="stretch">
-            <Heading size="lg" color="white" textAlign="center">
+          <VStack spacing={{ base: 3, sm: 4 }} w="100%" align="stretch">
+            <Heading size={{ base: "md", sm: "lg" }} color="white" textAlign="center">
               {currentJingle.term}
             </Heading>
             
-            <Text color="brand.300" fontWeight="600" fontSize="sm" textTransform="uppercase" textAlign="center">
+            <Text color="brand.300" fontWeight="600" fontSize={{ base: "xs", sm: "sm" }} textTransform="uppercase" textAlign="center">
               Edit & Regenerate
             </Text>
 
             <Box>
-              <Text color="whiteAlpha.600" fontSize="sm" mb={2}>Notes (for jingle content)</Text>
+              <Text color="whiteAlpha.600" fontSize={{ base: "xs", sm: "sm" }} mb={2}>Notes (for jingle content)</Text>
               <Textarea
                 value={editedNotes}
                 onChange={(e) => setEditedNotes(e.target.value)}
@@ -575,9 +582,10 @@ Format: Term — Definition (one per line)"
                 borderColor="rgba(217, 70, 239, 0.2)"
                 _hover={{ borderColor: 'brand.500' }}
                 _focus={{ borderColor: 'brand.500', boxShadow: '0 0 0 1px #d946ef' }}
-                rows={4}
+                rows={{ base: 3, sm: 4 }}
                 resize="vertical"
                 borderRadius="xl"
+                fontSize={{ base: "sm", sm: "md" }}
               />
             </Box>
 

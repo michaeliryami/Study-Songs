@@ -175,14 +175,14 @@ export default function AuthPage() {
   }
 
   return (
-    <Box minH="100vh" bg="#0f0f1a" py={{ base: 8, md: 16 }}>
-      <Container maxW="500px">
-        <VStack spacing={8}>
+    <Box minH="100vh" bg="#0f0f1a" py={{ base: 6, md: 16 }}>
+      <Container maxW="500px" px={{ base: 4, sm: 6 }}>
+        <VStack spacing={{ base: 6, md: 8 }}>
           {/* Logo & Header */}
           <VStack spacing={4} textAlign="center">
             <Box
-              w="60px"
-              h="60px"
+              w={{ base: "50px", sm: "60px" }}
+              h={{ base: "50px", sm: "60px" }}
               bgGradient="linear(135deg, brand.500 0%, accent.500 100%)"
               borderRadius="xl"
               display="flex"
@@ -190,17 +190,18 @@ export default function AuthPage() {
               justifyContent="center"
               boxShadow="0 4px 20px rgba(217, 70, 239, 0.4)"
             >
-              <Music size={32} color="#ffffff" strokeWidth={2.5} />
+              <Music size={{ base: 28, sm: 32 }} color="#ffffff" strokeWidth={2.5} />
             </Box>
             <Heading
-              size="xl"
+              size={{ base: "lg", sm: "xl" }}
               fontWeight="900"
               bgGradient="linear(135deg, brand.400 0%, accent.400 100%)"
               bgClip="text"
+              px={{ base: 2, sm: 0 }}
             >
               Welcome to Numo AI
             </Heading>
-            <Text color="whiteAlpha.600" fontSize="lg">
+            <Text color="whiteAlpha.600" fontSize={{ base: "md", sm: "lg" }} px={{ base: 4, sm: 0 }}>
               Turn study notes into memorable jingles
             </Text>
           </VStack>
@@ -209,7 +210,7 @@ export default function AuthPage() {
           <Box
             w="100%"
             bg="rgba(26, 26, 46, 0.8)"
-            p={8}
+            p={{ base: 6, sm: 8 }}
             borderRadius="2xl"
             borderWidth={2}
             borderColor="rgba(217, 70, 239, 0.3)"
@@ -248,7 +249,7 @@ export default function AuthPage() {
                     <form onSubmit={handleSignIn}>
                       <VStack spacing={4}>
                         <FormControl isRequired>
-                          <FormLabel color="whiteAlpha.800" fontSize="sm" fontWeight="600">
+                          <FormLabel color="whiteAlpha.800" fontSize={{ base: "xs", sm: "sm" }} fontWeight="600">
                             Email
                           </FormLabel>
                           <Input
@@ -261,12 +262,14 @@ export default function AuthPage() {
                             color="white"
                             _hover={{ borderColor: 'brand.500' }}
                             _focus={{ borderColor: 'brand.500', boxShadow: '0 0 0 1px #d946ef' }}
-                            size="lg"
+                            size={{ base: "md", sm: "lg" }}
+                            h={{ base: "48px", sm: "56px" }}
+                            fontSize={{ base: "sm", sm: "md" }}
                           />
                         </FormControl>
 
                         <FormControl isRequired>
-                          <FormLabel color="whiteAlpha.800" fontSize="sm" fontWeight="600">
+                          <FormLabel color="whiteAlpha.800" fontSize={{ base: "xs", sm: "sm" }} fontWeight="600">
                             Password
                           </FormLabel>
                           <Input
@@ -279,19 +282,23 @@ export default function AuthPage() {
                             color="white"
                             _hover={{ borderColor: 'brand.500' }}
                             _focus={{ borderColor: 'brand.500', boxShadow: '0 0 0 1px #d946ef' }}
-                            size="lg"
+                            size={{ base: "md", sm: "lg" }}
+                            h={{ base: "48px", sm: "56px" }}
+                            fontSize={{ base: "sm", sm: "md" }}
                           />
                         </FormControl>
 
                         <Button
                           type="submit"
                           w="100%"
-                          size="lg"
+                          size={{ base: "md", sm: "lg" }}
+                          h={{ base: "48px", sm: "56px" }}
                           bgGradient="linear(135deg, brand.500 0%, accent.500 100%)"
                           color="white"
                           fontWeight="700"
-                          rightIcon={<ArrowRight size={20} />}
+                          rightIcon={<ArrowRight size={{ base: 18, sm: 20 }} />}
                           isLoading={loading}
+                          fontSize={{ base: "sm", sm: "md" }}
                           _hover={{
                             bgGradient: 'linear(135deg, brand.600 0%, accent.600 100%)',
                           }}
@@ -301,7 +308,7 @@ export default function AuthPage() {
 
                         <Link
                           color="brand.300"
-                          fontSize="sm"
+                          fontSize={{ base: "xs", sm: "sm" }}
                           onClick={() => setShowForgotPassword(true)}
                           cursor="pointer"
                           _hover={{ color: 'brand.400' }}

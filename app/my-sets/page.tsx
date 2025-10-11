@@ -609,22 +609,23 @@ export default function MySetsPage() {
   }
 
   return (
-    <Box minH="100vh" bg="#0f0f1a" py={{ base: 8, md: 12 }}>
-      <Container maxW="1200px" w="100%" px={{ base: 4, md: 8 }}>
-        <VStack spacing={8} align="stretch">
+    <Box minH="100vh" bg="#0f0f1a" py={{ base: 6, md: 12 }}>
+      <Container maxW="1200px" w="100%" px={{ base: 3, sm: 4, md: 8 }}>
+        <VStack spacing={{ base: 6, md: 8 }} align="stretch">
           <Box textAlign="center">
             <Heading 
               as="h1" 
-              fontSize={{base: "2xl", md: "4xl"}} 
+              fontSize={{ base: "xl", sm: "2xl", md: "4xl" }} 
               fontWeight="900" 
               mb={3} 
               letterSpacing="-0.03em"
               bgGradient="linear(135deg, brand.400 0%, accent.400 100%)"
               bgClip="text"
+              px={{ base: 2, sm: 0 }}
             >
               My Study Sets
             </Heading>
-            <Text fontSize={{base: "sm", md: "md"}} color="whiteAlpha.600" fontWeight="500" maxW="xl" mx="auto">
+            <Text fontSize={{ base: "sm", sm: "md" }} color="whiteAlpha.600" fontWeight="500" maxW="xl" mx="auto" px={{ base: 4, sm: 0 }}>
               Review your mnemonics and ace that exam
             </Text>
           </Box>
@@ -651,8 +652,8 @@ export default function MySetsPage() {
             ) : (
               <>
                 <HStack spacing={2} mb={2}>
-                  <Folder size={16} />
-                  <Text fontSize="md" fontWeight="600" color="whiteAlpha.700">
+                  <Folder size={{ base: 14, md: 16 }} />
+                  <Text fontSize={{ base: "sm", md: "md" }} fontWeight="600" color="whiteAlpha.700">
                     Your Collections ({savedSets.length})
                   </Text>
                 </HStack>
@@ -660,7 +661,7 @@ export default function MySetsPage() {
                   <Box
                     key={set.id}
                     bg="rgba(26, 26, 46, 0.6)"
-                    p={5}
+                    p={{ base: 4, sm: 5 }}
                     borderRadius="2xl"
                     borderWidth={2}
                     borderColor="brand.500"
@@ -674,14 +675,14 @@ export default function MySetsPage() {
                       <Heading size="md" fontWeight="700" color="white">
                         {set.subject}
                       </Heading>
-                      <HStack spacing={3} color="whiteAlpha.600" fontSize="sm" fontWeight="500">
+                      <HStack spacing={{ base: 2, sm: 3 }} color="whiteAlpha.600" fontSize={{ base: "xs", sm: "sm" }} fontWeight="500" flexWrap="wrap">
                         <HStack spacing={1}>
-                          <Music size={14} />
+                          <Music size={{ base: 12, sm: 14 }} />
                           <Text>{set.jingles.length} terms</Text>
                         </HStack>
-                        <Text>•</Text>
+                        <Text display={{ base: "none", sm: "inline" }}>•</Text>
                         <HStack spacing={1}>
-                          <Calendar size={14} />
+                          <Calendar size={{ base: 12, sm: 14 }} />
                           <Text>{new Date(set.created_at).toLocaleDateString()}</Text>
                         </HStack>
                       </HStack>
@@ -722,21 +723,23 @@ export default function MySetsPage() {
                         flex={1}
                         bgGradient="linear(135deg, brand.500 0%, accent.500 100%)"
                         color="white"
-                        h="44px"
+                        h={{ base: "40px", sm: "44px" }}
                         fontWeight="600"
+                        fontSize={{ base: "sm", sm: "md" }}
                         onClick={() => router.push(`/sets/${set.id}`)}
                         _hover={{
                           bgGradient: "linear(135deg, brand.600 0%, accent.600 100%)",
                           transform: "translateY(-2px)"
                         }}
-                        leftIcon={<Play size={16} />}
+                        leftIcon={<Play size={{ base: 14, sm: 16 }} />}
                       >
                         Study Now
                       </Button>
                       <IconButton
                         aria-label="Delete"
-                        icon={<Trash2 size={16} />}
-                        h="44px"
+                        icon={<Trash2 size={{ base: 14, sm: 16 }} />}
+                        h={{ base: "40px", sm: "44px" }}
+                        w={{ base: "40px", sm: "44px" }}
                         bg="rgba(239, 68, 68, 0.1)"
                         color="red.400"
                         borderWidth={1}

@@ -154,25 +154,26 @@ export default function CreatePage() {
   }
 
   return (
-    <Box minH="100vh" bg="#0f0f1a" py={{ base: 8, md: 12 }}>
-      <Container maxW="1200px" px={{ base: 4, md: 8 }}>
-        <VStack spacing={8} align="stretch">
+    <Box minH="100vh" bg="#0f0f1a" py={{ base: 6, md: 12 }}>
+      <Container maxW="1200px" px={{ base: 3, sm: 4, md: 8 }}>
+        <VStack spacing={{ base: 6, md: 8 }} align="stretch">
           <Box textAlign="center">
             <Heading
-              size={{ base: "2xl", md: "4xl" }}
+              size={{ base: "xl", sm: "2xl", md: "4xl" }}
               fontWeight="900"
               bgGradient="linear(135deg, brand.400 0%, accent.400 100%)"
               bgClip="text"
               mb={2}
+              px={{ base: 2, sm: 0 }}
             >
               Create Study Set
             </Heading>
-            <Text fontSize={{base: "sm", md: "md"}} color="whiteAlpha.600" fontWeight="500" maxW="xl" mx="auto">
+            <Text fontSize={{ base: "sm", sm: "md" }} color="whiteAlpha.600" fontWeight="500" maxW="xl" mx="auto" px={{ base: 4, sm: 0 }}>
               Paste your notes and we&apos;ll create catchy jingles for each term
             </Text>
           </Box>
 
-          <VStack spacing={6} align="stretch" bg="rgba(26, 26, 46, 0.6)" p={{ base: 6, md: 8 }} borderRadius="2xl" borderWidth={2} borderColor="brand.500">
+          <VStack spacing={{ base: 4, md: 6 }} align="stretch" bg="rgba(26, 26, 46, 0.6)" p={{ base: 4, sm: 6, md: 8 }} borderRadius="2xl" borderWidth={2} borderColor="brand.500">
             <Box>
               <HStack mb={2} spacing={2}>
                 <Text fontWeight="600" fontSize="sm" color="whiteAlpha.700" textTransform="uppercase" letterSpacing="wide">
@@ -188,8 +189,8 @@ export default function CreatePage() {
                 color="white"
                 _hover={{ borderColor: 'brand.500' }}
                 _focus={{ borderColor: 'brand.500', boxShadow: '0 0 0 1px #d946ef' }}
-                h="56px"
-                fontSize="md"
+                h={{ base: "48px", sm: "56px" }}
+                fontSize={{ base: "sm", sm: "md" }}
                 borderRadius="xl"
               />
             </Box>
@@ -209,8 +210,8 @@ export default function CreatePage() {
                 color="white"
                 _hover={{ borderColor: 'brand.500' }}
                 _focus={{ borderColor: 'brand.500', boxShadow: '0 0 0 1px #d946ef' }}
-                h="56px"
-                fontSize="md"
+                h={{ base: "48px", sm: "56px" }}
+                fontSize={{ base: "sm", sm: "md" }}
                 borderRadius="xl"
               >
                 <option value="random">Random</option>
@@ -242,20 +243,20 @@ Format: Term — Definition (one per line)"
                 color="white"
                 _hover={{ borderColor: 'brand.500' }}
                 _focus={{ borderColor: 'brand.500', boxShadow: '0 0 0 1px #d946ef' }}
-                minHeight="280px"
-                fontSize="md"
+                minHeight={{ base: "200px", sm: "280px" }}
+                fontSize={{ base: "sm", sm: "md" }}
                 borderRadius="xl"
               />
             </Box>
 
             <Button
-              leftIcon={<Sparkles size={22} />}
+              leftIcon={<Sparkles size={{ base: 18, sm: 22 }} />}
               onClick={handleGenerate}
               isLoading={generating}
               loadingText="Generating mnemonics..."
-              size="lg"
-              h="64px"
-              fontSize="lg"
+              size={{ base: "md", sm: "lg" }}
+              h={{ base: "56px", sm: "64px" }}
+              fontSize={{ base: "md", sm: "lg" }}
               bgGradient="linear(135deg, brand.500 0%, accent.500 100%)"
               color="white"
               fontWeight="700"
@@ -267,6 +268,7 @@ Format: Term — Definition (one per line)"
                 transform: "translateY(0)"
               }}
               transition="all 0.2s"
+              w="full"
             >
               Generate Study Set
             </Button>
