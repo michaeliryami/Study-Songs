@@ -42,7 +42,7 @@ export default function Home() {
 
   const handleGetStarted = () => {
     if (user) {
-    router.push('/create')
+      router.push('/create')
     } else {
       router.push('/auth')
     }
@@ -133,7 +133,7 @@ export default function Home() {
                   px={{ base: 6, sm: 10 }}
                   fontSize={{ base: "lg", sm: "xl" }}
                   fontWeight="700"
-                  rightIcon={<ArrowRight size={{ base: 20, sm: 24 }} />}
+                  rightIcon={<ArrowRight size={24} />}
                   onClick={handleGetStarted}
                   _hover={{
                     bgGradient: "linear(135deg, brand.600 0%, accent.600 100%)",

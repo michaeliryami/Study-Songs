@@ -62,7 +62,7 @@ export default function Navbar() {
                   zIndex: -1,
                 }}
               >
-                <Music size={{ base: 20, sm: 24 }} color="#ffffff" strokeWidth={2.5} />
+                <Music size={24} color="#ffffff" strokeWidth={2.5} />
               </Box>
               <Box display={{ base: 'none', sm: 'block' }}>
                 <Heading 

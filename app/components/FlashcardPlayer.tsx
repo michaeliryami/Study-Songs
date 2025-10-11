@@ -388,7 +388,7 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
       <HStack justify="space-between" align="center" spacing={{ base: 2, sm: 4 }}>
         <IconButton
           aria-label="Back"
-          icon={<ArrowLeft size={{ base: 18, sm: 20 }} />}
+          icon={<ArrowLeft size={20} />}
           onClick={() => router.push('/my-sets')}
           bg="rgba(26, 26, 46, 0.6)"
           color="whiteAlpha.700"
@@ -409,7 +409,7 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
         <HStack>
           <IconButton
             aria-label="Add terms"
-            icon={<Plus size={{ base: 18, sm: 20 }} />}
+            icon={<Plus size={20} />}
             onClick={() => setIsAddingTerms(!isAddingTerms)}
             bg={isAddingTerms ? 'brand.500' : 'rgba(26, 26, 46, 0.6)'}
             color="white"
@@ -582,7 +582,7 @@ Format: Term — Definition (one per line)"
                 borderColor="rgba(217, 70, 239, 0.2)"
                 _hover={{ borderColor: 'brand.500' }}
                 _focus={{ borderColor: 'brand.500', boxShadow: '0 0 0 1px #d946ef' }}
-                rows={{ base: 3, sm: 4 }}
+                rows={4}
                 resize="vertical"
                 borderRadius="xl"
                 fontSize={{ base: "sm", sm: "md" }}

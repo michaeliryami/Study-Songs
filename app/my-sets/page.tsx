@@ -652,7 +652,7 @@ export default function MySetsPage() {
             ) : (
               <>
                 <HStack spacing={2} mb={2}>
-                  <Folder size={{ base: 14, md: 16 }} />
+                  <Folder size={16} />
                   <Text fontSize={{ base: "sm", md: "md" }} fontWeight="600" color="whiteAlpha.700">
                     Your Collections ({savedSets.length})
                   </Text>
@@ -677,12 +677,12 @@ export default function MySetsPage() {
                       </Heading>
                       <HStack spacing={{ base: 2, sm: 3 }} color="whiteAlpha.600" fontSize={{ base: "xs", sm: "sm" }} fontWeight="500" flexWrap="wrap">
                         <HStack spacing={1}>
-                          <Music size={{ base: 12, sm: 14 }} />
+                          <Music size={14} />
                           <Text>{set.jingles.length} terms</Text>
                         </HStack>
                         <Text display={{ base: "none", sm: "inline" }}>•</Text>
                         <HStack spacing={1}>
-                          <Calendar size={{ base: 12, sm: 14 }} />
+                          <Calendar size={14} />
                           <Text>{new Date(set.created_at).toLocaleDateString()}</Text>
                         </HStack>
                       </HStack>
@@ -731,13 +731,13 @@ export default function MySetsPage() {
                           bgGradient: "linear(135deg, brand.600 0%, accent.600 100%)",
                           transform: "translateY(-2px)"
                         }}
-                        leftIcon={<Play size={{ base: 14, sm: 16 }} />}
+                        leftIcon={<Play size={16} />}
                       >
                         Study Now
                       </Button>
                       <IconButton
                         aria-label="Delete"
-                        icon={<Trash2 size={{ base: 14, sm: 16 }} />}
+                        icon={<Trash2 size={16} />}
                         h={{ base: "40px", sm: "44px" }}
                         w={{ base: "40px", sm: "44px" }}
                         bg="rgba(239, 68, 68, 0.1)"
