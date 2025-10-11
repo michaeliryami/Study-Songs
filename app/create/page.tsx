@@ -81,7 +81,7 @@ export default function CreatePage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          subject: subject ? `${subject}\n\nStudy Notes:\n${notes}` : `Study Notes:\n${notes}`,
+          studyNotes: subject ? `${subject}\n\nStudy Notes:\n${notes}` : `Study Notes:\n${notes}`,
         }),
       })
 
