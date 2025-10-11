@@ -199,7 +199,7 @@ export default function AuthPage() {
               bgClip="text"
               px={{ base: 2, sm: 0 }}
             >
-              Welcome to Numo AI
+              Welcome to noomo AI
             </Heading>
             <Text color="whiteAlpha.600" fontSize={{ base: "md", sm: "lg" }} px={{ base: 4, sm: 0 }}>
               Turn study notes into memorable jingles

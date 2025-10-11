@@ -1,4 +1,4 @@
-# 🎵 Numo AI - UI Refactor Summary
+# 🎵 noomo AI - UI Refactor Summary
 
 ## ✨ What Changed
 
