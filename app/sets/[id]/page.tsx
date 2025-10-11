@@ -29,6 +29,10 @@ export default function SetPage() {
   useEffect(() => {
     async function loadSet() {
       try {
+        if (!supabase) {
+          throw new Error('Database not configured')
+        }
+
         const { data, error } = await supabase
           .from('sets')
           .select('*')
