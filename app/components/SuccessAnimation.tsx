@@ -76,7 +76,7 @@ export default function SuccessAnimation({ count, subject }: SuccessAnimationPro
           Study Set Created!
         </Heading>
         <Text fontSize="lg" color="whiteAlpha.700" fontWeight="600" textAlign="center">
-          {count} jingles for "{subject}"
+          {count} jingles for &quot;{subject}&quot;
         </Text>
       </VStack>
 

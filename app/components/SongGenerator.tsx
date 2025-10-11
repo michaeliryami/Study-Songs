@@ -739,7 +739,7 @@ export default function SongGenerator({ currentView, onViewChange }: SongGenerat
                 ) : savedSets.length === 0 ? (
                   <Box textAlign="center" py={12}>
                     <Text fontSize="lg" color="whiteAlpha.600" mb={4}>
-                      You haven't created any study sets yet.
+                      You haven&apos;t created any study sets yet.
                     </Text>
                     <Button
                       colorScheme="brand"

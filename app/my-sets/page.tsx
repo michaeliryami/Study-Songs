@@ -623,7 +623,7 @@ export default function MySetsPage() {
             ) : savedSets.length === 0 ? (
               <Box textAlign="center" py={12}>
                 <Text fontSize="lg" color="whiteAlpha.600" mb={4}>
-                  You haven't created any study sets yet.
+                  You haven&apos;t created any study sets yet.
                 </Text>
                 <Button
                   bgGradient="linear(135deg, brand.500 0%, accent.500 100%)"
@@ -1134,7 +1134,7 @@ export default function MySetsPage() {
             <AlertDialogBody color="whiteAlpha.800">
               Are you sure you want to delete{' '}
               <Text as="span" fontWeight="bold" color="brand.300">
-                "{setToDelete?.subject}"
+                &quot;{setToDelete?.subject}&quot;
               </Text>
               ? This action cannot be undone.
             </AlertDialogBody>
@@ -1185,7 +1185,7 @@ export default function MySetsPage() {
             <AlertDialogBody color="whiteAlpha.800">
               Remove{' '}
               <Text as="span" fontWeight="bold" color="brand.300">
-                "{termToRemove?.term}"
+                &quot;{termToRemove?.term}&quot;
               </Text>
               {' '}from this study set?
             </AlertDialogBody>

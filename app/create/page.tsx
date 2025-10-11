@@ -292,7 +292,7 @@ export default function CreatePage() {
               Create Study Set
             </Heading>
             <Text fontSize={{base: "sm", md: "md"}} color="whiteAlpha.600" fontWeight="500" maxW="xl" mx="auto">
-              Paste your notes and we'll create catchy jingles for each term
+              Paste your notes and we&apos;ll create catchy jingles for each term
             </Text>
           </Box>
 

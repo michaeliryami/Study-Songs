@@ -108,7 +108,7 @@ export default function Home() {
               mx="auto"
               lineHeight="1.6"
             >
-              Turn any study material into catchy, memorable jingles. Let your brain's love for music supercharge your learning and retention.
+              Turn any study material into catchy, memorable jingles. Let your brain&apos;s love for music supercharge your learning and retention.
             </Text>
 
             <HStack spacing={4} pt={6} flexWrap="wrap" justify="center">
@@ -384,7 +384,7 @@ export default function Home() {
                   Actually Enjoyable
                 </Heading>
                 <Text color="whiteAlpha.700" fontSize="md" lineHeight="tall">
-                  Choose from Pop, R&B, Hip-Hop, and more. Turn tedious memorization into an experience you'll actually look forward to.
+                  Choose from Pop, R&B, Hip-Hop, and more. Turn tedious memorization into an experience you&apos;ll actually look forward to.
                 </Text>
                 <HStack mt={6} spacing={2}>
                   <CheckCircle size={18} color="#10b981" />
@@ -461,7 +461,7 @@ export default function Home() {
                     Paste Your Notes
                   </Heading>
                   <Text color="whiteAlpha.700" fontSize="md" lineHeight="tall">
-                    Simply copy-paste your study material. Use the format "Term — Definition" and our AI handles the rest.
+                    Simply copy-paste your study material. Use the format &quot;Term — Definition&quot; and our AI handles the rest.
                   </Text>
                 </VStack>
               </Box>
