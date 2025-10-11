@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap');
+
+* {
+  font-family: 'Outfit', sans-serif;
+}
+
+body {
+  background: linear-gradient(180deg, #0f0f1a 0%, #1a0f2e 100%);
+  min-height: 100vh;
+  color: #ffffff;
+  margin: 0;
+  padding: 0;
+  font-family: 'Outfit', sans-serif;
+}
+
+/* Glow effects for viral appeal */
+.glow-purple {
+  box-shadow: 0 0 20px rgba(217, 70, 239, 0.3);
+}
+
+.glow-orange {
+  box-shadow: 0 0 20px rgba(249, 115, 22, 0.3);
+}
+
+/* Smooth animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(217, 70, 239, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(217, 70, 239, 0.6);
+  }
+}
+
