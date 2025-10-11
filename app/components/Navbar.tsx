@@ -39,9 +39,9 @@ export default function Navbar() {
               </Box>
               <Box>
                 <Heading size="md" fontWeight="800" bgGradient="linear(135deg, brand.400 0%, accent.400 100%)" bgClip="text">
-                  StudyBeats
+                  Numo AI
                 </Heading>
-                <Text fontSize="xs" color="whiteAlpha.600" fontWeight="500">Memorize with Music</Text>
+                <Text fontSize="xs" color="whiteAlpha.600" fontWeight="500">AI-Powered Mnemonics</Text>
               </Box>
             </Flex>
           </Link>

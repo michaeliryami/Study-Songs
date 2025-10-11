@@ -1,4 +1,4 @@
-# 🎵 StudyBeats - UI Refactor Summary
+# 🎵 Numo AI - UI Refactor Summary
 
 ## ✨ What Changed
 

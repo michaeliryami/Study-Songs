@@ -12,8 +12,8 @@ interface ShareButtonProps {
 export default function ShareButton({ term, lyrics, audioUrl }: ShareButtonProps) {
   const toast = useToast()
 
-  const shareText = `🎵 Just learned "${term}" with a catchy jingle on StudyBeats!\n\nLyrics:\n${lyrics.slice(0, 150)}...\n\nTry it yourself: `
-  const shareUrl = typeof window !== 'undefined' ? window.location.origin : 'https://studybeats.app'
+  const shareText = `🎵 Just learned "${term}" with a catchy jingle on Numo AI!\n\nLyrics:\n${lyrics.slice(0, 150)}...\n\nTry it yourself: `
+  const shareUrl = typeof window !== 'undefined' ? window.location.origin : 'https://numo.ai'
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(`${shareText}${shareUrl}`)

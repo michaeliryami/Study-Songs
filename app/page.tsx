@@ -234,7 +234,7 @@ export default function Home() {
                 FEATURES
               </Badge>
               <Heading fontSize={{ base: "3xl", md: "5xl" }} fontWeight="900" color="white">
-                Why StudyBeats Works
+                Why Numo AI Works
               </Heading>
               <Text fontSize="lg" color="whiteAlpha.600" maxW="3xl">
                 Backed by neuroscience, powered by AI
@@ -634,7 +634,7 @@ export default function Home() {
                 </Text>
               </Heading>
               <Text fontSize="xl" color="whiteAlpha.700" maxW="3xl" lineHeight="tall">
-                Join 10,000+ students already using StudyBeats to transform their studying. No credit card required.
+                Join 10,000+ students already using Numo AI to transform their studying. No credit card required.
               </Text>
               <HStack spacing={4} pt={4}>
                 <Button
