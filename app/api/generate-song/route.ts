@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
   try {
-    const { studyNotes, genre: userGenre } = await request.json()
+    const { studyNotes, genre: userGenre, skipAudio } = await request.json()
 
     if (!studyNotes) {
       return NextResponse.json({ error: 'Study notes are required' }, { status: 400 })
@@ -213,6 +213,13 @@ ${studyNotes}`,
     }
 
     console.log('Generated jingle:', lyrics)
+    
+    // Skip audio generation if requested (for faster initial load)
+    if (skipAudio) {
+      console.log('Skipping audio generation')
+      return NextResponse.json({ lyrics, audioUrl: null })
+    }
+    
     console.log('Generating music...')
 
     const replicateApiKey = process.env.REPLICATE_API_KEY

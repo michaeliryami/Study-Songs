@@ -117,13 +117,14 @@ export default function CreatePage() {
         setCurrentTermNum(i + 1)
         setCurrentTermName(term)
         
-        // Generate song with the specific term-definition pair
+        // Generate ONLY lyrics first (skip audio for speed)
         const songResponse = await fetch('/api/generate-song', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             studyNotes: definition,
             genre,
+            skipAudio: true, // Skip audio generation initially
           }),
         })
 
@@ -132,7 +133,7 @@ export default function CreatePage() {
           jingles.push({
             term: term,
             lyrics: data.lyrics || '',
-            audioUrl: data.audioUrl || null,
+            audioUrl: null, // No audio yet - will generate in background
             notes: definition,
             genre,
           })
