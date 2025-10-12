@@ -19,7 +19,6 @@ import {
 import { Sparkles, Music } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
-import FlashcardPlayer from '../components/FlashcardPlayer'
 
 export default function CreatePage() {
   const router = useRouter()
@@ -31,11 +30,6 @@ export default function CreatePage() {
   const [notes, setNotes] = useState('')
   const [generating, setGenerating] = useState(false)
   const [progress, setProgress] = useState(0)
-  const [currentTerm, setCurrentTerm] = useState('')
-  const [totalTerms, setTotalTerms] = useState(0)
-  const [currentTermIndex, setCurrentTermIndex] = useState(0)
-  const [generatedJingles, setGeneratedJingles] = useState<any[]>([])
-  const [studySetId, setStudySetId] = useState<number | null>(null)
 
   // Redirect if not logged in
   useEffect(() => {
@@ -114,70 +108,9 @@ export default function CreatePage() {
       if (createError) throw createError
       
       const setId = newSet.id
-      setStudySetId(setId)
-
-      // Generate jingles for each term-definition pair and update in real-time
-      const jingles: any[] = []
-      for (let i = 0; i < termsList.length; i++) {
-        const line = termsList[i].trim()
-        setCurrentTermIndex(i + 1)
-        
-        // Extract term and definition from "Term — Definition" format
-        const separatorMatch = line.match(/[—:-]/)
-        let term = line
-        let definition = line
-        
-        if (separatorMatch) {
-          const parts = line.split(separatorMatch[0])
-          term = parts[0].trim()
-          definition = line // Keep full line with separator for context
-        }
-        
-        setCurrentTerm(term)
-        
-        // Generate song with the specific term-definition pair
-        const songResponse = await fetch('/api/generate-song', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            studyNotes: definition,
-            genre,
-          }),
-        })
-
-        if (songResponse.ok) {
-          const data = await songResponse.json()
-          const newJingle = {
-            term: term,
-            lyrics: data.lyrics || '',
-            audioUrl: data.audioUrl || null,
-            notes: definition,
-            genre,
-          }
-          jingles.push(newJingle)
-          
-          // Update UI immediately with new jingle
-          setGeneratedJingles([...jingles])
-          
-          // Update Supabase in real-time
-          await supabase
-            .from('sets')
-            .update({ jingles: jingles })
-            .eq('id', setId)
-        }
-
-        setProgress(40 + ((i + 1) / termsList.length) * 50)
-      }
-
-      setProgress(100)
-      setCurrentTerm('')
       
-      toast({
-        title: 'Complete!',
-        description: `Generated ${termsList.length} mnemonics`,
-        status: 'success',
-        duration: 3000,
-      })
+      // Redirect to the study set page immediately so generation happens there
+      router.push(`/sets/${setId}?generating=true&totalTerms=${termsList.length}&genre=${genre}&notes=${encodeURIComponent(JSON.stringify(termsList))}`)
     } catch (error: any) {
       toast({
         title: 'Error',
@@ -311,16 +244,8 @@ Format: Term — Definition (one per line)"
               Generate Study Set
             </Button>
 
-            {generating && currentTerm && (
+            {generating && (
               <VStack spacing={3} bg="rgba(42, 42, 64, 0.6)" p={4} borderRadius="xl" borderWidth={1} borderColor="rgba(217, 70, 239, 0.2)">
-                <HStack w="100%" justify="space-between">
-                  <Text color="whiteAlpha.700" fontSize="sm" fontWeight="600">
-                    Generating term {currentTermIndex} of {totalTerms}
-                  </Text>
-                  <Text color="brand.300" fontSize="sm" fontWeight="600">
-                    {Math.round(progress)}%
-                  </Text>
-                </HStack>
                 <Progress
                   value={progress}
                   size="sm"
@@ -334,26 +259,12 @@ Format: Term — Definition (one per line)"
                     },
                   }}
                 />
-                <Text color="whiteAlpha.600" fontSize="xs" isTruncated maxW="100%">
-                  Currently generating: {currentTerm}
+                <Text color="whiteAlpha.700" fontSize="sm" fontWeight="600">
+                  Extracting terms and creating study set...
                 </Text>
               </VStack>
             )}
           </VStack>
-
-          {/* Show FlashcardPlayer in real-time as cards are generated */}
-          {generatedJingles.length > 0 && studySetId && (
-            <Box mt={8}>
-              <FlashcardPlayer 
-                studySet={{
-                  id: studySetId,
-                  created_at: new Date().toISOString(),
-                  subject: subject || 'Untitled Study Set',
-                  jingles: generatedJingles,
-                }}
-              />
-            </Box>
-          )}
         </VStack>
       </Container>
     </Box>
