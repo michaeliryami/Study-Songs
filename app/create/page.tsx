@@ -93,17 +93,28 @@ export default function CreatePage() {
       const termsList = terms.split('\n').filter((line: string) => line.trim())
       setProgress(40)
 
-      // Generate jingles for each term with full context
+      // Generate jingles for each term-definition pair
       const jingles: any[] = []
       for (let i = 0; i < termsList.length; i++) {
-        const term = termsList[i].trim()
+        const line = termsList[i].trim()
         
-        // Send the FULL notes as context so AI can generate accurate lyrics
+        // Extract term and definition from "Term — Definition" format
+        const separatorMatch = line.match(/[—:-]/)
+        let term = line
+        let definition = line
+        
+        if (separatorMatch) {
+          const parts = line.split(separatorMatch[0])
+          term = parts[0].trim()
+          definition = line // Keep full line with separator for context
+        }
+        
+        // Generate song with the specific term-definition pair
         const songResponse = await fetch('/api/generate-song', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            studyNotes: `${fullNotes}\n\nFocus on creating a mnemonic for: ${term}`,
+            studyNotes: definition,
             genre,
           }),
         })
@@ -114,7 +125,7 @@ export default function CreatePage() {
             term: term,
             lyrics: data.lyrics || '',
             audioUrl: data.audioUrl || null,
-            notes: fullNotes,
+            notes: definition,
             genre,
           })
         }
