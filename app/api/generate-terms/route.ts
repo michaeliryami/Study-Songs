@@ -32,28 +32,28 @@ export async function POST(request: NextRequest) {
           messages: [
             {
               role: 'system',
-              content: `You are an expert at extracting terms and their definitions from study materials.
+              content: `You are an expert at identifying terms and their definitions from study notes.
 
 CRITICAL RULES:
-1. Extract ONLY the PRIMARY terms being taught/defined
-2. For EACH term, include its FULL definition/explanation
+1. Extract ONLY terms that have definitions/explanations in the notes
+2. Use the EXACT text from the notes - DO NOT summarize or rewrite
 3. Format: "Term — Definition" (one per line)
-4. Combine all bullet points/indented text under a term into ONE definition
-5. If a term has multiple sub-points, combine them into a single coherent definition
-6. If given only a subject name (no notes), generate 5-8 fundamental concepts with definitions
+4. Combine all bullet points/indented text under a term into the definition
+5. DO NOT extract the title/subject name itself - only extract defined concepts
+6. Keep the ORIGINAL wording from the notes exactly as written
 
 Examples:
-INPUT: "Marketing Myopia\nMarketing myopia definition\n        A nearsighted focus on selling products\n        Lack of insight\n\nHow to get rid of marketing myopia\n        Switching from production to consumer\n        Focus on customer needs"
+INPUT: "Marketing Myopia\nMarketing myopia definition\n        A nearsighted focus on selling products and services, rather than seeing the \"big picture\" of what consumers really want\n        Lack of insight into what a business is doing for its customers\n\nHow to get rid of marketing myopia\n        Switching from a production orientation to a consumer orientation"
 OUTPUT:
-Marketing Myopia — A nearsighted focus on selling products rather than seeing the big picture of what consumers want. It's a lack of insight into what a business is doing for its customers.
-How to get rid of marketing myopia — Switch from production orientation to consumer orientation by asking what you're really doing for the customer and focusing on customer needs.
+Marketing myopia definition — A nearsighted focus on selling products and services, rather than seeing the "big picture" of what consumers really want. Lack of insight into what a business is doing for its customers
+How to get rid of marketing myopia — Switching from a production orientation to a consumer orientation
 
 INPUT: "Photosynthesis: Plants use light to make glucose\nCellular Respiration: Cells break down glucose for energy"
 OUTPUT:
 Photosynthesis — Plants use light to make glucose
 Cellular Respiration — Cells break down glucose for energy
 
-Extract each main term with its COMPLETE definition on one line!`,
+Use EXACT text from notes - do not rewrite or summarize!`,
             },
             {
               role: 'user',
@@ -92,22 +92,23 @@ ${subject}`,
           messages: [
             {
               role: 'user',
-              content: `You are an expert at extracting terms and their definitions from study materials.
+              content: `You are an expert at identifying terms and their definitions from study notes.
 
 CRITICAL RULES:
-1. Extract ONLY the PRIMARY terms being taught/defined
-2. For EACH term, include its FULL definition/explanation
+1. Extract ONLY terms that have definitions/explanations in the notes
+2. Use the EXACT text from the notes - DO NOT summarize or rewrite
 3. Format: "Term — Definition" (one per line)
-4. Combine all bullet points/indented text under a term into ONE definition
-5. If a term has multiple sub-points, combine them into a single coherent definition
+4. Combine all bullet points/indented text under a term into the definition
+5. DO NOT extract the title/subject name itself - only extract defined concepts
+6. Keep the ORIGINAL wording from the notes exactly as written
 
-Example: If notes say "Marketing Myopia\n    A nearsighted focus\n    Lack of insight\n\nHow to fix it\n    Switch orientation\n    Focus on customers" 
+Example: If notes say "Marketing Myopia\nMarketing myopia definition\n    A nearsighted focus on selling products\n    Lack of insight\n\nHow to fix it\n    Switch orientation" 
 
 Output:
-Marketing Myopia — A nearsighted focus on products rather than customers. It's a lack of insight into what the business does for customers.
-How to fix it — Switch from production to consumer orientation and focus on what you're doing for customers.
+Marketing myopia definition — A nearsighted focus on selling products. Lack of insight
+How to fix it — Switch orientation
 
-Extract each term with its COMPLETE definition:
+Use EXACT text from notes:
 
 ${subject}`,
             },
