@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
   try {
-    const { studyNotes, genre: userGenre, skipAudio } = await request.json()
+    const { studyNotes, genre: userGenre, skipAudio, existingLyrics } = await request.json()
 
-    if (!studyNotes) {
-      return NextResponse.json({ error: 'Study notes are required' }, { status: 400 })
+    if (!studyNotes && !existingLyrics) {
+      return NextResponse.json({ error: 'Study notes or lyrics are required' }, { status: 400 })
     }
 
     // Map user-selected genre to music style with detailed production specs
@@ -29,19 +29,25 @@ export async function POST(request: NextRequest) {
       genre = genreMap[userGenre] || genreMap['pop']
     }
 
-    const apiKey = process.env.OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY
-    const provider = process.env.LLM_PROVIDER || 'openai'
-
-    if (!apiKey) {
-      return NextResponse.json(
-        { error: 'API key not configured. Please add OPENAI_API_KEY or ANTHROPIC_API_KEY to .env.local' },
-        { status: 500 }
-      )
-    }
-
     let lyrics = ''
 
-    if (provider === 'openai' || process.env.OPENAI_API_KEY) {
+    // If lyrics already exist, skip generation and go straight to audio
+    if (existingLyrics) {
+      lyrics = existingLyrics
+      console.log('Using existing lyrics:', lyrics)
+    } else {
+      // Generate new lyrics
+      const apiKey = process.env.OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY
+      const provider = process.env.LLM_PROVIDER || 'openai'
+
+      if (!apiKey) {
+        return NextResponse.json(
+          { error: 'API key not configured. Please add OPENAI_API_KEY or ANTHROPIC_API_KEY to .env.local' },
+          { status: 500 }
+        )
+      }
+
+      if (provider === 'openai' || process.env.OPENAI_API_KEY) {
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -199,20 +205,21 @@ ${studyNotes}`,
       return trimmed
     })
     
-    // If we have at least some lines, use them
-    if (lines.length === 0) {
-      lyrics = 'Error: No lyrics generated'
-    } else {
-      lyrics = lines.join('\n')
-    }
+      // If we have at least some lines, use them
+      if (lines.length === 0) {
+        lyrics = 'Error: No lyrics generated'
+      } else {
+        lyrics = lines.join('\n')
+      }
+
+      console.log('Generated jingle:', lyrics)
+    } // End of lyrics generation
 
     // For music, repeat if too short
     let musicLyrics = lyrics
     if (lyrics.length < 80) {
       musicLyrics = lyrics + '\n\n' + lyrics
     }
-
-    console.log('Generated jingle:', lyrics)
     
     // Skip audio generation if requested (for faster initial load)
     if (skipAudio) {

@@ -91,9 +91,9 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              studyNotes: (jingle as any).notes || jingle.term,
+              existingLyrics: jingle.lyrics, // Use existing lyrics!
               genre: (jingle as any).genre || 'random',
-              skipAudio: false, // Generate audio this time
+              skipAudio: false, // Generate audio for these lyrics
             }),
           })
 
