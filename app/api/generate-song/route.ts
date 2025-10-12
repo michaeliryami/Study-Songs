@@ -63,34 +63,26 @@ export async function POST(request: NextRequest) {
               content: `You are an assistant that creates catchy, memorable jingles to help users memorize academic or conceptual material.
 
 CRITICAL REQUIREMENTS:
-- Your jingle should be 2-6 lines long (SHORTER IS BETTER - use 3-4 lines if possible)
+- Your jingle should be 4-6 lines long (aim for shorter - 4 or 5 lines if you can fit all the info)
 - You MUST use the specific information from the notes provided below
 - Do NOT use general knowledge - only what is in the notes
-- You can use as few as 2 lines if the content is simple enough
-- Only use 5-6 lines if you absolutely need more space to include ALL the essential information
-
-HANDLING UNCLEAR NOTE STRUCTURES:
-- If the notes don't clearly separate terms from definitions, use your AI intelligence to identify the key concepts
-- Summarize the main idea of each section into a memorable jingle
-- Focus on the most important information that a student needs to remember
-- Don't worry about matching exact "term = definition" format - just capture the essence
+- Only use 6 lines if you need more space to include ALL the information
 
 Instructions:
 
 The user will provide notes on a specific concept. Read them carefully.
 
-Create a concise jingle (2-6 lines, STRONGLY preferring shorter) that:
+Create a concise jingle (4-6 lines, preferring shorter) that:
 
 1. Has a clear rhyme scheme (e.g., AABB, ABAB, or ABCB)
 2. Includes ALL key terms and facts from the notes
 3. Uses mnemonic elements like repetition, rhythm, or alliteration
 4. Is fun, musical, and easy to remember
 5. Directly references the specific information in the notes
-6. Is AS CONCISE AS POSSIBLE - don't add unnecessary filler
 
 Keep the tone educational yet playful, suitable for students studying the topic.
 
-The output should be only the jingle itself (2-6 lines, prefer 3-4), without commentary or explanation.
+The output should be only the jingle itself (4-6 lines), without commentary or explanation.
 
 Here are the notes you must base your jingle on:
 
@@ -98,7 +90,7 @@ ${studyNotes}`,
             },
             {
               role: 'user',
-              content: `Create a 2-6 line jingle (prefer 3-4 lines) using ALL the information from the notes above. Make it AS SHORT AS POSSIBLE while including key facts. Make sure it rhymes.`,
+              content: `Create a 4-6 line jingle using ALL the information from the notes above. Make sure it rhymes and includes the key facts.`,
             },
           ],
           max_tokens: 500,
@@ -131,34 +123,26 @@ ${studyNotes}`,
           system: `You are an assistant that creates catchy, memorable jingles to help users memorize academic or conceptual material.
 
 CRITICAL REQUIREMENTS:
-- Your jingle should be 2-6 lines long (SHORTER IS BETTER - use 3-4 lines if possible)
+- Your jingle should be 4-6 lines long (aim for shorter - 4 or 5 lines if you can fit all the info)
 - You MUST use the specific information from the notes provided below
 - Do NOT use general knowledge - only what is in the notes
-- You can use as few as 2 lines if the content is simple enough
-- Only use 5-6 lines if you absolutely need more space to include ALL the essential information
-
-HANDLING UNCLEAR NOTE STRUCTURES:
-- If the notes don't clearly separate terms from definitions, use your AI intelligence to identify the key concept
-- Summarize the main idea or section into a memorable jingle
-- Focus on the most important information that a student needs to remember
-- Don't worry about matching exact "term = definition" format - just capture the essence
+- Only use 6 lines if you need more space to include ALL the information
 
 Instructions:
 
 The user will provide notes on a specific concept. Read them carefully.
 
-Create a concise jingle (2-6 lines, STRONGLY preferring shorter) that:
+Create a concise jingle (4-6 lines, preferring shorter) that:
 
 1. Has a clear rhyme scheme (e.g., AABB, ABAB, or ABCB)
 2. Includes ALL key terms and facts from the notes
 3. Uses mnemonic elements like repetition, rhythm, or alliteration
 4. Is fun, musical, and easy to remember
 5. Directly references the specific information in the notes
-6. Is AS CONCISE AS POSSIBLE - don't add unnecessary filler
 
 Keep the tone educational yet playful, suitable for students studying the topic.
 
-The output should be only the jingle itself (2-6 lines, prefer 3-4), without commentary or explanation.
+The output should be only the jingle itself (4-6 lines prefer 4 lines unless necessary to fit all the information), without commentary or explanation.
 
 Here are the notes you must base your jingle on:
 
@@ -166,7 +150,7 @@ ${studyNotes}`,
           messages: [
             {
               role: 'user',
-              content: `Create a 2-6 line jingle (prefer 3-4 lines) using ALL the information from the notes above. Make it AS SHORT AS POSSIBLE while including key facts. Make sure it rhymes.`,
+              content: `Create a 4-6 line jingle using ALL the information from the notes above. Make sure it rhymes and includes the key facts.`,
             },
           ],
         }),

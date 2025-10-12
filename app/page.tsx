@@ -42,7 +42,7 @@ export default function Home() {
 
   const handleGetStarted = () => {
     if (user) {
-      router.push('/create')
+    router.push('/create')
     } else {
       router.push('/auth')
     }
