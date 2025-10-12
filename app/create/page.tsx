@@ -30,6 +30,9 @@ export default function CreatePage() {
   const [notes, setNotes] = useState('')
   const [generating, setGenerating] = useState(false)
   const [progress, setProgress] = useState(0)
+  const [currentTermNum, setCurrentTermNum] = useState(0)
+  const [currentTermName, setCurrentTermName] = useState('')
+  const [totalTerms, setTotalTerms] = useState(0)
 
   // Redirect if not logged in
   useEffect(() => {
@@ -91,25 +94,79 @@ export default function CreatePage() {
 
       const { terms } = await termsResponse.json()
       const termsList = terms.split('\n').filter((line: string) => line.trim())
+      setTotalTerms(termsList.length)
       setProgress(40)
 
-      // Create the study set immediately so we can add jingles to it in real-time
-      const { data: newSet, error: createError } = await supabase
+      // Generate jingles for each term-definition pair
+      const jingles: any[] = []
+      for (let i = 0; i < termsList.length; i++) {
+        const line = termsList[i].trim()
+        
+        // Extract term and definition from "Term — Definition" format
+        const separatorMatch = line.match(/[—:-]/)
+        let term = line
+        let definition = line
+        
+        if (separatorMatch) {
+          const parts = line.split(separatorMatch[0])
+          term = parts[0].trim()
+          definition = line // Keep full line with separator for context
+        }
+        
+        // Update current term being generated
+        setCurrentTermNum(i + 1)
+        setCurrentTermName(term)
+        
+        // Generate song with the specific term-definition pair
+        const songResponse = await fetch('/api/generate-song', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            studyNotes: definition,
+            genre,
+          }),
+        })
+
+        if (songResponse.ok) {
+          const data = await songResponse.json()
+          jingles.push({
+            term: term,
+            lyrics: data.lyrics || '',
+            audioUrl: data.audioUrl || null,
+            notes: definition,
+            genre,
+          })
+        }
+
+        setProgress(40 + ((i + 1) / termsList.length) * 50)
+      }
+
+      setProgress(95)
+
+      // Save to Supabase with created_by
+      const { data: newSet, error } = await supabase
         .from('sets')
         .insert({
           subject: subject || 'Untitled Study Set',
-          jingles: [],
-          created_by: user.id,
+          jingles,
+          created_by: user.id, // Set the creator
         })
         .select()
         .single()
 
-      if (createError) throw createError
-      
-      const setId = newSet.id
-      
-      // Redirect to the study set page immediately so generation happens there
-      router.push(`/sets/${setId}?generating=true&totalTerms=${termsList.length}&genre=${genre}&notes=${encodeURIComponent(JSON.stringify(termsList))}`)
+      if (error) throw error
+
+      setProgress(100)
+
+      toast({
+        title: 'Success!',
+        description: 'Your study set has been created',
+        status: 'success',
+        duration: 3000,
+      })
+
+      // Navigate to the new set
+      router.push(`/sets/${newSet.id}`)
     } catch (error: any) {
       toast({
         title: 'Error',
@@ -223,7 +280,7 @@ Format: Term — Definition (one per line)"
               leftIcon={<Sparkles size={22} />}
               onClick={handleGenerate}
               isLoading={generating}
-              loadingText="Generating mnemonics..."
+              loadingText={currentTermName ? `${currentTermName.length > 25 ? currentTermName.slice(0, 25) + '...' : currentTermName} (${currentTermNum}/${totalTerms})` : "Extracting terms..."}
               size={{ base: "md", sm: "lg" }}
               h={{ base: "56px", sm: "64px" }}
               fontSize={{ base: "md", sm: "lg" }}
@@ -252,14 +309,9 @@ Format: Term — Definition (one per line)"
                   w="100%"
                   borderRadius="full"
                   bg="rgba(42, 42, 64, 0.8)"
-                  sx={{
-                    '& > div': {
-                      background: 'linear-gradient(135deg, #d946ef 0%, #f97316 100%)',
-                    },
-                  }}
                 />
-                <Text color="whiteAlpha.700" fontSize="sm" fontWeight="600">
-                  Extracting terms and creating study set...
+                <Text color="whiteAlpha.700" fontSize="sm">
+                  Creating your AI-powered mnemonics...
                 </Text>
               </VStack>
             )}
