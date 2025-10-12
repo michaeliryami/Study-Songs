@@ -75,38 +75,46 @@ export default function CreatePage() {
     setProgress(10)
 
     try {
-      // Split notes into lines (each line should be "Term — Definition")
+      // First, let AI intelligently extract the main terms from the notes
       setProgress(20)
       const fullNotes = subject ? `${subject}\n\n${notes}` : notes
-      const termsList = notes.split('\n').filter((line: string) => line.trim())
+      
+      const termsResponse = await fetch('/api/generate-terms', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subject: fullNotes }),
+      })
+
+      if (!termsResponse.ok) {
+        throw new Error('Failed to extract terms from notes')
+      }
+
+      const { terms } = await termsResponse.json()
+      const termsList = terms.split('\n').filter((line: string) => line.trim())
       setProgress(40)
 
       // Generate jingles for each term with full context
       const jingles: any[] = []
       for (let i = 0; i < termsList.length; i++) {
-        const line = termsList[i].trim()
+        const term = termsList[i].trim()
         
-        // Send the full line (with definition) to generate the song
+        // Send the FULL notes as context so AI can generate accurate lyrics
         const songResponse = await fetch('/api/generate-song', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            studyNotes: fullNotes.includes('\n\n') 
-              ? `${subject}\n\n${line}` 
-              : line,
+            studyNotes: `${fullNotes}\n\nFocus on creating a mnemonic for: ${term}`,
             genre,
           }),
         })
 
         if (songResponse.ok) {
           const data = await songResponse.json()
-          // Extract just the term name from "Term — Definition"
-          const termName = line.split(/[—:-]/)[0]?.trim() || line.split(' ')[0]
           jingles.push({
-            term: termName,
+            term: term,
             lyrics: data.lyrics || '',
             audioUrl: data.audioUrl || null,
-            notes: line,
+            notes: fullNotes,
             genre,
           })
         }

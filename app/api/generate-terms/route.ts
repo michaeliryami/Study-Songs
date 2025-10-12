@@ -35,30 +35,35 @@ export async function POST(request: NextRequest) {
               content: `You are an expert at extracting ONLY the MAIN TERMS being defined or taught from study materials.
 
 CRITICAL RULES:
-1. If given study notes, extract ONLY the PRIMARY terms that are being DEFINED or EXPLAINED
-2. DO NOT extract examples, sub-topics, or concepts mentioned in passing
-3. Look for terms followed by "is", "are", "means", "refers to" - those are the main terms
-4. If a term has bullet points or definitions under it, that's a main term
-5. Extract EXACTLY how many main terms are in the notes (could be 2, could be 10)
-6. If given only a subject name (no notes), generate 5-8 fundamental concepts
-7. Output ONLY the terms, one per line
+1. Extract ONLY the PRIMARY terms that are being DEFINED or EXPLAINED
+2. Look for patterns like:
+   - "Term name" followed by description/definition
+   - Terms that have bullet points or indented text under them
+   - Terms followed by "is", "are", "means", "refers to", "definition"
+   - Section headers that introduce concepts
+3. DO NOT extract examples, sub-points, or concepts mentioned in passing
+4. Indented/bulleted text is usually supporting detail - extract the PARENT term, not the bullets
+5. Extract EXACTLY how many main terms exist (could be 2, could be 20)
+6. If given only a subject name, generate 5-8 fundamental concepts
+7. Output ONLY the term names, one per line
 
 Examples:
-INPUT: "Economics has two branches:\n• Microeconomics is the study of individual decisions\n• Macroeconomics is the study of the overall economy"
+INPUT: "Marketing Myopia\nMarketing myopia definition\n        A nearsighted focus on selling products\n        Lack of insight\n\nHow to get rid of marketing myopia\n        Switching from production to consumer"
+OUTPUT:
+Marketing myopia
+How to get rid of marketing myopia
+
+INPUT: "Microeconomics is the study of individuals\nMacroeconomics is the study of the economy"
 OUTPUT: 
 Microeconomics
 Macroeconomics
 
-INPUT: "The mitochondria produces ATP. It has an inner membrane and outer membrane."
-OUTPUT: 
-mitochondria
-
-INPUT: "Photosynthesis: Plants use light to make glucose\nCellular Respiration: Cells break down glucose for energy"
+INPUT: "Photosynthesis: Plants use light to make glucose\nCellular Respiration: Cells break down glucose"
 OUTPUT:
 Photosynthesis
 Cellular Respiration
 
-DO NOT extract every word mentioned - ONLY extract the MAIN TERMS being defined!`,
+ONLY extract the MAIN TERMS/CONCEPTS being taught - ignore examples and supporting details!`,
             },
             {
               role: 'user',
@@ -99,9 +104,18 @@ ${subject}`,
               role: 'user',
               content: `You are an expert at extracting ONLY the MAIN TERMS being defined or taught from study materials.
 
-CRITICAL: Extract ONLY the PRIMARY terms that are being DEFINED or EXPLAINED. DO NOT extract examples, sub-topics, or concepts mentioned in passing. Look for terms followed by "is", "are", "means", or terms with bullet points/definitions under them.
+CRITICAL RULES:
+1. Extract ONLY the PRIMARY terms that are being DEFINED or EXPLAINED
+2. Look for patterns like:
+   - "Term name" followed by description/definition
+   - Terms that have bullet points or indented text under them
+   - Terms followed by "is", "are", "means", "refers to", "definition"
+   - Section headers that introduce concepts
+3. DO NOT extract examples, sub-points, or concepts mentioned in passing
+4. Indented/bulleted text is usually supporting detail - extract the PARENT term, not the bullets
+5. Extract EXACTLY how many main terms exist (could be 2, could be 20)
 
-For example, if notes say "Microeconomics is the study of individuals. Macroeconomics is the study of the economy." - extract ONLY "Microeconomics" and "Macroeconomics", NOT "individuals" or "economy".
+Example: If notes say "Marketing Myopia\n    A nearsighted focus\n    Lack of insight\n\nHow to fix it\n    Switch orientation" - extract ONLY "Marketing Myopia" and "How to fix it"
 
 Output ONLY the main terms, one per line:
 
