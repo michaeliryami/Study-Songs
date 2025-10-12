@@ -91,7 +91,6 @@ export default function CreatePage() {
 
       const { terms } = await termsResponse.json()
       const termsList = terms.split('\n').filter((line: string) => line.trim())
-      setTotalTerms(termsList.length)
       setProgress(40)
 
       // Create the study set immediately so we can add jingles to it in real-time
