@@ -58,6 +58,8 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
   const [newTerms, setNewTerms] = useState('')
   const [isAddingTerms, setIsAddingTerms] = useState(false)
   const [addingNewTerms, setAddingNewTerms] = useState(false)
+  const [generatingAudio, setGeneratingAudio] = useState(false)
+  const [audioProgress, setAudioProgress] = useState({ current: 0, total: 0 })
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const toast = useToast()
   const router = useRouter()
@@ -65,6 +67,69 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
   const [touchEnd, setTouchEnd] = useState(0)
 
   const currentJingle = studySet.jingles[currentIndex]
+
+  // Generate missing audio in background
+  useEffect(() => {
+    const generateMissingAudio = async () => {
+      // Check if any jingles are missing audio
+      const missingAudio = studySet.jingles.filter(j => !j.audioUrl)
+      if (missingAudio.length === 0) return
+
+      setGeneratingAudio(true)
+      setAudioProgress({ current: 0, total: missingAudio.length })
+
+      const updatedJingles = [...studySet.jingles]
+
+      for (let i = 0; i < missingAudio.length; i++) {
+        const jingle = missingAudio[i]
+        const jingleIndex = studySet.jingles.findIndex(j => j.term === jingle.term)
+
+        setAudioProgress({ current: i + 1, total: missingAudio.length })
+
+        try {
+          const response = await fetch('/api/generate-song', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              studyNotes: (jingle as any).notes || jingle.term,
+              genre: (jingle as any).genre || 'random',
+              skipAudio: false, // Generate audio this time
+            }),
+          })
+
+          if (response.ok) {
+            const data = await response.json()
+            updatedJingles[jingleIndex] = {
+              ...updatedJingles[jingleIndex],
+              audioUrl: data.audioUrl,
+            }
+
+            // Update in Supabase
+            if (supabase) {
+              await supabase
+                .from('sets')
+                .update({ jingles: updatedJingles })
+                .eq('id', studySet.id)
+            }
+
+            setStudySet({ ...studySet, jingles: updatedJingles })
+          }
+        } catch (error) {
+          console.error('Error generating audio for', jingle.term, error)
+        }
+      }
+
+      setGeneratingAudio(false)
+      toast({
+        title: 'Audio ready!',
+        description: 'All jingles now have audio',
+        status: 'success',
+        duration: 3000,
+      })
+    }
+
+    generateMissingAudio()
+  }, []) // Only run once on mount
 
   // Handle keyboard navigation
   useEffect(() => {
@@ -383,6 +448,40 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
   return (
     <VStack spacing={4} align="stretch" w="100%">
       <audio ref={audioRef} />
+
+      {/* Audio Generation Progress Bar */}
+      {generatingAudio && (
+        <Box
+          bg="rgba(26, 26, 46, 0.9)"
+          p={4}
+          borderRadius="xl"
+          borderWidth={2}
+          borderColor="brand.500"
+        >
+          <VStack spacing={2} align="stretch">
+            <HStack justify="space-between">
+              <Text fontSize="sm" fontWeight="600" color="white">
+                Generating audio...
+              </Text>
+              <Text fontSize="sm" color="whiteAlpha.700">
+                {audioProgress.current}/{audioProgress.total}
+              </Text>
+            </HStack>
+            <Progress
+              value={(audioProgress.current / audioProgress.total) * 100}
+              colorScheme="brand"
+              bg="rgba(42, 42, 64, 0.6)"
+              borderRadius="full"
+              height="8px"
+              sx={{
+                '& > div': {
+                  background: 'linear-gradient(135deg, #d946ef 0%, #f97316 100%)',
+                },
+              }}
+            />
+          </VStack>
+        </Box>
+      )}
 
       {/* Header */}
       <HStack justify="space-between" align="center" spacing={{ base: 2, sm: 4 }}>
