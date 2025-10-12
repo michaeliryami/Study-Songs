@@ -72,7 +72,7 @@ export default function Navbar() {
                   bgClip="text"
                   letterSpacing="tight"
                 >
-                  noomo AI
+                  Noomo AI
                 </Heading>
                 <Text fontSize="2xs" color="whiteAlpha.500" fontWeight="600" textTransform="uppercase" letterSpacing="wider">
                   AI Mnemonics

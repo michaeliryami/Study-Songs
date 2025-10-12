@@ -19,6 +19,7 @@ import {
 import { Sparkles, Music } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
+import FlashcardPlayer from '../components/FlashcardPlayer'
 
 export default function CreatePage() {
   const router = useRouter()
@@ -30,6 +31,11 @@ export default function CreatePage() {
   const [notes, setNotes] = useState('')
   const [generating, setGenerating] = useState(false)
   const [progress, setProgress] = useState(0)
+  const [currentTerm, setCurrentTerm] = useState('')
+  const [totalTerms, setTotalTerms] = useState(0)
+  const [currentTermIndex, setCurrentTermIndex] = useState(0)
+  const [generatedJingles, setGeneratedJingles] = useState<any[]>([])
+  const [studySetId, setStudySetId] = useState<number | null>(null)
 
   // Redirect if not logged in
   useEffect(() => {
@@ -91,12 +97,30 @@ export default function CreatePage() {
 
       const { terms } = await termsResponse.json()
       const termsList = terms.split('\n').filter((line: string) => line.trim())
+      setTotalTerms(termsList.length)
       setProgress(40)
 
-      // Generate jingles for each term-definition pair
+      // Create the study set immediately so we can add jingles to it in real-time
+      const { data: newSet, error: createError } = await supabase
+        .from('sets')
+        .insert({
+          subject: subject || 'Untitled Study Set',
+          jingles: [],
+          created_by: user.id,
+        })
+        .select()
+        .single()
+
+      if (createError) throw createError
+      
+      const setId = newSet.id
+      setStudySetId(setId)
+
+      // Generate jingles for each term-definition pair and update in real-time
       const jingles: any[] = []
       for (let i = 0; i < termsList.length; i++) {
         const line = termsList[i].trim()
+        setCurrentTermIndex(i + 1)
         
         // Extract term and definition from "Term — Definition" format
         const separatorMatch = line.match(/[—:-]/)
@@ -108,6 +132,8 @@ export default function CreatePage() {
           term = parts[0].trim()
           definition = line // Keep full line with separator for context
         }
+        
+        setCurrentTerm(term)
         
         // Generate song with the specific term-definition pair
         const songResponse = await fetch('/api/generate-song', {
@@ -121,44 +147,37 @@ export default function CreatePage() {
 
         if (songResponse.ok) {
           const data = await songResponse.json()
-          jingles.push({
+          const newJingle = {
             term: term,
             lyrics: data.lyrics || '',
             audioUrl: data.audioUrl || null,
             notes: definition,
             genre,
-          })
+          }
+          jingles.push(newJingle)
+          
+          // Update UI immediately with new jingle
+          setGeneratedJingles([...jingles])
+          
+          // Update Supabase in real-time
+          await supabase
+            .from('sets')
+            .update({ jingles: jingles })
+            .eq('id', setId)
         }
 
         setProgress(40 + ((i + 1) / termsList.length) * 50)
       }
 
-      setProgress(95)
-
-      // Save to Supabase with created_by
-      const { data: newSet, error } = await supabase
-        .from('sets')
-        .insert({
-          subject: subject || 'Untitled Study Set',
-          jingles,
-          created_by: user.id, // Set the creator
-        })
-        .select()
-        .single()
-
-      if (error) throw error
-
       setProgress(100)
-
+      setCurrentTerm('')
+      
       toast({
-        title: 'Success!',
-        description: 'Your study set has been created',
+        title: 'Complete!',
+        description: `Generated ${termsList.length} mnemonics`,
         status: 'success',
         duration: 3000,
       })
-
-      // Navigate to the new set
-      router.push(`/sets/${newSet.id}`)
     } catch (error: any) {
       toast({
         title: 'Error',
@@ -292,8 +311,16 @@ Format: Term — Definition (one per line)"
               Generate Study Set
             </Button>
 
-            {generating && (
+            {generating && currentTerm && (
               <VStack spacing={3} bg="rgba(42, 42, 64, 0.6)" p={4} borderRadius="xl" borderWidth={1} borderColor="rgba(217, 70, 239, 0.2)">
+                <HStack w="100%" justify="space-between">
+                  <Text color="whiteAlpha.700" fontSize="sm" fontWeight="600">
+                    Generating term {currentTermIndex} of {totalTerms}
+                  </Text>
+                  <Text color="brand.300" fontSize="sm" fontWeight="600">
+                    {Math.round(progress)}%
+                  </Text>
+                </HStack>
                 <Progress
                   value={progress}
                   size="sm"
@@ -301,13 +328,32 @@ Format: Term — Definition (one per line)"
                   w="100%"
                   borderRadius="full"
                   bg="rgba(42, 42, 64, 0.8)"
+                  sx={{
+                    '& > div': {
+                      background: 'linear-gradient(135deg, #d946ef 0%, #f97316 100%)',
+                    },
+                  }}
                 />
-                <Text color="whiteAlpha.700" fontSize="sm">
-                  Creating your AI-powered mnemonics...
+                <Text color="whiteAlpha.600" fontSize="xs" isTruncated maxW="100%">
+                  Currently generating: {currentTerm}
                 </Text>
               </VStack>
             )}
           </VStack>
+
+          {/* Show FlashcardPlayer in real-time as cards are generated */}
+          {generatedJingles.length > 0 && studySetId && (
+            <Box mt={8}>
+              <FlashcardPlayer 
+                studySet={{
+                  id: studySetId,
+                  created_at: new Date().toISOString(),
+                  subject: subject || 'Untitled Study Set',
+                  jingles: generatedJingles,
+                }}
+              />
+            </Box>
+          )}
         </VStack>
       </Container>
     </Box>

@@ -4,7 +4,7 @@ import './styles/globals.css'
 import Navbar from './components/Navbar'
 
 export const metadata: Metadata = {
-  title: 'noomo AI - Memorable Learning Jingles',
+  title: 'Noomo AI - Memorable Learning Jingles',
   description: 'Turn study notes into unforgettable mnemonic devices',
 }
 
