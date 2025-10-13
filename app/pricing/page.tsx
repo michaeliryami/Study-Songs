@@ -20,7 +20,6 @@ import { CheckCircle, Sparkles } from 'lucide-react'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '../contexts/AuthContext'
-import Navbar from '../components/Navbar'
 
 export default function PricingPage() {
   const [isYearly, setIsYearly] = useState(false)
@@ -111,7 +110,6 @@ export default function PricingPage() {
 
   return (
     <Box minH="100vh" bg="#0f0f1a">
-      <Navbar />
       <Container maxW="container.xl" py={20}>
         <VStack spacing={12} align="center">
           <VStack spacing={4} textAlign="center">
