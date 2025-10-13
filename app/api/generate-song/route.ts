@@ -252,11 +252,34 @@ ${studyNotes}`,
       }
 
       const output = await replicate.run('minimax/music-1.5', { input: musicInput }) as any
-      const audioUrl = output.url()
+      const replicateAudioUrl = output.url()
 
       console.log('Music generated!')
 
-      return NextResponse.json({ lyrics, audioUrl })
+      // Upload to Supabase Storage
+      const uploadResponse = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/upload-audio`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          audioUrl: replicateAudioUrl,
+          userId: 'anonymous', // We'll need to get this from auth context in the future
+          term: studyNotes.split(':')[0] || 'study-term', // Extract term from study notes
+        }),
+      })
+
+      if (!uploadResponse.ok) {
+        throw new Error('Failed to upload audio to Supabase')
+      }
+
+      const uploadData = await uploadResponse.json()
+      console.log('Audio uploaded to Supabase:', uploadData.supabaseAudioUrl)
+      
+      return NextResponse.json({ 
+        lyrics, 
+        audioUrl: uploadData.supabaseAudioUrl
+      })
     } catch (musicError) {
       console.error('Error generating music:', musicError)
       return NextResponse.json({

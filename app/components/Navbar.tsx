@@ -1,7 +1,7 @@
 'use client'
 
 import { Box, Container, Flex, Heading, HStack, Button, Text, Menu, MenuButton, MenuList, MenuItem, Avatar, Badge } from '@chakra-ui/react'
-import { Music, Library, Sparkles, LogOut, User as UserIcon, Settings, BarChart3 } from 'lucide-react'
+import { Music, Library, Sparkles, LogOut, User as UserIcon, BarChart3 } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useAuth } from '../contexts/AuthContext'
@@ -218,18 +218,6 @@ export default function Navbar() {
                       mx={1}
                     >
                       Profile & Stats
-                    </MenuItem>
-                    <MenuItem
-                      bg="transparent"
-                      color="whiteAlpha.800"
-                      _hover={{ bg: 'rgba(217, 70, 239, 0.1)', color: 'white' }}
-                      icon={<Settings size={18} />}
-                      onClick={() => router.push('/profile')}
-                      fontWeight="500"
-                      borderRadius="md"
-                      mx={1}
-                    >
-                      Settings
                     </MenuItem>
                     <Box h="1px" bg="rgba(217, 70, 239, 0.15)" my={2} />
                     <MenuItem

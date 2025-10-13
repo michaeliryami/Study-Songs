@@ -25,6 +25,7 @@ import {
   Plus,
   Trash2,
   RefreshCw,
+  Download,
 } from 'lucide-react'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
@@ -445,6 +446,48 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
     setTouchEnd(0)
   }
 
+  const handleDownload = async () => {
+    if (!currentJingle?.audioUrl) {
+      toast({
+        title: 'No audio available',
+        description: 'This jingle does not have audio to download',
+        status: 'warning',
+        duration: 3000,
+      })
+      return
+    }
+
+    try {
+      const response = await fetch(currentJingle.audioUrl)
+      if (!response.ok) throw new Error('Failed to fetch audio')
+
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `${currentJingle.term.replace(/[^a-zA-Z0-9]/g, '_')}.mp3`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url)
+
+      toast({
+        title: 'Download started',
+        description: `${currentJingle.term} audio is downloading`,
+        status: 'success',
+        duration: 2000,
+      })
+    } catch (error) {
+      console.error('Download error:', error)
+      toast({
+        title: 'Download failed',
+        description: 'Could not download the audio file',
+        status: 'error',
+        duration: 3000,
+      })
+    }
+  }
+
   return (
     <VStack spacing={4} align="stretch" w="100%">
       <audio ref={audioRef} />
@@ -849,6 +892,25 @@ Format: Term — Definition (one per line)"
         >
           Restart
         </Button>
+        {currentJingle?.audioUrl && (
+          <Button
+            leftIcon={<Download size={18} />}
+            onClick={handleDownload}
+            bg="rgba(217, 70, 239, 0.1)"
+            color="brand.300"
+            borderWidth={1}
+            borderColor="brand.500"
+            _hover={{ 
+              bg: 'rgba(217, 70, 239, 0.2)', 
+              borderColor: 'brand.400',
+              color: 'brand.200'
+            }}
+            size="sm"
+            borderRadius="xl"
+          >
+            Download MP3
+          </Button>
+        )}
       </HStack>
 
       {/* Swipe Hint */}
