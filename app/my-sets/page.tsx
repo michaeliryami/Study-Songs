@@ -332,7 +332,11 @@ export default function MySetsPage() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ studyNotes, genre: 'random' }),
+          body: JSON.stringify({ 
+            studyNotes, 
+            genre: 'random',
+            userId: user?.id, // Pass userId for token deduction
+          }),
         })
 
         const data = await response.json()
@@ -344,6 +348,9 @@ export default function MySetsPage() {
             audioUrl: data.audioUrl || null,
             genre: 'random',
           })
+        } else if (response.status === 403) {
+          // Insufficient tokens - stop generation
+          throw new Error(data.error || 'Insufficient tokens')
         } else {
           newJingles.push({
             term,
@@ -481,7 +488,8 @@ export default function MySetsPage() {
         },
         body: JSON.stringify({ 
           studyNotes: notes,
-          genre: genreToUse 
+          genre: genreToUse,
+          userId: user?.id, // Pass userId for token deduction
         }),
       })
 
@@ -521,6 +529,9 @@ export default function MySetsPage() {
           duration: 3000,
           isClosable: true,
         })
+      } else if (response.status === 403) {
+        // Insufficient tokens
+        throw new Error(data.error || 'Insufficient tokens')
       } else {
         throw new Error(data.error || 'Failed to regenerate')
       }

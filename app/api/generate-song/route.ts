@@ -2,10 +2,32 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
   try {
-    const { studyNotes, genre: userGenre, skipAudio, existingLyrics } = await request.json()
+    const { studyNotes, genre: userGenre, skipAudio, existingLyrics, userId } = await request.json()
 
     if (!studyNotes && !existingLyrics) {
       return NextResponse.json({ error: 'Study notes or lyrics are required' }, { status: 400 })
+    }
+
+    // Deduct token if userId is provided and we're generating new lyrics (not just audio)
+    if (userId && !existingLyrics) {
+      console.log('🪙 Deducting token for user:', userId)
+      const tokenResponse = await fetch(`${request.nextUrl.origin}/api/deduct-token`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId }),
+      })
+
+      const tokenData = await tokenResponse.json()
+
+      if (!tokenResponse.ok) {
+        console.error('❌ Token deduction failed:', tokenData.error)
+        return NextResponse.json(
+          { error: tokenData.error || 'Insufficient tokens' },
+          { status: 403 }
+        )
+      }
+
+      console.log('✅ Token deducted. Remaining:', tokenData.tokensRemaining)
     }
 
     // Map user-selected genre to music style with detailed production specs

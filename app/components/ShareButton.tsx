@@ -2,6 +2,8 @@
 
 import { Button, HStack, Menu, MenuButton, MenuItem, MenuList, useToast } from '@chakra-ui/react'
 import { Share2, Twitter, Facebook, Link as LinkIcon, Download } from 'lucide-react'
+import { useSubscription } from '../hooks/useSubscription'
+import { useRouter } from 'next/navigation'
 
 interface ShareButtonProps {
   term: string
@@ -11,6 +13,8 @@ interface ShareButtonProps {
 
 export default function ShareButton({ term, lyrics, audioUrl }: ShareButtonProps) {
   const toast = useToast()
+  const { features } = useSubscription()
+  const router = useRouter()
 
   const shareText = `🎵 Just learned "${term}" with a catchy jingle on Noomo AI!\n\nLyrics:\n${lyrics.slice(0, 150)}...\n\nTry it yourself: `
   const shareUrl = typeof window !== 'undefined' ? window.location.origin : 'https://Noomo.ai'
@@ -37,6 +41,18 @@ export default function ShareButton({ term, lyrics, audioUrl }: ShareButtonProps
   }
 
   const handleDownload = async () => {
+    // Check if user has download permission
+    if (!features.canDownload) {
+      toast({
+        title: 'Upgrade Required',
+        description: 'Download MP3s is a premium feature. Upgrade to Basic or Premium to unlock downloads.',
+        status: 'warning',
+        duration: 5000,
+      })
+      router.push('/pricing')
+      return
+    }
+
     if (!audioUrl) {
       toast({
         title: 'No audio available',

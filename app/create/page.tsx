@@ -125,6 +125,7 @@ export default function CreatePage() {
             studyNotes: definition,
             genre,
             skipAudio: true, // Skip audio generation initially
+            userId: user.id, // Pass userId for token deduction
           }),
         })
 
@@ -137,6 +138,10 @@ export default function CreatePage() {
             notes: definition,
             genre,
           })
+        } else if (songResponse.status === 403) {
+          // Insufficient tokens
+          const errorData = await songResponse.json()
+          throw new Error(errorData.error || 'Insufficient tokens')
         }
 
         setProgress(40 + ((i + 1) / termsList.length) * 50)

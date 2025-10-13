@@ -30,6 +30,7 @@ import {
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '../lib/supabase'
+import { useSubscription } from '../hooks/useSubscription'
 
 interface Jingle {
   term: string
@@ -66,6 +67,7 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
   const router = useRouter()
   const [touchStart, setTouchStart] = useState(0)
   const [touchEnd, setTouchEnd] = useState(0)
+  const { features } = useSubscription()
 
   const currentJingle = studySet.jingles[currentIndex]
 
@@ -447,6 +449,18 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
   }
 
   const handleDownload = async () => {
+    // Check if user has download permission
+    if (!features.canDownload) {
+      toast({
+        title: 'Upgrade Required',
+        description: 'Download MP3s is a premium feature. Upgrade to Basic or Premium to unlock downloads.',
+        status: 'warning',
+        duration: 5000,
+      })
+      router.push('/pricing')
+      return
+    }
+
     if (!currentJingle?.audioUrl) {
       toast({
         title: 'No audio available',
