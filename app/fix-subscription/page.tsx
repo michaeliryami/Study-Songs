@@ -77,7 +77,21 @@ export default function FixSubscriptionPage() {
         {error && (
           <Alert status="error" borderRadius="md">
             <AlertIcon />
-            {error}
+            <Box>
+              <Text fontWeight="bold">{error}</Text>
+              {result?.message && (
+                <Text mt={2} fontSize="sm">{result.message}</Text>
+              )}
+              {result?.solution && (
+                <Box mt={3} p={3} bg="rgba(0,0,0,0.3)" borderRadius="md">
+                  <Text fontSize="sm" fontWeight="bold" mb={1}>Solution:</Text>
+                  <Text fontSize="sm">{result.solution}</Text>
+                  <Text fontSize="sm" mt={2} color="yellow.300">
+                    📄 See DATABASE-CONSTRAINT-FIX.md for detailed instructions
+                  </Text>
+                </Box>
+              )}
+            </Box>
           </Alert>
         )}
 

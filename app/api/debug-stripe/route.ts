@@ -63,6 +63,17 @@ export async function POST(req: NextRequest) {
 
       if (error) {
         console.error('Error updating:', error)
+        
+        // Check if it's a constraint violation
+        if (error.code === '23514') {
+          return NextResponse.json({ 
+            error: 'Database constraint violation',
+            message: 'Your Supabase table has a check constraint that doesn\'t allow the value "basic" or "premium" for subscription_tier.',
+            solution: 'Run the SQL script fix-constraint.sql in your Supabase SQL Editor to fix this.',
+            details: error 
+          }, { status: 500 })
+        }
+        
         return NextResponse.json({ 
           error: 'Failed to update',
           details: error 
