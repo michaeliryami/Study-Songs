@@ -6,6 +6,12 @@ import Navbar from './components/Navbar'
 export const metadata: Metadata = {
   title: 'Noomo AI - Memorable Learning Jingles',
   description: 'Turn study notes into unforgettable mnemonic devices',
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+  },
 }
 
 export default function RootLayout({

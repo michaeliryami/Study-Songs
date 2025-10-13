@@ -172,26 +172,19 @@ export async function POST(req: NextRequest) {
 
     console.log('✅ Stitched audio uploaded:', urlData.publicUrl)
 
-    // Update the study set with stitched audio URL
-    const updatedJingles = [...studySet.jingles]
-    const updatedSet = {
-      ...studySet,
-      jingles: updatedJingles,
-      stitchedAudioUrl: urlData.publicUrl,
-      stitchedAt: new Date().toISOString()
-    }
+    // Save stitched audio URL to the stitch column
+    console.log('💾 Saving to database...')
 
     const { error: updateError } = await supabase
       .from('sets')
       .update({ 
-        jingles: updatedJingles,
-        stitchedAudioUrl: urlData.publicUrl,
-        stitchedAt: new Date().toISOString()
+        stitch: urlData.publicUrl
       })
       .eq('id', setId)
 
     if (updateError) {
       console.error('❌ Error updating set:', updateError)
+      console.error('❌ Update error details:', JSON.stringify(updateError, null, 2))
       return NextResponse.json(
         { error: 'Failed to save stitched audio URL' },
         { status: 500 }

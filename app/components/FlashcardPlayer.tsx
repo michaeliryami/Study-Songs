@@ -44,8 +44,7 @@ interface StudySet {
   created_at: string
   subject: string
   jingles: Jingle[]
-  stitchedAudioUrl?: string
-  stitchedAt?: string
+  stitch?: string
 }
 
 interface FlashcardPlayerProps {
@@ -544,8 +543,7 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
       // Update the study set with the stitched audio URL
       setStudySet({
         ...studySet,
-        stitchedAudioUrl: data.stitchedAudioUrl,
-        stitchedAt: new Date().toISOString()
+        stitch: data.stitchedAudioUrl
       })
 
       toast({
@@ -586,7 +584,7 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
   }
 
   const handleDownloadStitched = async () => {
-    if (!studySet.stitchedAudioUrl) {
+    if (!studySet.stitch) {
       toast({
         title: 'No stitched audio',
         description: 'Please stitch the audio first',
@@ -597,7 +595,7 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
     }
 
     try {
-      const response = await fetch(studySet.stitchedAudioUrl)
+      const response = await fetch(studySet.stitch)
       if (!response.ok) throw new Error('Failed to fetch audio')
 
       const blob = await response.blob()
@@ -632,7 +630,7 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
       <audio ref={audioRef} />
       <audio 
         ref={stitchedAudioRef} 
-        src={studySet.stitchedAudioUrl}
+        src={studySet.stitch}
         onEnded={() => setPlayingStitched(false)}
       />
 
@@ -1058,7 +1056,7 @@ Format: Term — Definition (one per line)"
         {tier === 'premium' && (
           <Button
             leftIcon={<Download size={18} />}
-            onClick={studySet.stitchedAudioUrl ? handleDownloadStitched : handleStitchAudio}
+            onClick={studySet.stitch ? handleDownloadStitched : handleStitchAudio}
             isLoading={stitchingAudio}
             loadingText="Stitching..."
             bg="rgba(34, 197, 94, 0.1)"
@@ -1073,7 +1071,7 @@ Format: Term — Definition (one per line)"
             size="sm"
             borderRadius="xl"
           >
-            {studySet.stitchedAudioUrl ? 'Download Stitch' : 'Stitch All'}
+            {studySet.stitch ? 'Download Stitch' : 'Stitch All'}
           </Button>
         )}
       </HStack>

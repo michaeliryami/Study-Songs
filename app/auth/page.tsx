@@ -286,7 +286,7 @@ export default function AuthPage() {
                             _focus={{ borderColor: 'brand.500', boxShadow: '0 0 0 1px #d946ef' }}
                             size={{ base: "md", sm: "lg" }}
                             h={{ base: "48px", sm: "56px" }}
-                            fontSize={{ base: "sm", sm: "md" }}
+                            fontSize="16px"
                           />
                         </FormControl>
 
@@ -307,7 +307,7 @@ export default function AuthPage() {
                               _focus={{ borderColor: 'brand.500', boxShadow: '0 0 0 1px #d946ef' }}
                               size={{ base: "md", sm: "lg" }}
                               h={{ base: "48px", sm: "56px" }}
-                              fontSize={{ base: "sm", sm: "md" }}
+                              fontSize="16px"
                             />
                             <InputRightElement h="full" pr={3}>
                               <IconButton
@@ -333,7 +333,7 @@ export default function AuthPage() {
                           fontWeight="700"
                           rightIcon={<ArrowRight size={20} />}
                           isLoading={loading}
-                          fontSize={{ base: "sm", sm: "md" }}
+                            fontSize="16px"
                           _hover={{
                             bgGradient: 'linear(135deg, brand.600 0%, accent.600 100%)',
                           }}
