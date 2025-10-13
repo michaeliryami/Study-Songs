@@ -19,11 +19,13 @@ import {
 import { Sparkles, Music } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
+import { useSubscription } from '../hooks/useSubscription'
 
 export default function CreatePage() {
   const router = useRouter()
   const toast = useToast()
   const { user, loading: authLoading } = useAuth()
+  const { tier, features, loading: subscriptionLoading } = useSubscription()
   
   const [subject, setSubject] = useState('')
   const [genre, setGenre] = useState('random')
@@ -62,6 +64,36 @@ export default function CreatePage() {
         duration: 3000,
       })
       return
+    }
+
+    // Check if free user already has a set
+    if (tier === 'free' && supabase) {
+      const { data: existingSets, error } = await supabase
+        .from('sets')
+        .select('id')
+        .eq('created_by', user.id)
+
+      if (error) {
+        console.error('Error checking existing sets:', error)
+        toast({
+          title: 'Error',
+          description: 'Failed to check existing sets',
+          status: 'error',
+          duration: 3000,
+        })
+        return
+      }
+
+      if (existingSets && existingSets.length >= 1) {
+        toast({
+          title: 'Set Limit Reached',
+          description: 'Free users can only create 1 study set. Upgrade to create unlimited sets.',
+          status: 'warning',
+          duration: 5000,
+        })
+        router.push('/pricing')
+        return
+      }
     }
 
     if (!supabase) {
@@ -204,6 +236,27 @@ export default function CreatePage() {
             <Text fontSize={{ base: "sm", sm: "md" }} color="whiteAlpha.600" fontWeight="500" maxW="xl" mx="auto" px={{ base: 4, sm: 0 }}>
               Paste your notes and we&apos;ll create catchy jingles for each term
             </Text>
+            
+            {/* Free user limit warning */}
+            {tier === 'free' && (
+              <Box
+                bg="rgba(251, 146, 60, 0.1)"
+                border="1px solid"
+                borderColor="accent.500"
+                borderRadius="lg"
+                p={4}
+                mt={4}
+                maxW="md"
+                mx="auto"
+              >
+                <Text fontSize="sm" color="accent.300" fontWeight="600" mb={1}>
+                  ⚠️ Free Plan Limit
+                </Text>
+                <Text fontSize="xs" color="whiteAlpha.700">
+                  You can create 1 study set with 30 tokens. Upgrade for unlimited sets and more tokens.
+                </Text>
+              </Box>
+            )}
           </Box>
 
           <VStack spacing={{ base: 4, md: 6 }} align="stretch" bg="rgba(26, 26, 46, 0.6)" p={{ base: 4, sm: 6, md: 8 }} borderRadius="2xl" borderWidth={2} borderColor="brand.500">
