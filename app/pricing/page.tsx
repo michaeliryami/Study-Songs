@@ -1,0 +1,300 @@
+'use client'
+
+import {
+  Box,
+  Button,
+  Container,
+  Heading,
+  Text,
+  VStack,
+  HStack,
+  SimpleGrid,
+  List,
+  ListItem,
+  ListIcon,
+  Switch,
+  useToast,
+  Badge,
+} from '@chakra-ui/react'
+import { CheckCircle, Sparkles } from 'lucide-react'
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useAuth } from '../contexts/AuthContext'
+import Navbar from '../components/Navbar'
+
+export default function PricingPage() {
+  const [isYearly, setIsYearly] = useState(false)
+  const [loading, setLoading] = useState<string | null>(null)
+  const { user } = useAuth()
+  const router = useRouter()
+  const toast = useToast()
+
+  const handleSubscribe = async (priceId: string, planName: string) => {
+    if (!user) {
+      router.push('/auth')
+      return
+    }
+
+    setLoading(planName)
+
+    try {
+      const response = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          priceId,
+          userId: user.id,
+          email: user.email,
+        }),
+      })
+
+      const { url, error } = await response.json()
+
+      if (error) throw new Error(error)
+
+      if (url) {
+        window.location.href = url
+      }
+    } catch (error) {
+      console.error('Error:', error)
+      toast({
+        title: 'Error',
+        description: 'Failed to start checkout',
+        status: 'error',
+        duration: 5000,
+      })
+    } finally {
+      setLoading(null)
+    }
+  }
+
+  const plans = [
+    {
+      name: 'Basic',
+      tier: 'basic',
+      monthlyPrice: '$10',
+      yearlyPrice: '$96',
+      monthlyPriceId: process.env.NEXT_PUBLIC_STRIPE_BASIC_MONTHLY_PRICE_ID!,
+      yearlyPriceId: process.env.NEXT_PUBLIC_STRIPE_BASIC_YEARLY_PRICE_ID!,
+      description: 'Perfect for students getting started',
+      features: [
+        '100 jingles per month',
+        'All music genres',
+        'Download MP3s',
+        'Save study sets',
+        'Share jingles',
+      ],
+    },
+    {
+      name: 'Premium',
+      tier: 'premium',
+      monthlyPrice: '$14',
+      yearlyPrice: '$134.40',
+      monthlyPriceId: process.env.NEXT_PUBLIC_STRIPE_PREMIUM_MONTHLY_PRICE_ID!,
+      yearlyPriceId: process.env.NEXT_PUBLIC_STRIPE_PREMIUM_YEARLY_PRICE_ID!,
+      description: 'For power learners',
+      features: [
+        'Unlimited jingles',
+        'All music genres',
+        'Download MP3s',
+        'Save study sets',
+        'Share jingles',
+        'Priority generation',
+        'Custom genres',
+        'Advanced analytics',
+      ],
+      popular: true,
+    },
+  ]
+
+  return (
+    <Box minH="100vh" bg="#0f0f1a">
+      <Navbar />
+      <Container maxW="container.xl" py={20}>
+        <VStack spacing={12} align="center">
+          <VStack spacing={4} textAlign="center">
+            <Heading
+              fontSize={{ base: '4xl', md: '6xl' }}
+              fontWeight="900"
+              bgGradient="linear(135deg, brand.400 0%, accent.400 100%)"
+              bgClip="text"
+            >
+              Choose Your Plan
+            </Heading>
+            <Text fontSize={{ base: 'lg', md: 'xl' }} color="whiteAlpha.700" maxW="2xl">
+              Turn your study notes into unforgettable jingles
+            </Text>
+          </VStack>
+
+          <HStack
+            spacing={4}
+            bg="rgba(26, 26, 46, 0.6)"
+            p={2}
+            borderRadius="xl"
+            border="1px solid"
+            borderColor="rgba(217, 70, 239, 0.2)"
+          >
+            <Text
+              fontSize="md"
+              fontWeight="600"
+              color={!isYearly ? 'white' : 'whiteAlpha.600'}
+            >
+              Monthly
+            </Text>
+            <Switch
+              size="lg"
+              colorScheme="purple"
+              isChecked={isYearly}
+              onChange={(e) => setIsYearly(e.target.checked)}
+            />
+            <HStack spacing={2}>
+              <Text
+                fontSize="md"
+                fontWeight="600"
+                color={isYearly ? 'white' : 'whiteAlpha.600'}
+              >
+                Yearly
+              </Text>
+              <Badge
+                bgGradient="linear(135deg, brand.500 0%, accent.500 100%)"
+                color="white"
+                px={2}
+                py={1}
+                borderRadius="md"
+                fontSize="xs"
+                fontWeight="700"
+              >
+                Save 20%
+              </Badge>
+            </HStack>
+          </HStack>
+
+          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={8} w="full" maxW="5xl">
+            {plans.map((plan) => (
+              <Box
+                key={plan.name}
+                bg="rgba(26, 26, 46, 0.6)"
+                borderRadius="2xl"
+                p={8}
+                border="2px solid"
+                borderColor={
+                  plan.popular
+                    ? 'brand.500'
+                    : 'rgba(217, 70, 239, 0.1)'
+                }
+                position="relative"
+                transition="all 0.3s"
+                _hover={{
+                  transform: 'translateY(-8px)',
+                  boxShadow: '0 20px 60px rgba(217, 70, 239, 0.3)',
+                }}
+              >
+                {plan.popular && (
+                  <Box
+                    position="absolute"
+                    top="-12px"
+                    left="50%"
+                    transform="translateX(-50%)"
+                    bgGradient="linear(135deg, brand.500 0%, accent.500 100%)"
+                    color="white"
+                    px={4}
+                    py={1}
+                    borderRadius="full"
+                    fontSize="sm"
+                    fontWeight="700"
+                  >
+                    ⭐ Most Popular
+                  </Box>
+                )}
+
+                <VStack align="start" spacing={6}>
+                  <VStack align="start" spacing={2}>
+                    <Heading size="xl" color="white">
+                      {plan.name}
+                    </Heading>
+                    <Text color="whiteAlpha.600" fontSize="md">
+                      {plan.description}
+                    </Text>
+                  </VStack>
+
+                  <HStack align="baseline" spacing={1}>
+                    <Heading
+                      size="3xl"
+                      bgGradient="linear(135deg, brand.300 0%, accent.300 100%)"
+                      bgClip="text"
+                    >
+                      {isYearly ? plan.yearlyPrice : plan.monthlyPrice}
+                    </Heading>
+                    <Text color="whiteAlpha.500" fontSize="lg">
+                      /{isYearly ? 'year' : 'month'}
+                    </Text>
+                  </HStack>
+
+                  {isYearly && (
+                    <Text fontSize="sm" color="green.300" fontWeight="600">
+                      💰 Save $
+                      {plan.tier === 'basic' ? '24' : '33.60'} per year
+                    </Text>
+                  )}
+
+                  <List spacing={3} w="full">
+                    {plan.features.map((feature) => (
+                      <ListItem key={feature} color="whiteAlpha.800">
+                        <HStack>
+                          <ListIcon
+                            as={CheckCircle}
+                            color="green.400"
+                            fontSize="20px"
+                          />
+                          <Text fontSize="md">{feature}</Text>
+                        </HStack>
+                      </ListItem>
+                    ))}
+                  </List>
+
+                  <Button
+                    w="full"
+                    size="lg"
+                    h="60px"
+                    bgGradient={
+                      plan.popular
+                        ? 'linear(135deg, brand.500 0%, accent.500 100%)'
+                        : 'none'
+                    }
+                    bg={plan.popular ? undefined : 'rgba(217, 70, 239, 0.1)'}
+                    color="white"
+                    fontSize="lg"
+                    fontWeight="700"
+                    borderWidth={plan.popular ? 0 : 2}
+                    borderColor="brand.500"
+                    leftIcon={<Sparkles size={20} />}
+                    onClick={() =>
+                      handleSubscribe(
+                        isYearly ? plan.yearlyPriceId : plan.monthlyPriceId,
+                        plan.name
+                      )
+                    }
+                    isLoading={loading === plan.name}
+                    _hover={{
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0 10px 30px rgba(217, 70, 239, 0.4)',
+                    }}
+                  >
+                    Get Started
+                  </Button>
+                </VStack>
+              </Box>
+            ))}
+          </SimpleGrid>
+
+          <Text fontSize="sm" color="whiteAlpha.500" textAlign="center" maxW="2xl">
+            All plans include a 7-day free trial. Cancel anytime. No questions asked.
+          </Text>
+        </VStack>
+      </Container>
+    </Box>
+  )
+}
+

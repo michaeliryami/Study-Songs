@@ -25,6 +25,7 @@ import {
 } from '@chakra-ui/react'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
+import { useSubscription } from '../hooks/useSubscription'
 import { 
   User, 
   BookOpen, 
@@ -35,6 +36,9 @@ import {
   Sparkles,
   Music,
   Clock,
+  CreditCard,
+  Settings as SettingsIcon,
+  AlertCircle,
 } from 'lucide-react'
 
 interface ProfileStats {
@@ -50,6 +54,8 @@ export default function ProfilePage() {
   const { user, loading: authLoading } = useAuth()
   const [stats, setStats] = useState<ProfileStats | null>(null)
   const [loading, setLoading] = useState(true)
+  const { tier, features, isPremium, isBasic, isFree, hasUnlimited } = useSubscription()
+  const [managingSubscription, setManagingSubscription] = useState(false)
 
   // Redirect if not logged in
   useEffect(() => {
@@ -83,6 +89,30 @@ export default function ProfilePage() {
       loadProfile()
     }
   }, [user])
+
+  const handleManageSubscription = async () => {
+    if (!user?.email) return
+    
+    setManagingSubscription(true)
+    try {
+      const response = await fetch('/api/create-portal-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: user.email }),
+      })
+
+      const { url, error } = await response.json()
+      if (error) throw new Error(error)
+      
+      if (url) {
+        window.location.href = url
+      }
+    } catch (error) {
+      console.error('Error opening portal:', error)
+    } finally {
+      setManagingSubscription(false)
+    }
+  }
 
   if (authLoading || loading) {
     return (
@@ -312,73 +342,89 @@ export default function ProfilePage() {
           <Card
             bg="rgba(26, 26, 46, 0.6)"
             borderWidth={2}
-            borderColor="rgba(217, 70, 239, 0.3)"
+            borderColor={isPremium ? 'brand.500' : 'rgba(217, 70, 239, 0.3)'}
             borderRadius="xl"
           >
             <CardBody p={6}>
               <VStack align="stretch" spacing={6}>
                 <HStack justify="space-between">
-                  <VStack align="start" spacing={1}>
-                    <Text fontSize="sm" color="whiteAlpha.600" fontWeight="600" textTransform="uppercase">
-                      Current Plan
-                    </Text>
-                    <Heading size="lg" color="white">
-                      {currentTier.text} Tier
-                    </Heading>
-                  </VStack>
-                  {stats.subscription_tier === 'free' && (
+                  <HStack spacing={3}>
+                    {isPremium ? <Crown size={24} color="#d946ef" /> : <CreditCard size={24} color="#d946ef" />}
+                    <VStack align="start" spacing={0}>
+                      <Text fontSize="sm" color="whiteAlpha.600" fontWeight="600" textTransform="uppercase">
+                        Current Plan
+                      </Text>
+                      <Heading size="lg" color="white" textTransform="capitalize">
+                        {tier} Tier
+                      </Heading>
+                    </VStack>
+                  </HStack>
+
+                  {isFree && (
                     <Button
                       bgGradient="linear(135deg, brand.500 0%, accent.500 100%)"
                       color="white"
                       fontWeight="700"
+                      leftIcon={<Sparkles size={18} />}
                       _hover={{
                         bgGradient: 'linear(135deg, brand.600 0%, accent.600 100%)',
+                        transform: 'translateY(-2px)',
                       }}
-                      onClick={() => router.push('/')}
+                      onClick={() => router.push('/pricing')}
                     >
                       Upgrade
+                    </Button>
+                  )}
+
+                  {!isFree && (
+                    <Button
+                      bg="rgba(217, 70, 239, 0.1)"
+                      color="brand.300"
+                      fontWeight="600"
+                      borderWidth={1}
+                      borderColor="brand.500"
+                      leftIcon={<SettingsIcon size={18} />}
+                      _hover={{
+                        bg: 'rgba(217, 70, 239, 0.2)',
+                      }}
+                      onClick={handleManageSubscription}
+                      isLoading={managingSubscription}
+                    >
+                      Manage Subscription
                     </Button>
                   )}
                 </HStack>
 
                 <Divider borderColor="rgba(217, 70, 239, 0.15)" />
 
-                {stats.subscription_tier === 'free' && (
-                  <VStack align="stretch" spacing={3}>
-                    <HStack justify="space-between">
-                      <Text color="whiteAlpha.700" fontSize="sm">
-                        Study Sets: <Text as="span" fontWeight="700">{stats.sets_count} / 1</Text>
+                {/* Features List */}
+                <VStack align="stretch" spacing={2}>
+                  <Text color="whiteAlpha.700" fontSize="sm" fontWeight="600">
+                    Your Features:
+                  </Text>
+                  <Text color="whiteAlpha.600" fontSize="sm">
+                    ✓ {features.jinglesPerMonth >= 999999 ? 'Unlimited' : features.jinglesPerMonth} jingles per month
+                  </Text>
+                  <Text color="whiteAlpha.600" fontSize="sm">
+                    {features.canDownload ? '✓' : '✗'} Download MP3s
+                  </Text>
+                  <Text color="whiteAlpha.600" fontSize="sm">
+                    ✓ {features.maxSetsPerMonth >= 999 ? 'Unlimited' : features.maxSetsPerMonth} study sets
+                  </Text>
+                  <Text color="whiteAlpha.600" fontSize="sm">
+                    ✓ Save and share jingles
+                  </Text>
+                  {isPremium && (
+                    <>
+                      <Text color="whiteAlpha.600" fontSize="sm">
+                        ✓ Priority generation
                       </Text>
-                      <Text color={stats.sets_count >= 1 ? 'red.400' : 'green.400'} fontSize="xs" fontWeight="600">
-                        {stats.sets_count >= 1 ? 'Limit Reached' : 'Available'}
+                      <Text color="whiteAlpha.600" fontSize="sm">
+                        ✓ Advanced analytics
                       </Text>
-                    </HStack>
-                    <Progress
-                      value={(stats.sets_count / 1) * 100}
-                      size="sm"
-                      colorScheme={stats.sets_count >= 1 ? 'red' : 'purple'}
-                      borderRadius="full"
-                      bg="rgba(42, 42, 64, 0.6)"
-                    />
-                    <Text color="whiteAlpha.500" fontSize="xs">
-                      Upgrade to Pro for 10 sets or Premium for unlimited sets
-                    </Text>
-                  </VStack>
-                )}
-
-                {stats.subscription_tier === 'pro' && (
-                  <VStack align="stretch" spacing={3}>
-                    <Text color="whiteAlpha.700" fontSize="sm">
-                      ✅ Up to 10 study sets
-                    </Text>
-                    <Text color="whiteAlpha.700" fontSize="sm">
-                      ✅ Up to 15 terms per set
-                    </Text>
-                    <Text color="whiteAlpha.700" fontSize="sm">
-                      ✅ Priority support
-                    </Text>
-                  </VStack>
-                )}
+                    </>
+                  )}
+                </VStack>
 
                 {stats.subscription_tier === 'premium' && (
                   <VStack align="stretch" spacing={3}>

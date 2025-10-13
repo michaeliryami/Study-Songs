@@ -1,7 +1,7 @@
 'use client'
 
 import { Box, Container, Flex, Heading, HStack, Button, Text, Menu, MenuButton, MenuList, MenuItem, Avatar, Badge } from '@chakra-ui/react'
-import { Music, Library, Sparkles, LogOut, User as UserIcon, BarChart3 } from 'lucide-react'
+import { Music, Library, Sparkles, LogOut, User as UserIcon, BarChart3, DollarSign } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useAuth } from '../contexts/AuthContext'
@@ -164,6 +164,25 @@ export default function Navbar() {
                       transition="all 0.2s"
                     >
                       My Sets
+                    </Button>
+                  </Link>
+                  <Link href="/pricing">
+                    <Button
+                      size="md"
+                      fontWeight="600"
+                      leftIcon={<DollarSign size={18} />}
+                      bg={pathname === '/pricing' ? 'rgba(217, 70, 239, 0.15)' : 'transparent'}
+                      color={pathname === '/pricing' ? 'brand.300' : 'whiteAlpha.700'}
+                      borderWidth={pathname === '/pricing' ? '1px' : '0'}
+                      borderColor={pathname === '/pricing' ? 'brand.500' : 'transparent'}
+                      _hover={{
+                        bg: 'rgba(217, 70, 239, 0.1)',
+                        color: 'white',
+                        transform: 'translateY(-1px)',
+                      }}
+                      transition="all 0.2s"
+                    >
+                      Pricing
                     </Button>
                   </Link>
                 </HStack>
