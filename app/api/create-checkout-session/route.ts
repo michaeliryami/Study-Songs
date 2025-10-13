@@ -28,13 +28,24 @@ export async function POST(req: NextRequest) {
 
     // Create customer if doesn't exist
     if (!customerId) {
+      // Get user's name from profile if available
+      const { data: fullProfile } = await supabase
+        .from('profiles')
+        .select('full_name, email')
+        .eq('id', userId)
+        .single()
+
       const customer = await stripe.customers.create({
         email,
+        name: fullProfile?.full_name || email?.split('@')[0] || 'Study Songs User',
         metadata: {
-          userId: userId || '',
+          supabase_user_id: userId || '',
+          user_email: email || '',
         },
       })
       customerId = customer.id
+
+      console.log('Created Stripe customer:', customerId, 'for', email)
 
       // Store customer ID
       await supabase
@@ -61,9 +72,12 @@ export async function POST(req: NextRequest) {
       allow_promotion_codes: true,
       billing_address_collection: 'auto',
       metadata: {
-        userId: userId || '',
+        supabase_user_id: userId || '',
+        user_email: email || '',
       },
     })
+
+    console.log('Created checkout session:', session.id, 'for customer:', customerId)
 
     return NextResponse.json({ sessionId: session.id, url: session.url })
   } catch (error) {
