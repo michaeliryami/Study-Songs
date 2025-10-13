@@ -403,7 +403,7 @@ export default function ProfilePage() {
                     Your Features:
                   </Text>
                   <Text color="whiteAlpha.600" fontSize="sm">
-                    ✓ {features.jinglesPerMonth >= 999999 ? 'Unlimited' : features.jinglesPerMonth} jingles per month
+                    ✓ {features.tokensPerMonth >= 999999 ? 'Unlimited' : features.tokensPerMonth} tokens per month
                   </Text>
                   <Text color="whiteAlpha.600" fontSize="sm">
                     {features.canDownload ? '✓' : '✗'} Download MP3s
