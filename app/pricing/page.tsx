@@ -126,6 +126,7 @@ export default function PricingPage() {
         'All music genres',
         'Share jingles',
       ],
+      popular: true,
     },
     {
       name: 'Premium',
@@ -145,7 +146,6 @@ export default function PricingPage() {
         'Custom genres',
         'Advanced analytics',
       ],
-      popular: true,
     },
   ]
 
@@ -211,42 +211,62 @@ export default function PricingPage() {
           </HStack>
 
           <SimpleGrid columns={{ base: 1, md: 2 }} spacing={8} w="full" maxW="5xl">
-            {plans.map((plan) => (
-              <Box
-                key={plan.name}
-                bg="rgba(26, 26, 46, 0.6)"
-                borderRadius="2xl"
-                p={8}
-                border="2px solid"
-                borderColor={
-                  plan.popular
-                    ? 'brand.500'
-                    : 'rgba(217, 70, 239, 0.1)'
-                }
-                position="relative"
-                transition="all 0.3s"
-                _hover={{
-                  transform: 'translateY(-8px)',
-                  boxShadow: '0 20px 60px rgba(217, 70, 239, 0.3)',
-                }}
-              >
-                {plan.popular && (
-                  <Box
-                    position="absolute"
-                    top="-12px"
-                    left="50%"
-                    transform="translateX(-50%)"
-                    bgGradient="linear(135deg, brand.500 0%, accent.500 100%)"
-                    color="white"
-                    px={4}
-                    py={1}
-                    borderRadius="full"
-                    fontSize="sm"
-                    fontWeight="700"
-                  >
-                    ⭐ Most Popular
-                  </Box>
-                )}
+            {plans.map((plan) => {
+              const isCurrentPlan = tier === plan.tier
+              return (
+                <Box
+                  key={plan.name}
+                  bg={isCurrentPlan ? "rgba(217, 70, 239, 0.1)" : "rgba(26, 26, 46, 0.6)"}
+                  borderRadius="2xl"
+                  p={8}
+                  border="2px solid"
+                  borderColor={
+                    isCurrentPlan
+                      ? 'brand.500'
+                      : plan.popular
+                      ? 'brand.500'
+                      : 'rgba(217, 70, 239, 0.1)'
+                  }
+                  position="relative"
+                  transition="all 0.3s"
+                  _hover={{
+                    transform: 'translateY(-8px)',
+                    boxShadow: '0 20px 60px rgba(217, 70, 239, 0.3)',
+                  }}
+                >
+                  {plan.popular && (
+                    <Box
+                      position="absolute"
+                      top="-12px"
+                      left="50%"
+                      transform="translateX(-50%)"
+                      bgGradient="linear(135deg, brand.500 0%, accent.500 100%)"
+                      color="white"
+                      px={4}
+                      py={1}
+                      borderRadius="full"
+                      fontSize="sm"
+                      fontWeight="700"
+                    >
+                      ⭐ Most Popular
+                    </Box>
+                  )}
+                  {isCurrentPlan && (
+                    <Box
+                      position="absolute"
+                      top="-12px"
+                      right="12px"
+                      bg="green.500"
+                      color="white"
+                      px={3}
+                      py={1}
+                      borderRadius="full"
+                      fontSize="xs"
+                      fontWeight="700"
+                    >
+                      ✓ Current Plan
+                    </Box>
+                  )}
 
                 <VStack align="stretch" spacing={6} h="full">
                   <VStack align="start" spacing={2}>
@@ -339,7 +359,8 @@ export default function PricingPage() {
                   </Button>
                 </VStack>
               </Box>
-            ))}
+              )
+            })}
           </SimpleGrid>
 
           <Text fontSize="sm" color="whiteAlpha.500" textAlign="center" maxW="2xl">
