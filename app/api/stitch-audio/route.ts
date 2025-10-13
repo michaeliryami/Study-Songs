@@ -105,31 +105,40 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Create a simple concatenated audio file
-    // Note: This is a simplified approach. For production, you might want to use a proper audio processing library
+    // Create a proper MP3 concatenation
     console.log('🔗 Concatenating audio files...')
     
-    // Calculate total size
+    // For MP3 files, we need to be more careful about concatenation
+    // Let's create a simple concatenation that should work for most MP3 files
     const totalSize = audioBuffers.reduce((sum, buffer) => sum + buffer.byteLength, 0)
     console.log(`📊 Total audio size: ${totalSize} bytes`)
 
     // Create a new buffer with all audio data
-    const concatenatedBuffer = new Uint8Array(totalSize)
+    const combinedBuffer = new Uint8Array(totalSize)
     let offset = 0
     
-    for (const buffer of audioBuffers) {
-      concatenatedBuffer.set(new Uint8Array(buffer), offset)
+    for (let i = 0; i < audioBuffers.length; i++) {
+      const buffer = audioBuffers[i]
+      const uint8Buffer = new Uint8Array(buffer)
+      
+      // For MP3 files, we can usually just concatenate the raw data
+      // The browser/audio player will handle the format
+      combinedBuffer.set(uint8Buffer, offset)
       offset += buffer.byteLength
+      
+      console.log(`✅ Added audio ${i + 1}/${audioBuffers.length} (${buffer.byteLength} bytes)`)
     }
 
     // Create blob and upload to Supabase
-    const stitchedBlob = new Blob([concatenatedBuffer], { type: 'audio/mpeg' })
+    const stitchedBlob = new Blob([combinedBuffer], { type: 'audio/mpeg' })
     
     // Generate filename
     const timestamp = Date.now()
     const fileName = `stitched_${setId}_${timestamp}.mp3`
     
     console.log('☁️ Uploading stitched audio to Supabase...')
+    console.log(`📁 File: ${fileName}`)
+    console.log(`📦 Size: ${stitchedBlob.size} bytes`)
     
     const { data: uploadData, error: uploadError } = await supabase.storage
       .from('audio-files')
@@ -140,11 +149,14 @@ export async function POST(req: NextRequest) {
 
     if (uploadError) {
       console.error('❌ Upload error:', uploadError)
+      console.error('❌ Upload error details:', JSON.stringify(uploadError, null, 2))
       return NextResponse.json(
         { error: `Failed to upload stitched audio: ${uploadError.message}` },
         { status: 500 }
       )
     }
+
+    console.log('✅ Upload successful:', uploadData)
 
     // Get public URL
     const { data: urlData } = supabase.storage

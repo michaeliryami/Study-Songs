@@ -1055,84 +1055,28 @@ Format: Term — Definition (one per line)"
             Download MP3
           </Button>
         )}
+        {tier === 'premium' && (
+          <Button
+            leftIcon={<Download size={18} />}
+            onClick={studySet.stitchedAudioUrl ? handleDownloadStitched : handleStitchAudio}
+            isLoading={stitchingAudio}
+            loadingText="Stitching..."
+            bg="rgba(34, 197, 94, 0.1)"
+            color="green.300"
+            borderWidth={1}
+            borderColor="green.500"
+            _hover={{ 
+              bg: 'rgba(34, 197, 94, 0.2)', 
+              borderColor: 'green.400',
+              color: 'green.200'
+            }}
+            size="sm"
+            borderRadius="xl"
+          >
+            {studySet.stitchedAudioUrl ? 'Download Stitch' : 'Stitch All'}
+          </Button>
+        )}
       </HStack>
-
-      {/* Stitched Audio Controls (Premium Only) */}
-      {tier === 'premium' && (
-        <Box
-          bg="rgba(217, 70, 239, 0.05)"
-          borderWidth={1}
-          borderColor="brand.500"
-          borderRadius="xl"
-          p={4}
-        >
-          <VStack spacing={3}>
-            <HStack justify="space-between" w="full">
-              <Text fontSize="sm" fontWeight="600" color="brand.300">
-                🎵 Complete Study Set Audio
-              </Text>
-              {studySet.stitchedAudioUrl && (
-                <Text fontSize="xs" color="whiteAlpha.500">
-                  {studySet.jingles.length} jingles combined
-                </Text>
-              )}
-            </HStack>
-            
-            {studySet.stitchedAudioUrl ? (
-              <HStack spacing={2} w="full">
-                <Button
-                  flex={1}
-                  leftIcon={playingStitched ? <Pause size={16} /> : <Play size={16} />}
-                  onClick={toggleStitchedPlayback}
-                  bgGradient="linear(135deg, brand.500 0%, accent.500 100%)"
-                  color="white"
-                  size="sm"
-                  _hover={{
-                    bgGradient: 'linear(135deg, brand.600 0%, accent.600 100%)',
-                  }}
-                >
-                  {playingStitched ? 'Pause All' : 'Play All'}
-                </Button>
-                <Button
-                  leftIcon={<Download size={16} />}
-                  onClick={handleDownloadStitched}
-                  bg="rgba(217, 70, 239, 0.1)"
-                  color="brand.300"
-                  borderWidth={1}
-                  borderColor="brand.500"
-                  size="sm"
-                  _hover={{
-                    bg: 'rgba(217, 70, 239, 0.2)',
-                  }}
-                >
-                  Download
-                </Button>
-              </HStack>
-            ) : (
-              <Button
-                w="full"
-                leftIcon={<Download size={16} />}
-                onClick={handleStitchAudio}
-                isLoading={stitchingAudio}
-                loadingText="Stitching..."
-                bg="rgba(217, 70, 239, 0.1)"
-                color="brand.300"
-                borderWidth={1}
-                borderColor="brand.500"
-                size="sm"
-                _hover={{
-                  bg: 'rgba(217, 70, 239, 0.2)',
-                }}
-              >
-                Stitch All Jingles
-              </Button>
-            )}
-            <Text fontSize="xs" color="whiteAlpha.500" textAlign="center">
-              Premium feature: Combine all jingles into one continuous MP3
-            </Text>
-          </VStack>
-        </Box>
-      )}
 
       {/* Swipe Hint */}
       <Text color="whiteAlpha.500" fontSize="sm" textAlign="center" fontWeight="500">

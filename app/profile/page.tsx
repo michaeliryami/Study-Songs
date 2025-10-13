@@ -114,6 +114,7 @@ export default function ProfilePage() {
     }
   }
 
+
   if (authLoading || loading) {
     return (
       <Box minH="100vh" bg="#0f0f1a" display="flex" alignItems="center" justifyContent="center">
@@ -483,6 +484,37 @@ export default function ProfilePage() {
               View My Sets
             </Button>
           </SimpleGrid>
+
+          {/* Subscription Management */}
+          {(isPremium || isBasic) && (
+            <VStack spacing={3} align="stretch">
+              <Text fontSize="sm" color="whiteAlpha.600" textAlign="center">
+                Subscription Management
+              </Text>
+              <HStack spacing={3} justify="center">
+                <Button
+                  h={{ base: "40px", sm: "45px" }}
+                  bg="rgba(59, 130, 246, 0.1)"
+                  color="blue.300"
+                  fontWeight="600"
+                  fontSize={{ base: "sm", sm: "md" }}
+                  leftIcon={<CreditCard size={16} />}
+                  borderWidth={1}
+                  borderColor="blue.500"
+                  onClick={handleManageSubscription}
+                  isLoading={managingSubscription}
+                  loadingText="Opening..."
+                  _hover={{
+                    bg: 'rgba(59, 130, 246, 0.15)',
+                    transform: 'translateY(-1px)',
+                  }}
+                  transition="all 0.2s"
+                >
+                  Manage Subscription
+                </Button>
+              </HStack>
+            </VStack>
+          )}
         </VStack>
       </Container>
     </Box>

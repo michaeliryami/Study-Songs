@@ -251,3 +251,67 @@ async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
   console.log(`Payment failed for customer ${customerId}, downgraded to free`)
 }
 
+async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
+  console.log('🔄 Processing subscription update:', subscription.id)
+  
+  const customerId = subscription.customer as string
+  const subscriptionId = subscription.id
+  
+  console.log('Customer ID:', customerId)
+  console.log('Subscription status:', subscription.status)
+  
+  // Get customer details
+  const customer = await stripe.customers.retrieve(customerId) as Stripe.Customer
+  const email = customer.email
+  
+  if (!email) {
+    console.error('❌ No email found for customer:', customerId)
+    return
+  }
+
+  console.log(`📧 Subscription updated for ${email}`)
+
+  // Determine tier from price ID
+  let tier: 'free' | 'basic' | 'premium' = 'free'
+  
+  if (subscription.status === 'active') {
+    const priceId = subscription.items.data[0]?.price.id
+    console.log('Price ID:', priceId)
+    
+    const env = process.env
+    if (priceId === env.NEXT_PUBLIC_STRIPE_PREMIUM_MONTHLY_PRICE_ID || 
+        priceId === env.NEXT_PUBLIC_STRIPE_PREMIUM_YEARLY_PRICE_ID) {
+      tier = 'premium'
+    } else if (priceId === env.NEXT_PUBLIC_STRIPE_BASIC_MONTHLY_PRICE_ID || 
+               priceId === env.NEXT_PUBLIC_STRIPE_BASIC_YEARLY_PRICE_ID) {
+      tier = 'basic'
+    }
+  }
+
+  console.log('Determined tier:', tier)
+
+  // Update profile
+  const { data, error } = await supabase
+    .from('profiles')
+    .update({
+      subscription_tier: tier,
+      stripe_customer_id: customerId,
+      stripe_subscription_id: subscriptionId,
+      updated_at: new Date().toISOString()
+    })
+    .eq('email', email)
+    .select()
+
+  if (error) {
+    console.error('❌ Error updating profile after subscription update:', error)
+    throw error
+  }
+
+  if (!data || data.length === 0) {
+    console.error('❌ No profile found to update for email:', email)
+    return
+  }
+
+  console.log(`✅ Subscription updated successfully for ${email}: ${tier}`)
+}
+
