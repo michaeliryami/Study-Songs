@@ -20,8 +20,11 @@ import {
   FormLabel,
   Link,
   HStack,
+  InputGroup,
+  InputRightElement,
+  IconButton,
 } from '@chakra-ui/react'
-import { Music, Mail, Lock, User, ArrowRight } from 'lucide-react'
+import { Music, Mail, Lock, User, ArrowRight, Eye, EyeOff } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 
 export default function AuthPage() {
@@ -33,6 +36,7 @@ export default function AuthPage() {
   // Sign up state
   const [signupEmail, setSignupEmail] = useState('')
   const [signupPassword, setSignupPassword] = useState('')
+  const [signupConfirmPassword, setSignupConfirmPassword] = useState('')
   const [signupName, setSignupName] = useState('')
 
   // Sign in state
@@ -43,8 +47,25 @@ export default function AuthPage() {
   const [forgotEmail, setForgotEmail] = useState('')
   const [showForgotPassword, setShowForgotPassword] = useState(false)
 
+  // Show password states
+  const [showSigninPassword, setShowSigninPassword] = useState(false)
+  const [showSignupPassword, setShowSignupPassword] = useState(false)
+  const [showSignupConfirmPassword, setShowSignupConfirmPassword] = useState(false)
+
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Validate password confirmation
+    if (signupPassword !== signupConfirmPassword) {
+      toast({
+        title: 'Password mismatch',
+        description: 'Passwords do not match',
+        status: 'error',
+        duration: 3000,
+      })
+      return
+    }
+
     if (!supabase) {
       toast({
         title: 'Error',
@@ -79,6 +100,7 @@ export default function AuthPage() {
       // Clear form
       setSignupEmail('')
       setSignupPassword('')
+      setSignupConfirmPassword('')
       setSignupName('')
     } catch (error: any) {
       toast({
@@ -272,20 +294,33 @@ export default function AuthPage() {
                           <FormLabel color="whiteAlpha.800" fontSize={{ base: "xs", sm: "sm" }} fontWeight="600">
                             Password
                           </FormLabel>
-                          <Input
-                            type="password"
-                            placeholder="••••••••"
-                            value={signinPassword}
-                            onChange={(e) => setSigninPassword(e.target.value)}
-                            bg="rgba(42, 42, 64, 0.6)"
-                            borderColor="rgba(217, 70, 239, 0.2)"
-                            color="white"
-                            _hover={{ borderColor: 'brand.500' }}
-                            _focus={{ borderColor: 'brand.500', boxShadow: '0 0 0 1px #d946ef' }}
-                            size={{ base: "md", sm: "lg" }}
-                            h={{ base: "48px", sm: "56px" }}
-                            fontSize={{ base: "sm", sm: "md" }}
-                          />
+                          <InputGroup>
+                            <Input
+                              type={showSigninPassword ? "text" : "password"}
+                              placeholder="••••••••"
+                              value={signinPassword}
+                              onChange={(e) => setSigninPassword(e.target.value)}
+                              bg="rgba(42, 42, 64, 0.6)"
+                              borderColor="rgba(217, 70, 239, 0.2)"
+                              color="white"
+                              _hover={{ borderColor: 'brand.500' }}
+                              _focus={{ borderColor: 'brand.500', boxShadow: '0 0 0 1px #d946ef' }}
+                              size={{ base: "md", sm: "lg" }}
+                              h={{ base: "48px", sm: "56px" }}
+                              fontSize={{ base: "sm", sm: "md" }}
+                            />
+                            <InputRightElement h="full" pr={3}>
+                              <IconButton
+                                aria-label={showSigninPassword ? "Hide password" : "Show password"}
+                                icon={showSigninPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                variant="ghost"
+                                color="whiteAlpha.600"
+                                _hover={{ color: 'white', bg: 'transparent' }}
+                                onClick={() => setShowSigninPassword(!showSigninPassword)}
+                                size="sm"
+                              />
+                            </InputRightElement>
+                          </InputGroup>
                         </FormControl>
 
                         <Button
@@ -363,18 +398,62 @@ export default function AuthPage() {
                           <FormLabel color="whiteAlpha.800" fontSize="sm" fontWeight="600">
                             Password
                           </FormLabel>
-                          <Input
-                            type="password"
-                            placeholder="••••••••"
-                            value={signupPassword}
-                            onChange={(e) => setSignupPassword(e.target.value)}
-                            bg="rgba(42, 42, 64, 0.6)"
-                            borderColor="rgba(217, 70, 239, 0.2)"
-                            color="white"
-                            _hover={{ borderColor: 'brand.500' }}
-                            _focus={{ borderColor: 'brand.500', boxShadow: '0 0 0 1px #d946ef' }}
-                            size="lg"
-                          />
+                          <InputGroup>
+                            <Input
+                              type={showSignupPassword ? "text" : "password"}
+                              placeholder="••••••••"
+                              value={signupPassword}
+                              onChange={(e) => setSignupPassword(e.target.value)}
+                              bg="rgba(42, 42, 64, 0.6)"
+                              borderColor="rgba(217, 70, 239, 0.2)"
+                              color="white"
+                              _hover={{ borderColor: 'brand.500' }}
+                              _focus={{ borderColor: 'brand.500', boxShadow: '0 0 0 1px #d946ef' }}
+                              size="lg"
+                            />
+                            <InputRightElement h="full" pr={3}>
+                              <IconButton
+                                aria-label={showSignupPassword ? "Hide password" : "Show password"}
+                                icon={showSignupPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                variant="ghost"
+                                color="whiteAlpha.600"
+                                _hover={{ color: 'white', bg: 'transparent' }}
+                                onClick={() => setShowSignupPassword(!showSignupPassword)}
+                                size="sm"
+                              />
+                            </InputRightElement>
+                          </InputGroup>
+                        </FormControl>
+
+                        <FormControl isRequired>
+                          <FormLabel color="whiteAlpha.800" fontSize="sm" fontWeight="600">
+                            Confirm Password
+                          </FormLabel>
+                          <InputGroup>
+                            <Input
+                              type={showSignupConfirmPassword ? "text" : "password"}
+                              placeholder="••••••••"
+                              value={signupConfirmPassword}
+                              onChange={(e) => setSignupConfirmPassword(e.target.value)}
+                              bg="rgba(42, 42, 64, 0.6)"
+                              borderColor="rgba(217, 70, 239, 0.2)"
+                              color="white"
+                              _hover={{ borderColor: 'brand.500' }}
+                              _focus={{ borderColor: 'brand.500', boxShadow: '0 0 0 1px #d946ef' }}
+                              size="lg"
+                            />
+                            <InputRightElement h="full" pr={3}>
+                              <IconButton
+                                aria-label={showSignupConfirmPassword ? "Hide password" : "Show password"}
+                                icon={showSignupConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                variant="ghost"
+                                color="whiteAlpha.600"
+                                _hover={{ color: 'white', bg: 'transparent' }}
+                                onClick={() => setShowSignupConfirmPassword(!showSignupConfirmPassword)}
+                                size="sm"
+                              />
+                            </InputRightElement>
+                          </InputGroup>
                         </FormControl>
 
                         <Button
