@@ -637,7 +637,7 @@ export default function Home() {
                       <Text color="whiteAlpha.600" fontSize="md">/month</Text>
                     </HStack>
                   </VStack>
-                  <VStack align="start" spacing={3}>
+                  <VStack align="start" spacing={3} flex="1">
                     <HStack>
                       <Box color="green.400">✓</Box>
                       <Text color="whiteAlpha.800" fontSize="sm">30 tokens (30 jingles)</Text>
@@ -655,20 +655,6 @@ export default function Home() {
                       <Text color="whiteAlpha.600" fontSize="sm">Download MP3s</Text>
                     </HStack>
                   </VStack>
-                  <Button
-                    w="100%"
-                    variant="outline"
-                    colorScheme="brand"
-                    borderColor="rgba(217, 70, 239, 0.5)"
-                    color="brand.300"
-                    _hover={{
-                      bg: "rgba(217, 70, 239, 0.1)",
-                      borderColor: "brand.400"
-                    }}
-                    onClick={handleGetStarted}
-                  >
-                    Get Started
-                  </Button>
                 </VStack>
               </Box>
 
@@ -710,7 +696,7 @@ export default function Home() {
                       <Text color="whiteAlpha.700" fontSize="md">/month</Text>
                     </HStack>
                   </VStack>
-                  <VStack align="start" spacing={3}>
+                  <VStack align="start" spacing={3} flex="1">
                     <HStack>
                       <Box color="green.400">✓</Box>
                       <Text color="white" fontSize="sm" fontWeight="600">300 tokens per month</Text>
@@ -732,19 +718,6 @@ export default function Home() {
                       <Text color="white" fontSize="sm" fontWeight="600">Share jingles</Text>
                     </HStack>
                   </VStack>
-                  <Button
-                    w="100%"
-                    bgGradient="linear(135deg, brand.500 0%, accent.500 100%)"
-                    color="white"
-                    fontWeight="700"
-                    _hover={{
-                      bgGradient: "linear(135deg, brand.600 0%, accent.600 100%)",
-                      transform: "translateY(-2px)"
-                    }}
-                    onClick={handleGetStarted}
-                  >
-                    Upgrade to Basic
-                  </Button>
                 </VStack>
               </Box>
 
@@ -777,7 +750,7 @@ export default function Home() {
                       <Text color="whiteAlpha.600" fontSize="md">/month</Text>
                     </HStack>
                   </VStack>
-                  <VStack align="start" spacing={3}>
+                  <VStack align="start" spacing={3} flex="1">
                     <HStack>
                       <Box color="green.400">✓</Box>
                       <Text color="whiteAlpha.800" fontSize="sm" fontWeight="600">Unlimited tokens</Text>
@@ -803,21 +776,6 @@ export default function Home() {
                       <Text color="whiteAlpha.800" fontSize="sm" fontWeight="600">Advanced analytics</Text>
                     </HStack>
                   </VStack>
-                  <Button
-                    w="100%"
-                    bg="rgba(251, 146, 60, 0.1)"
-                    borderWidth={2}
-                    borderColor="accent.500"
-                    color="accent.400"
-                    fontWeight="700"
-                    _hover={{
-                      bg: "rgba(251, 146, 60, 0.2)",
-                      borderColor: "accent.400"
-                    }}
-                    onClick={handleGetStarted}
-                  >
-                    Go Premium
-                  </Button>
                 </VStack>
               </Box>
             </SimpleGrid>

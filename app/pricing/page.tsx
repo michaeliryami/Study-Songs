@@ -248,7 +248,7 @@ export default function PricingPage() {
                   </Box>
                 )}
 
-                <VStack align="start" spacing={6}>
+                <VStack align="stretch" spacing={6} h="full">
                   <VStack align="start" spacing={2}>
                     <Heading size="xl" color="white">
                       {plan.name}
@@ -278,7 +278,7 @@ export default function PricingPage() {
                     </Text>
                   )}
 
-                  <List spacing={3} w="full">
+                  <List spacing={3} w="full" flex="1">
                     {plan.features.map((feature) => (
                       <ListItem key={feature} color="whiteAlpha.800">
                         <HStack>
