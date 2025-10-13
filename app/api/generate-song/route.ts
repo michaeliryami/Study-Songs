@@ -313,11 +313,7 @@ ${studyNotes}`,
         })
       } catch (uploadError) {
         console.error('Error uploading to Supabase:', uploadError)
-        // Fallback to Replicate URL if Supabase upload fails
-        return NextResponse.json({ 
-          lyrics, 
-          audioUrl: replicateAudioUrl
-        })
+        throw new Error(`Supabase upload failed: ${uploadError instanceof Error ? uploadError.message : 'Unknown error'}`)
       }
     } catch (musicError) {
       console.error('Error generating music:', musicError)
