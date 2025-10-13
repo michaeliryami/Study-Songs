@@ -541,10 +541,13 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
       }
 
       // Update the study set with the stitched audio URL
+      console.log('🔄 Updating studySet with stitch URL:', data.stitchedAudioUrl)
       setStudySet({
         ...studySet,
         stitch: data.stitchedAudioUrl
       })
+
+      console.log('✅ StudySet updated, stitch URL should now be available')
 
       toast({
         title: 'Audio Stitched!',
@@ -594,19 +597,36 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
       return
     }
 
+    console.log('🎵 Downloading stitched audio:', studySet.stitch)
+
     try {
       const response = await fetch(studySet.stitch)
-      if (!response.ok) throw new Error('Failed to fetch audio')
+      console.log('📥 Fetch response:', response.status, response.statusText)
+      
+      if (!response.ok) {
+        console.error('❌ Fetch failed:', response.status, response.statusText)
+        throw new Error(`Failed to fetch audio: ${response.status} ${response.statusText}`)
+      }
 
       const blob = await response.blob()
+      console.log('📦 Blob created:', blob.size, 'bytes')
+      
       const url = window.URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.href = url
       link.download = `${studySet.subject.replace(/[^a-zA-Z0-9]/g, '_')}_complete.mp3`
+      link.style.display = 'none'
+      
       document.body.appendChild(link)
+      console.log('🔗 Triggering download...')
       link.click()
-      document.body.removeChild(link)
-      window.URL.revokeObjectURL(url)
+      
+      // Clean up
+      setTimeout(() => {
+        document.body.removeChild(link)
+        window.URL.revokeObjectURL(url)
+        console.log('🧹 Cleaned up download link')
+      }, 100)
 
       toast({
         title: 'Download started',
@@ -615,12 +635,12 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
         duration: 2000,
       })
     } catch (error) {
-      console.error('Download error:', error)
+      console.error('❌ Download error:', error)
       toast({
         title: 'Download failed',
-        description: 'Could not download the stitched audio file',
+        description: error instanceof Error ? error.message : 'Could not download the stitched audio file',
         status: 'error',
-        duration: 3000,
+        duration: 5000,
       })
     }
   }

@@ -174,13 +174,15 @@ export async function POST(req: NextRequest) {
 
     // Save stitched audio URL to the stitch column
     console.log('💾 Saving to database...')
+    console.log('📝 Updating set ID:', setId, 'with stitch URL:', urlData.publicUrl)
 
-    const { error: updateError } = await supabase
+    const { data: updateData, error: updateError } = await supabase
       .from('sets')
       .update({ 
         stitch: urlData.publicUrl
       })
       .eq('id', setId)
+      .select()
 
     if (updateError) {
       console.error('❌ Error updating set:', updateError)
@@ -190,6 +192,8 @@ export async function POST(req: NextRequest) {
         { status: 500 }
       )
     }
+
+    console.log('✅ Database updated successfully:', updateData)
 
     console.log('🎉 Audio stitching completed successfully!')
 
