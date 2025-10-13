@@ -120,7 +120,7 @@ export default function Home() {
               lineHeight="1.6"
               px={{ base: 4, sm: 0 }}
             >
-              Turn any study material into catchy, memorable jingles. Let your brain&apos;s love for music supercharge your learning and retention.
+              Turn any study material into catchy, memorable jingles. Start with 30 free tokens and unlock unlimited learning potential.
             </Text>
 
             <VStack spacing={4} pt={6} w="full" maxW={{ base: "100%", sm: "auto" }}>
@@ -172,7 +172,7 @@ export default function Home() {
             </HStack>
             </VStack>
 
-            {/* Social Proof Stats */}
+            {/* Key Benefits */}
             <SimpleGrid columns={{ base: 2, md: 4 }} spacing={8} pt={12} w="100%">
               <VStack>
                 <HStack>
@@ -193,29 +193,29 @@ export default function Home() {
                   </Heading>
                 </HStack>
                 <Text fontSize="sm" color="whiteAlpha.600" fontWeight="500">
-                  Per Mnemonic
+                  Per Jingles
                 </Text>
               </VStack>
               <VStack>
                 <HStack>
-                  <Users size={20} color="#f97316" />
+                  <Zap size={20} color="#f97316" />
                   <Heading fontSize="3xl" fontWeight="900" bgGradient="linear(135deg, brand.400 0%, accent.400 100%)" bgClip="text">
-                    10K+
+                    30
                   </Heading>
                 </HStack>
                 <Text fontSize="sm" color="whiteAlpha.600" fontWeight="500">
-                  Students
+                  Free Tokens
                 </Text>
               </VStack>
               <VStack>
                 <HStack>
-                  <Headphones size={20} color="#f97316" />
+                  <Music size={20} color="#f97316" />
                   <Heading fontSize="3xl" fontWeight="900" bgGradient="linear(135deg, brand.400 0%, accent.400 100%)" bgClip="text">
-                    50K+
+                    ∞
                   </Heading>
                 </HStack>
                 <Text fontSize="sm" color="whiteAlpha.600" fontWeight="500">
-                  Jingles Created
+                  Genres
                 </Text>
               </VStack>
             </SimpleGrid>
@@ -640,15 +640,19 @@ export default function Home() {
                   <VStack align="start" spacing={3}>
                     <HStack>
                       <Box color="green.400">✓</Box>
+                      <Text color="whiteAlpha.800" fontSize="sm">30 tokens (30 jingles)</Text>
+                    </HStack>
+                    <HStack>
+                      <Box color="green.400">✓</Box>
                       <Text color="whiteAlpha.800" fontSize="sm">1 study set</Text>
                     </HStack>
                     <HStack>
                       <Box color="green.400">✓</Box>
-                      <Text color="whiteAlpha.800" fontSize="sm">Up to 10 terms</Text>
+                      <Text color="whiteAlpha.800" fontSize="sm">All genres</Text>
                     </HStack>
                     <HStack>
-                      <Box color="green.400">✓</Box>
-                      <Text color="whiteAlpha.800" fontSize="sm">All genres</Text>
+                      <Box color="red.400">✗</Box>
+                      <Text color="whiteAlpha.600" fontSize="sm">Download MP3s</Text>
                     </HStack>
                   </VStack>
                   <Button
@@ -709,11 +713,15 @@ export default function Home() {
                   <VStack align="start" spacing={3}>
                     <HStack>
                       <Box color="green.400">✓</Box>
-                      <Text color="white" fontSize="sm" fontWeight="600">10 study sets</Text>
+                      <Text color="white" fontSize="sm" fontWeight="600">300 tokens per month</Text>
                     </HStack>
                     <HStack>
                       <Box color="green.400">✓</Box>
-                      <Text color="white" fontSize="sm" fontWeight="600">Up to 15 terms each</Text>
+                      <Text color="white" fontSize="sm" fontWeight="600">Unlimited study sets</Text>
+                    </HStack>
+                    <HStack>
+                      <Box color="green.400">✓</Box>
+                      <Text color="white" fontSize="sm" fontWeight="600">Download MP3s</Text>
                     </HStack>
                     <HStack>
                       <Box color="green.400">✓</Box>
@@ -721,7 +729,7 @@ export default function Home() {
                     </HStack>
                     <HStack>
                       <Box color="green.400">✓</Box>
-                      <Text color="white" fontSize="sm" fontWeight="600">Priority support</Text>
+                      <Text color="white" fontSize="sm" fontWeight="600">Share jingles</Text>
                     </HStack>
                   </VStack>
                   <Button
@@ -735,7 +743,7 @@ export default function Home() {
                     }}
                     onClick={handleGetStarted}
                   >
-                    Upgrade to Pro
+                    Upgrade to Basic
                   </Button>
                 </VStack>
               </Box>
@@ -772,11 +780,15 @@ export default function Home() {
                   <VStack align="start" spacing={3}>
                     <HStack>
                       <Box color="green.400">✓</Box>
+                      <Text color="whiteAlpha.800" fontSize="sm" fontWeight="600">Unlimited tokens</Text>
+                    </HStack>
+                    <HStack>
+                      <Box color="green.400">✓</Box>
                       <Text color="whiteAlpha.800" fontSize="sm" fontWeight="600">Unlimited study sets</Text>
                     </HStack>
                     <HStack>
                       <Box color="green.400">✓</Box>
-                      <Text color="whiteAlpha.800" fontSize="sm" fontWeight="600">Unlimited terms</Text>
+                      <Text color="whiteAlpha.800" fontSize="sm" fontWeight="600">Download MP3s</Text>
                     </HStack>
                     <HStack>
                       <Box color="green.400">✓</Box>
@@ -784,11 +796,11 @@ export default function Home() {
                     </HStack>
                     <HStack>
                       <Box color="green.400">✓</Box>
-                      <Text color="whiteAlpha.800" fontSize="sm" fontWeight="600">Premium support</Text>
+                      <Text color="whiteAlpha.800" fontSize="sm" fontWeight="600">Priority generation</Text>
                     </HStack>
                     <HStack>
                       <Box color="green.400">✓</Box>
-                      <Text color="whiteAlpha.800" fontSize="sm" fontWeight="600">Early access to features</Text>
+                      <Text color="whiteAlpha.800" fontSize="sm" fontWeight="600">Advanced analytics</Text>
                     </HStack>
                   </VStack>
                   <Button

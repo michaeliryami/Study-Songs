@@ -7,22 +7,22 @@ import { supabase } from '../lib/supabase'
 // Define what each tier gets
 export const TIER_FEATURES = {
   free: {
-    jinglesPerMonth: 10,
+    tokensPerMonth: 30,
+    maxSetsPerMonth: 1,
     canDownload: false,
     canSaveSets: true,
-    maxSetsPerMonth: 3,
   },
   basic: {
-    jinglesPerMonth: 100,
+    tokensPerMonth: 300,
+    maxSetsPerMonth: 999,
     canDownload: true,
     canSaveSets: true,
-    maxSetsPerMonth: 999,
   },
   premium: {
-    jinglesPerMonth: 999999, // Unlimited
+    tokensPerMonth: 999999, // Unlimited
+    maxSetsPerMonth: 999999,
     canDownload: true,
     canSaveSets: true,
-    maxSetsPerMonth: 999999,
   },
 } as const
 
@@ -31,6 +31,7 @@ export type SubscriptionTier = 'free' | 'basic' | 'premium'
 export function useSubscription() {
   const { user } = useAuth()
   const [tier, setTier] = useState<SubscriptionTier>('free')
+  const [currentTokens, setCurrentTokens] = useState<number>(30)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -69,15 +70,17 @@ export function useSubscription() {
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select('subscription_tier')
+        .select('subscription_tier, current_tokens')
         .eq('id', user.id)
         .single()
 
       if (error) throw error
       setTier((data?.subscription_tier as SubscriptionTier) || 'free')
+      setCurrentTokens(data?.current_tokens || 30)
     } catch (error) {
       console.error('Error loading tier:', error)
       setTier('free')
+      setCurrentTokens(30)
     } finally {
       setLoading(false)
     }
@@ -91,6 +94,7 @@ export function useSubscription() {
   return {
     tier,
     features,
+    currentTokens,
     loading,
     isPremium,
     isBasic,

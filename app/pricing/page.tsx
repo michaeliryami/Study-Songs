@@ -20,11 +20,13 @@ import { CheckCircle, Sparkles } from 'lucide-react'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '../contexts/AuthContext'
+import { useSubscription } from '../hooks/useSubscription'
 
 export default function PricingPage() {
   const [isYearly, setIsYearly] = useState(false)
   const [loading, setLoading] = useState<string | null>(null)
   const { user } = useAuth()
+  const { tier, loading: subscriptionLoading } = useSubscription()
   const router = useRouter()
   const toast = useToast()
 
@@ -69,6 +71,45 @@ export default function PricingPage() {
     }
   }
 
+  const handleManageSubscription = async () => {
+    if (!user) {
+      router.push('/auth')
+      return
+    }
+
+    setLoading('manage')
+
+    try {
+      const response = await fetch('/api/create-portal-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: user.email,
+        }),
+      })
+
+      const { url, error } = await response.json()
+
+      if (error) throw new Error(error)
+
+      if (url) {
+        window.location.href = url
+      }
+    } catch (error) {
+      console.error('Error:', error)
+      toast({
+        title: 'Error',
+        description: 'Failed to open subscription portal',
+        status: 'error',
+        duration: 5000,
+      })
+    } finally {
+      setLoading(null)
+    }
+  }
+
   const plans = [
     {
       name: 'Basic',
@@ -79,10 +120,10 @@ export default function PricingPage() {
       yearlyPriceId: process.env.NEXT_PUBLIC_STRIPE_BASIC_YEARLY_PRICE_ID!,
       description: 'Perfect for students getting started',
       features: [
-        '100 jingles per month',
-        'All music genres',
+        '300 tokens per month',
+        'Unlimited study sets',
         'Download MP3s',
-        'Save study sets',
+        'All music genres',
         'Share jingles',
       ],
     },
@@ -95,10 +136,10 @@ export default function PricingPage() {
       yearlyPriceId: process.env.NEXT_PUBLIC_STRIPE_PREMIUM_YEARLY_PRICE_ID!,
       description: 'For power learners',
       features: [
-        'Unlimited jingles',
-        'All music genres',
+        'Unlimited tokens',
+        'Unlimited study sets',
         'Download MP3s',
-        'Save study sets',
+        'All music genres',
         'Share jingles',
         'Priority generation',
         'Custom genres',
@@ -268,19 +309,33 @@ export default function PricingPage() {
                     borderWidth={plan.popular ? 0 : 2}
                     borderColor="brand.500"
                     leftIcon={<Sparkles size={20} />}
-                    onClick={() =>
-                      handleSubscribe(
-                        isYearly ? plan.yearlyPriceId : plan.monthlyPriceId,
-                        plan.name
-                      )
-                    }
-                    isLoading={loading === plan.name}
+                    onClick={() => {
+                      if (tier === plan.tier) {
+                        // Same tier - go to portal to manage
+                        handleManageSubscription()
+                      } else if (tier === 'free') {
+                        // Free user - subscribe to this plan
+                        handleSubscribe(
+                          isYearly ? plan.yearlyPriceId : plan.monthlyPriceId,
+                          plan.name
+                        )
+                      } else {
+                        // Different tier - go to portal to upgrade/downgrade
+                        handleManageSubscription()
+                      }
+                    }}
+                    isLoading={loading === plan.name || loading === 'manage'}
                     _hover={{
                       transform: 'translateY(-2px)',
                       boxShadow: '0 10px 30px rgba(217, 70, 239, 0.4)',
                     }}
                   >
-                    Get Started
+                    {tier === plan.tier 
+                      ? 'Manage Plan' 
+                      : tier === 'free' 
+                        ? 'Get Started' 
+                        : 'Update Plan'
+                    }
                   </Button>
                 </VStack>
               </Box>

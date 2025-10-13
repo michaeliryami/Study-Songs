@@ -1,15 +1,17 @@
 'use client'
 
 import { Box, Container, Flex, Heading, HStack, Button, Text, Menu, MenuButton, MenuList, MenuItem, Avatar, Badge } from '@chakra-ui/react'
-import { Music, Library, Sparkles, LogOut, User as UserIcon, BarChart3, DollarSign } from 'lucide-react'
+import { Music, Library, Sparkles, LogOut, User as UserIcon, BarChart3, DollarSign, Coins } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useAuth } from '../contexts/AuthContext'
+import { useSubscription } from '../hooks/useSubscription'
 
 export default function Navbar() {
   const pathname = usePathname()
   const router = useRouter()
   const { user, signOut } = useAuth()
+  const { currentTokens, tier, loading: subscriptionLoading } = useSubscription()
   const isCreatePage = pathname === '/create'
   const isMySetsPage = pathname === '/my-sets'
   const isProfilePage = pathname === '/profile'
@@ -226,6 +228,26 @@ export default function Navbar() {
                         {user.email}
                       </Text>
                     </Box>
+                    
+                    {/* Tokens Display */}
+                    {!subscriptionLoading && (
+                      <Box px={3} py={2} borderBottom="1px solid" borderColor="rgba(217, 70, 239, 0.15)" mb={2}>
+                        <HStack spacing={2} align="center">
+                          <Coins size={16} color="#d946ef" />
+                          <Text fontSize="sm" color="white" fontWeight="600">
+                            {currentTokens >= 999999 ? '∞' : currentTokens} tokens
+                          </Text>
+                          <Badge 
+                            colorScheme={tier === 'premium' ? 'purple' : tier === 'basic' ? 'blue' : 'gray'} 
+                            variant="subtle"
+                            fontSize="xs"
+                            textTransform="capitalize"
+                          >
+                            {tier}
+                          </Badge>
+                        </HStack>
+                      </Box>
+                    )}
                     <MenuItem
                       bg="transparent"
                       color="whiteAlpha.800"
