@@ -86,13 +86,13 @@ export default function Navbar() {
           <HStack spacing={{ base: 1, sm: 2, md: 3 }}>
             {user ? (
               <>
-                {/* Mobile Navigation - Show on small screens */}
+                {/* Mobile Navigation - Show on small screens (icons only) */}
                 <HStack spacing={1} display={{ base: 'flex', md: 'none' }}>
                   <Link href="/create">
                     <Button
                       size="sm"
-                      fontWeight="600"
-                      leftIcon={<Sparkles size={16} />}
+                      p={2}
+                      minW="auto"
                       bg={isCreatePage ? 'rgba(217, 70, 239, 0.15)' : 'transparent'}
                       color={isCreatePage ? 'brand.300' : 'whiteAlpha.700'}
                       borderWidth={isCreatePage ? '1px' : '0'}
@@ -104,14 +104,14 @@ export default function Navbar() {
                       }}
                       transition="all 0.2s"
                     >
-                      Create
+                      <Sparkles size={18} />
                     </Button>
                   </Link>
                   <Link href="/my-sets">
                     <Button
                       size="sm"
-                      fontWeight="600"
-                      leftIcon={<Library size={16} />}
+                      p={2}
+                      minW="auto"
                       bg={isMySetsPage ? 'rgba(217, 70, 239, 0.15)' : 'transparent'}
                       color={isMySetsPage ? 'brand.300' : 'whiteAlpha.700'}
                       borderWidth={isMySetsPage ? '1px' : '0'}
@@ -123,7 +123,26 @@ export default function Navbar() {
                       }}
                       transition="all 0.2s"
                     >
-                      My Sets
+                      <Library size={18} />
+                    </Button>
+                  </Link>
+                  <Link href="/pricing">
+                    <Button
+                      size="sm"
+                      p={2}
+                      minW="auto"
+                      bg={pathname === '/pricing' ? 'rgba(217, 70, 239, 0.15)' : 'transparent'}
+                      color={pathname === '/pricing' ? 'brand.300' : 'whiteAlpha.700'}
+                      borderWidth={pathname === '/pricing' ? '1px' : '0'}
+                      borderColor={pathname === '/pricing' ? 'brand.500' : 'transparent'}
+                      _hover={{
+                        bg: 'rgba(217, 70, 239, 0.1)',
+                        color: 'white',
+                        transform: 'translateY(-1px)',
+                      }}
+                      transition="all 0.2s"
+                    >
+                      <DollarSign size={18} />
                     </Button>
                   </Link>
                 </HStack>

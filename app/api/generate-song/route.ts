@@ -252,39 +252,65 @@ ${studyNotes}`,
       }
 
       const output = await replicate.run('minimax/music-1.5', { input: musicInput }) as any
-      const replicateAudioUrl = output.url()
+      console.log('🎵 Replicate output type:', typeof output)
+      console.log('🎵 Replicate output:', output)
+      
+      // Handle different Replicate output formats
+      let replicateAudioUrl: string
+      if (typeof output === 'string') {
+        replicateAudioUrl = output
+      } else if (output?.url && typeof output.url === 'function') {
+        replicateAudioUrl = output.url()
+      } else if (output?.url) {
+        replicateAudioUrl = output.url
+      } else if (Array.isArray(output) && output.length > 0) {
+        replicateAudioUrl = output[0]
+      } else {
+        throw new Error('Unexpected Replicate output format')
+      }
 
-      console.log('Music generated!')
+      console.log('🎵 Music generated! URL:', replicateAudioUrl)
 
       // Upload directly to Supabase Storage (no separate API call needed)
       try {
+        console.log('📥 Starting audio download from Replicate...')
         // Fetch the audio file from Replicate
         const audioResponse = await fetch(replicateAudioUrl)
         if (!audioResponse.ok) {
           throw new Error(`Failed to fetch audio: ${audioResponse.statusText}`)
         }
+        console.log('✅ Audio downloaded from Replicate')
 
         const audioBuffer = await audioResponse.arrayBuffer()
         const audioBlob = new Blob([audioBuffer], { type: 'audio/mpeg' })
+        console.log('📦 Audio blob created, size:', audioBlob.size, 'bytes')
 
         // Create a unique filename
         const timestamp = Date.now()
-        const sanitizedTerm = (studyNotes.split(':')[0] || 'study-term').replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()
+        const sanitizedTerm = (studyNotes || existingLyrics || 'study-term').split(':')[0].replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()
         const fileName = `${timestamp}_${sanitizedTerm}.mp3`
         const filePath = fileName // Upload directly to root of bucket
+        console.log('📝 File path:', filePath)
 
         // Initialize Supabase client with service role key
         const { createClient } = await import('@supabase/supabase-js')
         const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
         const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
         
+        console.log('🔑 Checking Supabase credentials...')
+        console.log('  - URL exists:', !!supabaseUrl)
+        console.log('  - Service key exists:', !!supabaseServiceKey)
+        console.log('  - Service key length:', supabaseServiceKey?.length || 0)
+        
         if (!supabaseUrl || !supabaseServiceKey) {
           throw new Error('Missing Supabase environment variables')
         }
 
         const supabase = createClient(supabaseUrl, supabaseServiceKey)
+        console.log('✅ Supabase client created')
 
         // Upload to Supabase Storage
+        console.log('☁️ Uploading to Supabase Storage bucket: audio-files')
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from('audio-files')
           .upload(filePath, audioBlob, {
@@ -293,8 +319,10 @@ ${studyNotes}`,
           })
 
         if (uploadError) {
+          console.error('❌ Upload error:', uploadError)
           throw new Error(`Upload failed: ${uploadError.message}`)
         }
+        console.log('✅ Upload successful:', uploadData)
 
         // Get the public URL for the uploaded file
         const { data: urlData } = supabase.storage
@@ -305,14 +333,14 @@ ${studyNotes}`,
           throw new Error('Failed to get public URL for uploaded file')
         }
 
-        console.log('Audio uploaded to Supabase:', urlData.publicUrl)
+        console.log('🎉 Audio uploaded to Supabase:', urlData.publicUrl)
         
         return NextResponse.json({ 
           lyrics, 
           audioUrl: urlData.publicUrl
         })
       } catch (uploadError) {
-        console.error('Error uploading to Supabase:', uploadError)
+        console.error('❌ Error uploading to Supabase:', uploadError)
         throw new Error(`Supabase upload failed: ${uploadError instanceof Error ? uploadError.message : 'Unknown error'}`)
       }
     } catch (musicError) {
