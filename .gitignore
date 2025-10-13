@@ -35,4 +35,4 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-STRIPE-SETUP-INSTRUCTIONS.MD
+STRIPE-SETUP-INSTRUCTIONS.md
