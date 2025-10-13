@@ -11,23 +11,65 @@ export async function POST(request: NextRequest) {
     // Deduct token if userId is provided and we're generating new lyrics (not just audio)
     if (userId && !existingLyrics) {
       console.log('🪙 Deducting token for user:', userId)
-      const tokenResponse = await fetch(`${request.nextUrl.origin}/api/deduct-token`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId }),
-      })
-
-      const tokenData = await tokenResponse.json()
-
-      if (!tokenResponse.ok) {
-        console.error('❌ Token deduction failed:', tokenData.error)
+      
+      // Create Supabase client for token deduction
+      const { createClient } = await import('@supabase/supabase-js')
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+      const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+      
+      if (!supabaseUrl || !supabaseServiceKey) {
         return NextResponse.json(
-          { error: tokenData.error || 'Insufficient tokens' },
-          { status: 403 }
+          { error: 'Missing Supabase configuration' },
+          { status: 500 }
         )
       }
 
-      console.log('✅ Token deducted. Remaining:', tokenData.tokensRemaining)
+      const supabase = createClient(supabaseUrl, supabaseServiceKey)
+
+      // Get current user profile
+      const { data: profile, error: fetchError } = await supabase
+        .from('profiles')
+        .select('current_tokens, subscription_tier')
+        .eq('id', userId)
+        .single()
+
+      if (fetchError || !profile) {
+        console.error('Error fetching profile:', fetchError)
+        return NextResponse.json(
+          { error: 'Failed to fetch user profile' },
+          { status: 500 }
+        )
+      }
+
+      // Check if user has tokens (premium users have unlimited)
+      if (profile.subscription_tier !== 'premium') {
+        if (profile.current_tokens <= 0) {
+          return NextResponse.json(
+            { error: 'Insufficient tokens. Please upgrade your plan.' },
+            { status: 403 }
+          )
+        }
+
+        // Deduct 1 token
+        const { error: updateError } = await supabase
+          .from('profiles')
+          .update({ 
+            current_tokens: profile.current_tokens - 1 
+          })
+          .eq('id', userId)
+
+        if (updateError) {
+          console.error('Error updating tokens:', updateError)
+          return NextResponse.json(
+            { error: 'Failed to deduct token' },
+            { status: 500 }
+          )
+        }
+
+        console.log('✅ Token deducted. Remaining:', profile.current_tokens - 1)
+      } else {
+        console.log('✅ Premium user - unlimited tokens')
+      }
     }
 
     // Map user-selected genre to music style with detailed production specs

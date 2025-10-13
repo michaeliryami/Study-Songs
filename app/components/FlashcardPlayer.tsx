@@ -31,6 +31,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '../lib/supabase'
 import { useSubscription } from '../hooks/useSubscription'
+import { useAuth } from '../contexts/AuthContext'
 
 interface Jingle {
   term: string
@@ -68,6 +69,7 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
   const [touchStart, setTouchStart] = useState(0)
   const [touchEnd, setTouchEnd] = useState(0)
   const { features } = useSubscription()
+  const { user } = useAuth()
 
   const currentJingle = studySet.jingles[currentIndex]
 
@@ -240,7 +242,8 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           studyNotes: editedNotes,
-          genre: editedGenre 
+          genre: editedGenre,
+          userId: user?.id, // Pass userId for token deduction
         }),
       })
 
@@ -369,6 +372,7 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
           body: JSON.stringify({
             studyNotes,
             genre: 'random',
+            userId: user?.id, // Pass userId for token deduction
           }),
         })
 
