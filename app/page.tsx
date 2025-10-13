@@ -269,6 +269,9 @@ export default function Home() {
                 transition="all 0.3s"
                 position="relative"
                 overflow="hidden"
+                h="400px"
+                display="flex"
+                flexDirection="column"
                 _hover={{
                   transform: "translateY(-8px)",
                   boxShadow: "0 30px 60px rgba(217, 70, 239, 0.4)",
@@ -301,7 +304,7 @@ export default function Home() {
                 <Heading size="lg" color="white" mb={4}>
                   10x Better Retention
                 </Heading>
-                <Text color="whiteAlpha.700" fontSize="md" lineHeight="tall">
+                <Text color="whiteAlpha.700" fontSize="md" lineHeight="tall" flex="1">
                   Music activates multiple brain regions simultaneously, creating stronger neural pathways and dramatically improving long-term memory retention.
                 </Text>
                 <HStack mt={6} spacing={2}>
@@ -319,6 +322,9 @@ export default function Home() {
                 transition="all 0.3s"
                 position="relative"
                 overflow="hidden"
+                h="400px"
+                display="flex"
+                flexDirection="column"
                 _hover={{
                   transform: "translateY(-8px)",
                   boxShadow: "0 30px 60px rgba(217, 70, 239, 0.4)",
@@ -351,7 +357,7 @@ export default function Home() {
                 <Heading size="lg" color="white" mb={4}>
                   Lightning Fast
                 </Heading>
-                <Text color="whiteAlpha.700" fontSize="md" lineHeight="tall">
+                <Text color="whiteAlpha.700" fontSize="md" lineHeight="tall" flex="1">
                   Generate professional-quality study jingles in under 30 seconds. Stop wasting hours on flashcards and start studying smarter.
                 </Text>
                 <HStack mt={6} spacing={2}>
@@ -369,6 +375,9 @@ export default function Home() {
                 transition="all 0.3s"
                 position="relative"
                 overflow="hidden"
+                h="400px"
+                display="flex"
+                flexDirection="column"
                 _hover={{
                   transform: "translateY(-8px)",
                   boxShadow: "0 30px 60px rgba(217, 70, 239, 0.4)",
@@ -401,7 +410,7 @@ export default function Home() {
                 <Heading size="lg" color="white" mb={4}>
                   Actually Enjoyable
                 </Heading>
-                <Text color="whiteAlpha.700" fontSize="md" lineHeight="tall">
+                <Text color="whiteAlpha.700" fontSize="md" lineHeight="tall" flex="1">
                   Choose from Pop, R&B, Hip-Hop, and more. Turn tedious memorization into an experience you&apos;ll actually look forward to.
                 </Text>
                 <HStack mt={6} spacing={2}>
