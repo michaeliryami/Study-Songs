@@ -21,11 +21,12 @@ import {
   AlertDialogOverlay,
   useDisclosure,
 } from '@chakra-ui/react'
-import { Music, ChevronLeft, ChevronRight, Save, Trash2, Plus, Folder, Calendar, Play, BookOpen, AlertCircle, RefreshCw, Pencil } from 'lucide-react'
+import { Music, ChevronLeft, ChevronRight, Save, Trash2, Plus, Folder, Calendar, Play, BookOpen, AlertCircle, RefreshCw, Pencil, Download } from 'lucide-react'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
+import { useSubscription } from '../hooks/useSubscription'
 import ShareButton from '../components/ShareButton'
 
 interface Jingle {
@@ -61,11 +62,13 @@ export default function MySetsPage() {
   const [editGenre, setEditGenre] = useState('random')
   const [showInlineEditor, setShowInlineEditor] = useState(false)
   const [setToDelete, setSetToDelete] = useState<{ id: number; subject: string } | null>(null)
+  const [stitchingAudio, setStitchingAudio] = useState<number | null>(null)
   const [termToRemove, setTermToRemove] = useState<{ index: number; term: string } | null>(null)
   const { isOpen: isDeleteSetOpen, onOpen: onDeleteSetOpen, onClose: onDeleteSetClose } = useDisclosure()
   const { isOpen: isRemoveTermOpen, onOpen: onRemoveTermOpen, onClose: onRemoveTermClose } = useDisclosure()
   const cancelRef = useRef<HTMLButtonElement>(null)
   const cancelTermRef = useRef<HTMLButtonElement>(null)
+  const { tier } = useSubscription()
   const toast = useToast()
   const router = useRouter()
   const { user, loading: authLoading } = useAuth()
@@ -554,6 +557,59 @@ export default function MySetsPage() {
     await regenerateJingle(index, notesToUse, newGenre)
   }
 
+  const handleStitchAudio = async (setId: number) => {
+    if (tier !== 'premium') {
+      toast({
+        title: 'Premium Feature',
+        description: 'Audio stitching is only available for Premium users. Upgrade to unlock this feature.',
+        status: 'warning',
+        duration: 5000,
+      })
+      router.push('/pricing')
+      return
+    }
+
+    setStitchingAudio(setId)
+
+    try {
+      const response = await fetch('/api/stitch-audio', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          setId,
+          userId: user?.id,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to stitch audio')
+      }
+
+      toast({
+        title: 'Audio Stitched!',
+        description: `Successfully combined ${data.jinglesCount} jingles into one MP3`,
+        status: 'success',
+        duration: 5000,
+      })
+
+      // Reload the sets to get the updated stitched audio URL
+      loadSavedSets()
+
+    } catch (error) {
+      console.error('Error stitching audio:', error)
+      toast({
+        title: 'Stitching Failed',
+        description: error instanceof Error ? error.message : 'Failed to stitch audio files',
+        status: 'error',
+        duration: 5000,
+      })
+    } finally {
+      setStitchingAudio(null)
+    }
+  }
+
   const changeGenre = async (index: number, newGenre: string) => {
     await promptForNotesAndRegenerate(index, newGenre)
   }
@@ -746,6 +802,25 @@ export default function MySetsPage() {
                       >
                         Study Now
                       </Button>
+                      {tier === 'premium' && (
+                        <IconButton
+                          aria-label="Stitch Audio"
+                          icon={<Download size={16} />}
+                          h={{ base: "40px", sm: "44px" }}
+                          w={{ base: "40px", sm: "44px" }}
+                          bg="rgba(217, 70, 239, 0.1)"
+                          color="brand.400"
+                          borderWidth={1}
+                          borderColor="rgba(217, 70, 239, 0.3)"
+                          isLoading={stitchingAudio === set.id}
+                          onClick={() => handleStitchAudio(set.id)}
+                          _hover={{
+                            bg: "rgba(217, 70, 239, 0.2)",
+                            borderColor: "brand.500"
+                          }}
+                          title="Stitch all jingles into one MP3"
+                        />
+                      )}
                       <IconButton
                         aria-label="Delete"
                         icon={<Trash2 size={16} />}

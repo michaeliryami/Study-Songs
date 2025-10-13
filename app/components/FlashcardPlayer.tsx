@@ -44,6 +44,8 @@ interface StudySet {
   created_at: string
   subject: string
   jingles: Jingle[]
+  stitchedAudioUrl?: string
+  stitchedAt?: string
 }
 
 interface FlashcardPlayerProps {
@@ -68,8 +70,11 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
   const router = useRouter()
   const [touchStart, setTouchStart] = useState(0)
   const [touchEnd, setTouchEnd] = useState(0)
-  const { features } = useSubscription()
+  const { features, tier } = useSubscription()
   const { user } = useAuth()
+  const [stitchingAudio, setStitchingAudio] = useState(false)
+  const [playingStitched, setPlayingStitched] = useState(false)
+  const stitchedAudioRef = useRef<HTMLAudioElement | null>(null)
 
   const currentJingle = studySet.jingles[currentIndex]
 
@@ -506,9 +511,130 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
     }
   }
 
+  const handleStitchAudio = async () => {
+    if (tier !== 'premium') {
+      toast({
+        title: 'Premium Feature',
+        description: 'Audio stitching is only available for Premium users. Upgrade to unlock this feature.',
+        status: 'warning',
+        duration: 5000,
+      })
+      router.push('/pricing')
+      return
+    }
+
+    setStitchingAudio(true)
+
+    try {
+      const response = await fetch('/api/stitch-audio', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          setId: studySet.id,
+          userId: user?.id,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to stitch audio')
+      }
+
+      // Update the study set with the stitched audio URL
+      setStudySet({
+        ...studySet,
+        stitchedAudioUrl: data.stitchedAudioUrl,
+        stitchedAt: new Date().toISOString()
+      })
+
+      toast({
+        title: 'Audio Stitched!',
+        description: `Successfully combined ${data.jinglesCount} jingles into one MP3`,
+        status: 'success',
+        duration: 5000,
+      })
+
+    } catch (error) {
+      console.error('Error stitching audio:', error)
+      toast({
+        title: 'Stitching Failed',
+        description: error instanceof Error ? error.message : 'Failed to stitch audio files',
+        status: 'error',
+        duration: 5000,
+      })
+    } finally {
+      setStitchingAudio(false)
+    }
+  }
+
+  const toggleStitchedPlayback = () => {
+    if (!stitchedAudioRef.current) return
+
+    if (playingStitched) {
+      stitchedAudioRef.current.pause()
+      setPlayingStitched(false)
+    } else {
+      // Pause individual jingle if playing
+      if (audioRef.current) {
+        audioRef.current.pause()
+        setIsPlaying(false)
+      }
+      stitchedAudioRef.current.play()
+      setPlayingStitched(true)
+    }
+  }
+
+  const handleDownloadStitched = async () => {
+    if (!studySet.stitchedAudioUrl) {
+      toast({
+        title: 'No stitched audio',
+        description: 'Please stitch the audio first',
+        status: 'warning',
+        duration: 3000,
+      })
+      return
+    }
+
+    try {
+      const response = await fetch(studySet.stitchedAudioUrl)
+      if (!response.ok) throw new Error('Failed to fetch audio')
+
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `${studySet.subject.replace(/[^a-zA-Z0-9]/g, '_')}_complete.mp3`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url)
+
+      toast({
+        title: 'Download started',
+        description: 'Complete study set audio is downloading',
+        status: 'success',
+        duration: 2000,
+      })
+    } catch (error) {
+      console.error('Download error:', error)
+      toast({
+        title: 'Download failed',
+        description: 'Could not download the stitched audio file',
+        status: 'error',
+        duration: 3000,
+      })
+    }
+  }
+
   return (
     <VStack spacing={4} align="stretch" w="100%">
       <audio ref={audioRef} />
+      <audio 
+        ref={stitchedAudioRef} 
+        src={studySet.stitchedAudioUrl}
+        onEnded={() => setPlayingStitched(false)}
+      />
 
       {/* Audio Generation Progress Bar */}
       {generatingAudio && (
@@ -930,6 +1056,83 @@ Format: Term — Definition (one per line)"
           </Button>
         )}
       </HStack>
+
+      {/* Stitched Audio Controls (Premium Only) */}
+      {tier === 'premium' && (
+        <Box
+          bg="rgba(217, 70, 239, 0.05)"
+          borderWidth={1}
+          borderColor="brand.500"
+          borderRadius="xl"
+          p={4}
+        >
+          <VStack spacing={3}>
+            <HStack justify="space-between" w="full">
+              <Text fontSize="sm" fontWeight="600" color="brand.300">
+                🎵 Complete Study Set Audio
+              </Text>
+              {studySet.stitchedAudioUrl && (
+                <Text fontSize="xs" color="whiteAlpha.500">
+                  {studySet.jingles.length} jingles combined
+                </Text>
+              )}
+            </HStack>
+            
+            {studySet.stitchedAudioUrl ? (
+              <HStack spacing={2} w="full">
+                <Button
+                  flex={1}
+                  leftIcon={playingStitched ? <Pause size={16} /> : <Play size={16} />}
+                  onClick={toggleStitchedPlayback}
+                  bgGradient="linear(135deg, brand.500 0%, accent.500 100%)"
+                  color="white"
+                  size="sm"
+                  _hover={{
+                    bgGradient: 'linear(135deg, brand.600 0%, accent.600 100%)',
+                  }}
+                >
+                  {playingStitched ? 'Pause All' : 'Play All'}
+                </Button>
+                <Button
+                  leftIcon={<Download size={16} />}
+                  onClick={handleDownloadStitched}
+                  bg="rgba(217, 70, 239, 0.1)"
+                  color="brand.300"
+                  borderWidth={1}
+                  borderColor="brand.500"
+                  size="sm"
+                  _hover={{
+                    bg: 'rgba(217, 70, 239, 0.2)',
+                  }}
+                >
+                  Download
+                </Button>
+              </HStack>
+            ) : (
+              <Button
+                w="full"
+                leftIcon={<Download size={16} />}
+                onClick={handleStitchAudio}
+                isLoading={stitchingAudio}
+                loadingText="Stitching..."
+                bg="rgba(217, 70, 239, 0.1)"
+                color="brand.300"
+                borderWidth={1}
+                borderColor="brand.500"
+                size="sm"
+                _hover={{
+                  bg: 'rgba(217, 70, 239, 0.2)',
+                }}
+              >
+                Stitch All Jingles
+              </Button>
+            )}
+            <Text fontSize="xs" color="whiteAlpha.500" textAlign="center">
+              Premium feature: Combine all jingles into one continuous MP3
+            </Text>
+          </VStack>
+        </Box>
+      )}
 
       {/* Swipe Hint */}
       <Text color="whiteAlpha.500" fontSize="sm" textAlign="center" fontWeight="500">
