@@ -271,7 +271,7 @@ ${studyNotes}`,
         const timestamp = Date.now()
         const sanitizedTerm = (studyNotes.split(':')[0] || 'study-term').replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()
         const fileName = `${timestamp}_${sanitizedTerm}.mp3`
-        const filePath = `anonymous/${fileName}`
+        const filePath = fileName // Upload directly to root of bucket
 
         // Initialize Supabase client with service role key
         const { createClient } = await import('@supabase/supabase-js')
