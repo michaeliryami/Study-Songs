@@ -120,13 +120,11 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
 async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
   const customerId = invoice.customer as string
   
-  // subscription can be string | Subscription | DeletedSubscription | null
-  let subscriptionId: string | undefined
-  if (typeof invoice.subscription === 'string') {
-    subscriptionId = invoice.subscription
-  } else if (invoice.subscription && 'id' in invoice.subscription) {
-    subscriptionId = invoice.subscription.id
-  }
+  // Type assertion needed because subscription property exists at runtime but TypeScript types may be outdated
+  const invoiceWithSub = invoice as Stripe.Invoice & { subscription?: string | Stripe.Subscription | null }
+  const subscriptionId = typeof invoiceWithSub.subscription === 'string' 
+    ? invoiceWithSub.subscription 
+    : invoiceWithSub.subscription?.id
 
   if (!subscriptionId) return
 
