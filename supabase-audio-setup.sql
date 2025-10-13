@@ -1,6 +1,12 @@
 -- Supabase Audio Storage Setup Script
 -- Run this in your Supabase SQL Editor
 
+-- IMPORTANT: You also need to add your Service Role Key to .env.local
+-- 1. Go to your Supabase project dashboard
+-- 2. Navigate to Settings → API
+-- 3. Copy the "service_role" key (not the anon key)
+-- 4. Add to .env.local: SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
+
 -- 1. Create the audio files bucket
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 VALUES (

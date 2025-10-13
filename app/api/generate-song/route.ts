@@ -256,30 +256,69 @@ ${studyNotes}`,
 
       console.log('Music generated!')
 
-      // Upload to Supabase Storage
-      const uploadResponse = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/upload-audio`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          audioUrl: replicateAudioUrl,
-          userId: 'anonymous', // We'll need to get this from auth context in the future
-          term: studyNotes.split(':')[0] || 'study-term', // Extract term from study notes
-        }),
-      })
+      // Upload directly to Supabase Storage (no separate API call needed)
+      try {
+        // Fetch the audio file from Replicate
+        const audioResponse = await fetch(replicateAudioUrl)
+        if (!audioResponse.ok) {
+          throw new Error(`Failed to fetch audio: ${audioResponse.statusText}`)
+        }
 
-      if (!uploadResponse.ok) {
-        throw new Error('Failed to upload audio to Supabase')
+        const audioBuffer = await audioResponse.arrayBuffer()
+        const audioBlob = new Blob([audioBuffer], { type: 'audio/mpeg' })
+
+        // Create a unique filename
+        const timestamp = Date.now()
+        const sanitizedTerm = (studyNotes.split(':')[0] || 'study-term').replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()
+        const fileName = `${timestamp}_${sanitizedTerm}.mp3`
+        const filePath = `anonymous/${fileName}`
+
+        // Initialize Supabase client with service role key
+        const { createClient } = await import('@supabase/supabase-js')
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+        const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+        
+        if (!supabaseUrl || !supabaseServiceKey) {
+          throw new Error('Missing Supabase environment variables')
+        }
+
+        const supabase = createClient(supabaseUrl, supabaseServiceKey)
+
+        // Upload to Supabase Storage
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('audio-files')
+          .upload(filePath, audioBlob, {
+            contentType: 'audio/mpeg',
+            upsert: false,
+          })
+
+        if (uploadError) {
+          throw new Error(`Upload failed: ${uploadError.message}`)
+        }
+
+        // Get the public URL for the uploaded file
+        const { data: urlData } = supabase.storage
+          .from('audio-files')
+          .getPublicUrl(filePath)
+
+        if (!urlData?.publicUrl) {
+          throw new Error('Failed to get public URL for uploaded file')
+        }
+
+        console.log('Audio uploaded to Supabase:', urlData.publicUrl)
+        
+        return NextResponse.json({ 
+          lyrics, 
+          audioUrl: urlData.publicUrl
+        })
+      } catch (uploadError) {
+        console.error('Error uploading to Supabase:', uploadError)
+        // Fallback to Replicate URL if Supabase upload fails
+        return NextResponse.json({ 
+          lyrics, 
+          audioUrl: replicateAudioUrl
+        })
       }
-
-      const uploadData = await uploadResponse.json()
-      console.log('Audio uploaded to Supabase:', uploadData.supabaseAudioUrl)
-      
-      return NextResponse.json({ 
-        lyrics, 
-        audioUrl: uploadData.supabaseAudioUrl
-      })
     } catch (musicError) {
       console.error('Error generating music:', musicError)
       return NextResponse.json({
