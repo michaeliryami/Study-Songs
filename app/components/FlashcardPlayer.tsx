@@ -247,6 +247,80 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
     setEditedNotes('')
   }
 
+  const quickRegenerate = async () => {
+    if (!currentJingle) return
+
+    setRegenerating(true)
+    try {
+      // Use existing notes and genre from the current jingle
+      const notes = (currentJingle as any).notes || `${currentJingle.term} — `
+      const genre = (currentJingle as any).genre || 'random'
+
+      const response = await fetch('/api/generate-song', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          studyNotes: notes,
+          genre: genre,
+          userId: user?.id, // Pass userId for token deduction
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        if (response.status === 403) {
+          toast({
+            title: 'Insufficient tokens',
+            description: 'You need more tokens to regenerate this jingle',
+            status: 'error',
+            duration: 5000,
+          })
+          return
+        }
+        throw new Error(data.error || 'Failed to regenerate')
+      }
+
+      // Update the current jingle with new data
+      const updatedJingles = [...studySet.jingles]
+      updatedJingles[currentIndex] = {
+        ...currentJingle,
+        lyrics: data.lyrics || '',
+        audioUrl: data.audioUrl || null,
+        notes: notes,
+        genre: genre,
+      } as any
+
+      if (supabase) {
+        const { error } = await supabase
+          .from('sets')
+          .update({ jingles: updatedJingles })
+          .eq('id', studySet.id)
+
+        if (error) throw error
+      }
+
+      setStudySet({ ...studySet, jingles: updatedJingles })
+
+      toast({
+        title: 'Jingle regenerated!',
+        description: 'Your jingle has been updated with new content',
+        status: 'success',
+        duration: 3000,
+      })
+    } catch (error) {
+      console.error('Regeneration error:', error)
+      toast({
+        title: 'Regeneration failed',
+        description: error instanceof Error ? error.message : 'Something went wrong',
+        status: 'error',
+        duration: 5000,
+      })
+    } finally {
+      setRegenerating(false)
+    }
+  }
+
   const regenerateJingle = async () => {
     if (!editedNotes.trim()) {
       toast({
@@ -1007,6 +1081,19 @@ Format: Term — Definition (one per line)"
         ) : (
           <VStack spacing={5} w="100%">
             <HStack position="absolute" top={4} right={4}>
+              <IconButton
+                aria-label="Regenerate"
+                icon={<RefreshCw size={18} />}
+                onClick={quickRegenerate}
+                isLoading={regenerating}
+                size="sm"
+                bg="rgba(34, 197, 94, 0.1)"
+                color="green.400"
+                borderColor="rgba(34, 197, 94, 0.3)"
+                borderWidth={1}
+                _hover={{ bg: 'rgba(34, 197, 94, 0.2)', borderColor: 'green.500' }}
+                borderRadius="lg"
+              />
               <IconButton
                 aria-label="Edit"
                 icon={<Edit3 size={18} />}
