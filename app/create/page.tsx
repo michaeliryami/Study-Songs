@@ -34,6 +34,7 @@ export default function CreatePage() {
   
   const [subject, setSubject] = useState('')
   const [genre, setGenre] = useState('random')
+  const [customGenre, setCustomGenre] = useState('')
   const [notes, setNotes] = useState('')
   const [generating, setGenerating] = useState(false)
   const [progress, setProgress] = useState(0)
@@ -65,6 +66,17 @@ export default function CreatePage() {
       toast({
         title: 'Missing notes',
         description: 'Please enter your study notes',
+        status: 'error',
+        duration: 3000,
+      })
+      return
+    }
+
+    // Validate custom genre for premium users
+    if (genre === 'custom' && (!customGenre.trim() || customGenre.trim().length < 10)) {
+      toast({
+        title: 'Invalid custom genre',
+        description: 'Please enter at least 10 characters for your custom music style',
         status: 'error',
         duration: 3000,
       })
@@ -154,13 +166,16 @@ export default function CreatePage() {
         setCurrentTermNum(i + 1)
         setCurrentTermName(term)
         
+        // Determine the genre to use (custom genre for premium users)
+        const selectedGenre = genre === 'custom' && customGenre.trim() ? customGenre.trim() : genre
+
         // Generate ONLY lyrics first (skip audio for speed)
         const songResponse = await fetch('/api/generate-song', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             studyNotes: definition,
-            genre,
+            genre: selectedGenre,
             skipAudio: true, // Skip audio generation initially
             userId: user.id, // Pass userId for token deduction
           }),
@@ -173,7 +188,7 @@ export default function CreatePage() {
             lyrics: data.lyrics || '',
             audioUrl: null, // No audio yet - will generate in background
             notes: definition,
-            genre,
+            genre: selectedGenre,
           })
         } else if (songResponse.status === 403) {
           // Insufficient tokens
@@ -342,7 +357,12 @@ export default function CreatePage() {
                   <FormControl>
                     <Select
                       value={genre}
-                      onChange={(e) => setGenre(e.target.value)}
+                      onChange={(e) => {
+                        setGenre(e.target.value)
+                        if (e.target.value !== 'custom') {
+                          setCustomGenre('')
+                        }
+                      }}
                       bg="rgba(42, 42, 64, 0.6)"
                       borderColor="rgba(217, 70, 239, 0.2)"
                       color="white"
@@ -362,8 +382,35 @@ export default function CreatePage() {
                       <option value="electronic" style={{ backgroundColor: '#2a2a40', color: 'white' }}>🎛️ Electronic</option>
                       <option value="reggae" style={{ backgroundColor: '#2a2a40', color: 'white' }}>🌴 Reggae</option>
                       <option value="blues" style={{ backgroundColor: '#2a2a40', color: 'white' }}>🎸 Blues</option>
+                      {tier === 'premium' && (
+                        <option value="custom" style={{ backgroundColor: '#2a2a40', color: 'white' }}>✨ Other custom</option>
+                      )}
                     </Select>
                   </FormControl>
+
+                  {/* Custom genre input for premium users */}
+                  {tier === 'premium' && genre === 'custom' && (
+                    <FormControl>
+                      <Input
+                        placeholder="Describe your custom music style (min 10 characters)..."
+                        value={customGenre}
+                        onChange={(e) => setCustomGenre(e.target.value)}
+                        bg="rgba(42, 42, 64, 0.6)"
+                        borderColor="rgba(217, 70, 239, 0.2)"
+                        color="white"
+                        _hover={{ borderColor: 'brand.500' }}
+                        _focus={{ borderColor: 'brand.500', boxShadow: '0 0 0 1px #d946ef' }}
+                        h="48px"
+                        fontSize="16px"
+                        borderRadius="xl"
+                      />
+                      {customGenre.length > 0 && customGenre.length < 10 && (
+                        <Text fontSize="xs" color="red.400" mt={1}>
+                          Minimum 10 characters required
+                        </Text>
+                      )}
+                    </FormControl>
+                  )}
                 </VStack>
               </CardBody>
             </Card>
