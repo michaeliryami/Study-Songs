@@ -1,6 +1,6 @@
 'use client'
 
-import { Box, Container, Flex, Heading, HStack, Button, Text, Menu, MenuButton, MenuList, MenuItem, Avatar, Badge } from '@chakra-ui/react'
+import { Box, Container, Flex, Heading, HStack, Button, Text, Menu, MenuButton, MenuList, MenuItem, Avatar, Badge, Image } from '@chakra-ui/react'
 import { Music, Library, Sparkles, LogOut, User as UserIcon, BarChart3, DollarSign, Coins } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
@@ -43,29 +43,17 @@ export default function Navbar() {
               transition="all 0.2s"
               _hover={{ transform: 'translateY(-1px)' }}
             >
-              <Box
+              <Image
+                src="/logo.png"
+                alt="Noomo AI Logo"
                 w={{ base: "36px", sm: "44px" }}
                 h={{ base: "36px", sm: "44px" }}
-                bgGradient="linear(135deg, brand.500 0%, accent.500 100%)"
                 borderRadius="xl"
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
                 boxShadow="0 8px 25px rgba(217, 70, 239, 0.4)"
-                position="relative"
-                _before={{
-                  content: '""',
-                  position: 'absolute',
-                  inset: '-2px',
-                  bgGradient: 'linear(135deg, brand.400 0%, accent.400 100%)',
-                  borderRadius: 'xl',
-                  opacity: 0.3,
-                  filter: 'blur(8px)',
-                  zIndex: -1,
-                }}
-              >
-                <Music size={24} color="#ffffff" strokeWidth={2.5} />
-              </Box>
+                objectFit="contain"
+                transition="all 0.2s"
+                _hover={{ transform: 'scale(1.05)' }}
+              />
               <Box display={{ base: 'none', sm: 'block' }}>
                 <Heading 
                   size={{ base: "md", sm: "lg" }} 
