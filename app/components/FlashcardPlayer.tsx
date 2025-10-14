@@ -913,13 +913,16 @@ Format: Term — Definition (one per line)"
                 _focus={{ borderColor: 'brand.500', boxShadow: '0 0 0 1px #d946ef' }}
                 borderRadius="xl"
               >
-                <option value="random" style={{ background: '#1a1a2e' }}>Random</option>
-                <option value="pop" style={{ background: '#1a1a2e' }}>Pop</option>
-                <option value="rnb" style={{ background: '#1a1a2e' }}>R&B</option>
-                <option value="hiphop" style={{ background: '#1a1a2e' }}>Hip-Hop</option>
-                <option value="rock" style={{ background: '#1a1a2e' }}>Rock</option>
-                <option value="country" style={{ background: '#1a1a2e' }}>Country</option>
-                <option value="electronic" style={{ background: '#1a1a2e' }}>Electronic</option>
+                <option value="random" style={{ background: '#1a1a2e' }}>🎲 Random</option>
+                <option value="pop" style={{ background: '#1a1a2e' }}>🎵 Pop</option>
+                <option value="rock" style={{ background: '#1a1a2e' }}>🎸 Rock</option>
+                <option value="hip-hop" style={{ background: '#1a1a2e' }}>🎤 Hip-Hop</option>
+                <option value="country" style={{ background: '#1a1a2e' }}>🤠 Country</option>
+                <option value="jazz" style={{ background: '#1a1a2e' }}>🎷 Jazz</option>
+                <option value="classical" style={{ background: '#1a1a2e' }}>🎼 Classical</option>
+                <option value="electronic" style={{ background: '#1a1a2e' }}>🎛️ Electronic</option>
+                <option value="reggae" style={{ background: '#1a1a2e' }}>🌴 Reggae</option>
+                <option value="blues" style={{ background: '#1a1a2e' }}>🎸 Blues</option>
               </Select>
             </Box>
 

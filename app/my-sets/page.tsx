@@ -20,8 +20,9 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
   useDisclosure,
+  Input,
 } from '@chakra-ui/react'
-import { Music, ChevronLeft, ChevronRight, Save, Trash2, Plus, Folder, Calendar, Play, BookOpen, AlertCircle, RefreshCw, Pencil, Download } from 'lucide-react'
+import { Music, ChevronLeft, ChevronRight, Save, Trash2, Plus, Folder, Calendar, Play, BookOpen, AlertCircle, RefreshCw, Pencil, Download, Edit3, Check, X } from 'lucide-react'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '../lib/supabase'
@@ -65,6 +66,8 @@ export default function MySetsPage() {
   const [setToDelete, setSetToDelete] = useState<{ id: number; subject: string } | null>(null)
   const [stitchingAudio, setStitchingAudio] = useState<number | null>(null)
   const [termToRemove, setTermToRemove] = useState<{ index: number; term: string } | null>(null)
+  const [editingSetTitle, setEditingSetTitle] = useState<number | null>(null)
+  const [editedSetTitle, setEditedSetTitle] = useState('')
   const { isOpen: isDeleteSetOpen, onOpen: onDeleteSetOpen, onClose: onDeleteSetClose } = useDisclosure()
   const { isOpen: isRemoveTermOpen, onOpen: onRemoveTermOpen, onClose: onRemoveTermClose } = useDisclosure()
   const cancelRef = useRef<HTMLButtonElement>(null)
@@ -615,6 +618,72 @@ export default function MySetsPage() {
     await promptForNotesAndRegenerate(index, newGenre)
   }
 
+  const startEditingSetTitle = (setId: number, currentTitle: string) => {
+    setEditingSetTitle(setId)
+    setEditedSetTitle(currentTitle)
+  }
+
+  const cancelEditingSetTitle = () => {
+    setEditingSetTitle(null)
+    setEditedSetTitle('')
+  }
+
+  const saveSetTitle = async (setId: number) => {
+    if (!editedSetTitle.trim()) {
+      toast({
+        title: 'Title required',
+        description: 'Please enter a title for your study set',
+        status: 'warning',
+        duration: 3000,
+      })
+      return
+    }
+
+    if (!supabase) {
+      toast({
+        title: 'Error',
+        description: 'Database not configured',
+        status: 'error',
+        duration: 3000,
+      })
+      return
+    }
+
+    try {
+      const { error } = await supabase
+        .from('sets')
+        .update({ subject: editedSetTitle.trim() })
+        .eq('id', setId)
+
+      if (error) {
+        throw error
+      }
+
+      // Update the local state
+      setSavedSets(prev => prev.map(set => 
+        set.id === setId ? { ...set, subject: editedSetTitle.trim() } : set
+      ))
+
+      toast({
+        title: 'Title updated',
+        description: 'Study set title has been updated',
+        status: 'success',
+        duration: 3000,
+      })
+
+      setEditingSetTitle(null)
+      setEditedSetTitle('')
+    } catch (error) {
+      console.error('Error updating set title:', error)
+      toast({
+        title: 'Update failed',
+        description: error instanceof Error ? error.message : 'Failed to update title',
+        status: 'error',
+        duration: 5000,
+      })
+    }
+  }
+
   const goToPrevious = () => {
     setCurrentIndex(prev => {
       const next = prev > 0 ? prev - 1 : prev
@@ -727,9 +796,62 @@ export default function MySetsPage() {
                     }}
                   >
                     <VStack align="start" spacing={3} mb={4}>
-                      <Heading size="md" fontWeight="700" color="white">
-                        {set.subject}
-                      </Heading>
+                      {editingSetTitle === set.id ? (
+                        <HStack spacing={2} w="full">
+                          <Input
+                            value={editedSetTitle}
+                            onChange={(e) => setEditedSetTitle(e.target.value)}
+                            bg="rgba(42, 42, 64, 0.6)"
+                            borderColor="rgba(217, 70, 239, 0.2)"
+                            color="white"
+                            _hover={{ borderColor: 'brand.500' }}
+                            _focus={{ borderColor: 'brand.500', boxShadow: '0 0 0 1px #d946ef' }}
+                            borderRadius="lg"
+                            flex={1}
+                            fontSize="md"
+                            fontWeight="700"
+                          />
+                          <IconButton
+                            aria-label="Save"
+                            icon={<Check size={16} />}
+                            onClick={() => saveSetTitle(set.id)}
+                            bg="rgba(34, 197, 94, 0.1)"
+                            color="green.400"
+                            borderWidth={1}
+                            borderColor="green.500"
+                            _hover={{ bg: 'rgba(34, 197, 94, 0.2)', borderColor: 'green.400' }}
+                            size="sm"
+                          />
+                          <IconButton
+                            aria-label="Cancel"
+                            icon={<X size={16} />}
+                            onClick={cancelEditingSetTitle}
+                            bg="rgba(239, 68, 68, 0.1)"
+                            color="red.400"
+                            borderWidth={1}
+                            borderColor="red.500"
+                            _hover={{ bg: 'rgba(239, 68, 68, 0.2)', borderColor: 'red.400' }}
+                            size="sm"
+                          />
+                        </HStack>
+                      ) : (
+                        <HStack spacing={2} w="full">
+                          <Heading size="md" fontWeight="700" color="white" flex={1}>
+                            {set.subject}
+                          </Heading>
+                          <IconButton
+                            aria-label="Edit title"
+                            icon={<Edit3 size={16} />}
+                            onClick={() => startEditingSetTitle(set.id, set.subject)}
+                            bg="rgba(217, 70, 239, 0.1)"
+                            color="brand.400"
+                            borderWidth={1}
+                            borderColor="brand.500"
+                            _hover={{ bg: 'rgba(217, 70, 239, 0.2)', borderColor: 'brand.400' }}
+                            size="sm"
+                          />
+                        </HStack>
+                      )}
                       <HStack spacing={{ base: 2, sm: 3 }} color="whiteAlpha.600" fontSize={{ base: "xs", sm: "sm" }} fontWeight="500" flexWrap="wrap">
                         <HStack spacing={1}>
                           <Music size={14} />
