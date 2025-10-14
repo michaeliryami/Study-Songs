@@ -48,11 +48,7 @@ export default function Navbar() {
                 alt="Noomo AI Logo"
                 w={{ base: "36px", sm: "44px" }}
                 h={{ base: "36px", sm: "44px" }}
-                borderRadius="xl"
-                boxShadow="0 8px 25px rgba(217, 70, 239, 0.4)"
                 objectFit="contain"
-                transition="all 0.2s"
-                _hover={{ transform: 'scale(1.05)' }}
               />
               <Box display={{ base: 'none', sm: 'block' }}>
                 <Heading 
