@@ -153,6 +153,15 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
   // Handle keyboard navigation
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
+      // Don't trigger keyboard shortcuts when typing in form elements
+      const target = e.target as HTMLElement
+      const isFormElement = target.tagName === 'INPUT' || 
+                           target.tagName === 'TEXTAREA' || 
+                           target.tagName === 'SELECT' ||
+                           target.contentEditable === 'true'
+      
+      if (isFormElement) return
+      
       if (e.key === 'ArrowLeft') handlePrevious()
       if (e.key === 'ArrowRight') handleNext()
       if (e.key === ' ') {
