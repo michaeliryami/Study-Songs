@@ -21,6 +21,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '../contexts/AuthContext'
 import { useSubscription } from '../hooks/useSubscription'
+import PageHeader from '../components/PageHeader'
 
 export default function PricingPage() {
   const [isYearly, setIsYearly] = useState(false)
@@ -153,19 +154,10 @@ export default function PricingPage() {
     <Box minH="100vh" bg="#0f0f1a">
       <Container maxW="container.xl" py={20}>
         <VStack spacing={12} align="center">
-          <VStack spacing={4} textAlign="center">
-            <Heading
-              fontSize={{ base: '4xl', md: '6xl' }}
-              fontWeight="900"
-              bgGradient="linear(135deg, brand.400 0%, accent.400 100%)"
-              bgClip="text"
-            >
-              Choose Your Plan
-            </Heading>
-            <Text fontSize={{ base: 'lg', md: 'xl' }} color="whiteAlpha.700" maxW="2xl">
-              Turn your study notes into unforgettable jingles
-            </Text>
-          </VStack>
+          <PageHeader 
+            title="Choose Your Plan"
+            subtitle="Turn your study notes into unforgettable jingles"
+          />
 
           <HStack
             spacing={4}

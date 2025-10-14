@@ -27,6 +27,7 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 import { useSubscription } from '../hooks/useSubscription'
+import PageHeader from '../components/PageHeader'
 import ShareButton from '../components/ShareButton'
 
 interface Jingle {
@@ -679,23 +680,10 @@ export default function MySetsPage() {
     <Box minH="100vh" bg="#0f0f1a" py={{ base: 6, md: 12 }}>
       <Container maxW="1200px" w="100%" px={{ base: 3, sm: 4, md: 8 }}>
         <VStack spacing={{ base: 6, md: 8 }} align="stretch">
-          <Box textAlign="center">
-            <Heading 
-              as="h1" 
-              fontSize={{ base: "xl", sm: "2xl", md: "4xl" }} 
-              fontWeight="900" 
-              mb={3} 
-              letterSpacing="-0.03em"
-              bgGradient="linear(135deg, brand.400 0%, accent.400 100%)"
-              bgClip="text"
-              px={{ base: 2, sm: 0 }}
-            >
-              My Study Sets
-            </Heading>
-            <Text fontSize={{ base: "sm", sm: "md" }} color="whiteAlpha.600" fontWeight="500" maxW="xl" mx="auto" px={{ base: 4, sm: 0 }}>
-              Review your mnemonics and ace that exam
-            </Text>
-          </Box>
+          <PageHeader 
+            title="My Study Sets"
+            subtitle="Review your mnemonics and ace that exam"
+          />
 
         {jingles.length === 0 && (
           <VStack spacing={4} align="stretch">

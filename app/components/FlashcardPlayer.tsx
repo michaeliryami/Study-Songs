@@ -77,6 +77,14 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
 
   const currentJingle = studySet.jingles[currentIndex]
 
+  // Update edited notes when navigating between cards while editing
+  useEffect(() => {
+    if (isEditing && currentJingle) {
+      setEditedNotes((currentJingle as any).notes || `${currentJingle.term} — `)
+      setEditedGenre((currentJingle as any).genre || 'random')
+    }
+  }, [currentIndex, isEditing, currentJingle])
+
   // Generate missing audio in background
   useEffect(() => {
     const generateMissingAudio = async () => {
