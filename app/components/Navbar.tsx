@@ -44,7 +44,7 @@ export default function Navbar() {
               _hover={{ transform: 'translateY(-1px)' }}
             >
               <Image
-                src="/logo.png"
+                src="/logo2.png"
                 alt="Noomo AI Logo"
                 w={{ base: "36px", sm: "44px" }}
                 h={{ base: "36px", sm: "44px" }}
