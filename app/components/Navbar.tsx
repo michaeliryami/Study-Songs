@@ -46,8 +46,8 @@ export default function Navbar() {
               <Image
                 src="/logo.png"
                 alt="Noomo AI Logo"
-                w={{ base: "36px", sm: "44px" }}
-                h={{ base: "36px", sm: "44px" }}
+                w={{ base: "40px", sm: "48px" }}
+                h={{ base: "40px", sm: "48px" }}
                 objectFit="contain"
               />
               <Box display={{ base: 'none', sm: 'block' }}>

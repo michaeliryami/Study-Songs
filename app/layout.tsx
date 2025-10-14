@@ -6,6 +6,11 @@ import Navbar from './components/Navbar'
 export const metadata: Metadata = {
   title: 'Noomo AI - Memorable Learning Jingles',
   description: 'Turn study notes into unforgettable mnemonic devices',
+  icons: {
+    icon: '/logo.png',
+    shortcut: '/logo.png',
+    apple: '/logo.png',
+  },
   viewport: {
     width: 'device-width',
     initialScale: 1,
@@ -22,9 +27,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="/logo.png" type="image/png" />
-        <link rel="shortcut icon" href="/logo.png" type="image/png" />
-        <link rel="apple-touch-icon" href="/logo.png" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
