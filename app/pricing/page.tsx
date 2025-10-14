@@ -151,9 +151,9 @@ export default function PricingPage() {
   ]
 
   return (
-    <Box minH="100vh" bg="#0f0f1a">
-      <Container maxW="container.xl" py={20}>
-        <VStack spacing={12} align="center">
+    <Box minH="100vh" bg="#0f0f1a" py={{ base: 6, md: 12 }}>
+      <Container maxW="container.xl">
+        <VStack spacing={{ base: 6, md: 8 }} align="center">
           <PageHeader 
             title="Choose Your Plan"
             subtitle="Turn your study notes into unforgettable jingles"
