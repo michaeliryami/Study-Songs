@@ -8,6 +8,7 @@ import {
   VStack,
   HStack,
   IconButton,
+  Input,
   Progress,
   useToast,
   Textarea,
@@ -58,6 +59,7 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
   const [isEditing, setIsEditing] = useState(false)
   const [editedNotes, setEditedNotes] = useState('')
   const [editedGenre, setEditedGenre] = useState('random')
+  const [customGenre, setCustomGenre] = useState('')
   const [regenerating, setRegenerating] = useState(false)
   const [newTerms, setNewTerms] = useState('')
   const [isAddingTerms, setIsAddingTerms] = useState(false)
@@ -247,14 +249,28 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
       return
     }
 
+    // Validate custom genre for premium users
+    if (editedGenre === 'custom' && (!customGenre.trim() || customGenre.trim().length < 10)) {
+      toast({
+        title: 'Invalid custom genre',
+        description: 'Please enter at least 10 characters for your custom music style',
+        status: 'error',
+        duration: 3000,
+      })
+      return
+    }
+
     setRegenerating(true)
     try {
+      // Determine the genre to use (custom genre for premium users)
+      const selectedGenre = editedGenre === 'custom' && customGenre.trim() ? customGenre.trim() : editedGenre
+
       const response = await fetch('/api/generate-song', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           studyNotes: editedNotes,
-          genre: editedGenre,
+          genre: selectedGenre,
           userId: user?.id, // Pass userId for token deduction
         }),
       })
@@ -269,7 +285,7 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
         lyrics: data.lyrics || '',
         audioUrl: data.audioUrl || null,
         notes: editedNotes,
-        genre: editedGenre,
+        genre: selectedGenre,
       } as any
 
       if (supabase) {
@@ -903,9 +919,14 @@ Format: Term — Definition (one per line)"
 
             <Box>
               <Text color="whiteAlpha.600" fontSize="sm" mb={2}>Music Genre</Text>
-              <Select
-                value={editedGenre}
-                onChange={(e) => setEditedGenre(e.target.value)}
+                <Select
+                  value={editedGenre}
+                  onChange={(e) => {
+                    setEditedGenre(e.target.value)
+                    if (e.target.value !== 'custom') {
+                      setCustomGenre('')
+                    }
+                  }}
                 bg="rgba(42, 42, 64, 0.6)"
                 color="white"
                 borderColor="rgba(217, 70, 239, 0.2)"
@@ -915,16 +936,39 @@ Format: Term — Definition (one per line)"
               >
                 <option value="random" style={{ background: '#1a1a2e' }}>🎲 Random</option>
                 <option value="pop" style={{ background: '#1a1a2e' }}>🎵 Pop</option>
+                <option value="rnb" style={{ background: '#1a1a2e' }}>🎤 R&B</option>
+                <option value="hiphop" style={{ background: '#1a1a2e' }}>🎤 Hip-Hop</option>
                 <option value="rock" style={{ background: '#1a1a2e' }}>🎸 Rock</option>
-                <option value="hip-hop" style={{ background: '#1a1a2e' }}>🎤 Hip-Hop</option>
                 <option value="country" style={{ background: '#1a1a2e' }}>🤠 Country</option>
-                <option value="jazz" style={{ background: '#1a1a2e' }}>🎷 Jazz</option>
-                <option value="classical" style={{ background: '#1a1a2e' }}>🎼 Classical</option>
                 <option value="electronic" style={{ background: '#1a1a2e' }}>🎛️ Electronic</option>
-                <option value="reggae" style={{ background: '#1a1a2e' }}>🌴 Reggae</option>
-                <option value="blues" style={{ background: '#1a1a2e' }}>🎸 Blues</option>
+                {tier === 'premium' && (
+                  <option value="custom" style={{ background: '#1a1a2e' }}>✨ Other custom</option>
+                )}
               </Select>
             </Box>
+
+            {/* Custom genre input for premium users */}
+            {tier === 'premium' && editedGenre === 'custom' && (
+              <Box>
+                <Text color="whiteAlpha.600" fontSize="sm" mb={2}>Custom Genre</Text>
+                <Input
+                  placeholder="Describe your custom music style (min 10 characters)..."
+                  value={customGenre}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCustomGenre(e.target.value)}
+                  bg="rgba(42, 42, 64, 0.6)"
+                  borderColor="rgba(217, 70, 239, 0.2)"
+                  color="white"
+                  _hover={{ borderColor: 'brand.500' }}
+                  _focus={{ borderColor: 'brand.500', boxShadow: '0 0 0 1px #d946ef' }}
+                  borderRadius="xl"
+                />
+                {customGenre.length > 0 && customGenre.length < 10 && (
+                  <Text fontSize="xs" color="red.400" mt={1}>
+                    Minimum 10 characters required
+                  </Text>
+                )}
+              </Box>
+            )}
 
             <HStack spacing={3}>
               <Button

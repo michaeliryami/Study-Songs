@@ -374,14 +374,11 @@ export default function CreatePage() {
                     >
                       <option value="random" style={{ backgroundColor: '#2a2a40', color: 'white' }}>🎲 Random</option>
                       <option value="pop" style={{ backgroundColor: '#2a2a40', color: 'white' }}>🎵 Pop</option>
+                      <option value="rnb" style={{ backgroundColor: '#2a2a40', color: 'white' }}>🎤 R&B</option>
+                      <option value="hiphop" style={{ backgroundColor: '#2a2a40', color: 'white' }}>🎤 Hip-Hop</option>
                       <option value="rock" style={{ backgroundColor: '#2a2a40', color: 'white' }}>🎸 Rock</option>
-                      <option value="hip-hop" style={{ backgroundColor: '#2a2a40', color: 'white' }}>🎤 Hip-Hop</option>
                       <option value="country" style={{ backgroundColor: '#2a2a40', color: 'white' }}>🤠 Country</option>
-                      <option value="jazz" style={{ backgroundColor: '#2a2a40', color: 'white' }}>🎷 Jazz</option>
-                      <option value="classical" style={{ backgroundColor: '#2a2a40', color: 'white' }}>🎼 Classical</option>
                       <option value="electronic" style={{ backgroundColor: '#2a2a40', color: 'white' }}>🎛️ Electronic</option>
-                      <option value="reggae" style={{ backgroundColor: '#2a2a40', color: 'white' }}>🌴 Reggae</option>
-                      <option value="blues" style={{ backgroundColor: '#2a2a40', color: 'white' }}>🎸 Blues</option>
                       {tier === 'premium' && (
                         <option value="custom" style={{ backgroundColor: '#2a2a40', color: 'white' }}>✨ Other custom</option>
                       )}
