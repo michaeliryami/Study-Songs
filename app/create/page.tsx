@@ -71,8 +71,8 @@ export default function CreatePage() {
       return
     }
 
-    // Check if free user already has a set
-    if (tier === 'free' && supabase) {
+    // Check if free user already has a set (only if subscription data is loaded)
+    if (!subscriptionLoading && tier === 'free' && supabase) {
       const { data: existingSets, error } = await supabase
         .from('sets')
         .select('id')
@@ -232,8 +232,8 @@ export default function CreatePage() {
             subtitle="Paste your notes and we'll create catchy jingles for each term"
           />
           
-          {/* Free user limit warning */}
-          {tier === 'free' && (
+          {/* Free user limit warning - only show when not loading and confirmed free tier */}
+          {!subscriptionLoading && tier === 'free' && (
             <Box
               bg="rgba(251, 146, 60, 0.1)"
               border="1px solid"
@@ -424,7 +424,7 @@ export default function CreatePage() {
             {/* Generate Button */}
             <Button
               onClick={handleGenerate}
-              disabled={generating || !notes.trim()}
+              disabled={generating || !notes.trim() || subscriptionLoading}
               bgGradient="linear(135deg, brand.500 0%, accent.500 100%)"
               color="white"
               size="lg"
@@ -445,7 +445,7 @@ export default function CreatePage() {
               }}
               transition="all 0.2s"
             >
-              {generating ? 'Generating...' : 'Generate Study Set'}
+              {subscriptionLoading ? 'Loading...' : generating ? 'Generating...' : 'Generate Study Set'}
             </Button>
 
             {generating && (
