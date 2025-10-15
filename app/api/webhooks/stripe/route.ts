@@ -32,7 +32,12 @@ export async function POST(req: NextRequest) {
         break
 
       case 'customer.subscription.created':
+        console.log('📢 New subscription created event')
+        await handleSubscriptionCreated(event.data.object as Stripe.Subscription)
+        break
+
       case 'customer.subscription.updated':
+        console.log('📢 Subscription updated event')
         await handleSubscriptionUpdate(event.data.object as Stripe.Subscription)
         break
 
@@ -64,28 +69,55 @@ export async function POST(req: NextRequest) {
 
 async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
   console.log('🎯 Processing checkout.session.completed:', session.id)
-  console.log('Full session object:', JSON.stringify(session, null, 2))
+  console.log('Session mode:', session.mode)
   console.log('Session metadata:', session.metadata)
   
   const customerId = session.customer as string
-  const subscriptionId = session.subscription as string
+  let subscriptionId = session.subscription as string
   const userId = session.metadata?.supabase_user_id
   
   console.log('Raw customer value:', session.customer)
   console.log('Raw subscription value:', session.subscription)
-  console.log('Customer ID (as string):', customerId)
-  console.log('Subscription ID (as string):', subscriptionId)
   console.log('Type of subscription:', typeof session.subscription)
   
-  if (!customerId || !subscriptionId) {
-    console.error('❌ Missing customer or subscription ID in checkout session')
-    console.error('Customer exists?', !!customerId, 'Subscription exists?', !!subscriptionId)
+  // If subscription is not directly available, retrieve the full session with expanded subscription
+  if (!subscriptionId && session.mode === 'subscription') {
+    console.log('⚠️ Subscription ID not found in session, retrieving full session...')
+    try {
+      const fullSession = await stripe.checkout.sessions.retrieve(session.id, {
+        expand: ['subscription']
+      })
+      console.log('Full session retrieved:', fullSession.id)
+      console.log('Expanded subscription:', fullSession.subscription)
+      
+      if (typeof fullSession.subscription === 'object' && fullSession.subscription !== null) {
+        subscriptionId = fullSession.subscription.id
+        console.log('✓ Extracted subscription ID from expanded object:', subscriptionId)
+      } else {
+        subscriptionId = fullSession.subscription as string
+        console.log('✓ Got subscription ID as string:', subscriptionId)
+      }
+    } catch (error) {
+      console.error('❌ Error retrieving full session:', error)
+    }
+  }
+  
+  if (!customerId) {
+    console.error('❌ Missing customer ID in checkout session')
+    return
+  }
+  
+  if (!subscriptionId) {
+    console.error('❌ Missing subscription ID in checkout session')
+    console.error('This might be a one-time payment instead of a subscription')
+    console.error('Session mode:', session.mode)
+    console.error('Payment status:', session.payment_status)
     return
   }
 
-  console.log('✓ Customer ID:', customerId)
-  console.log('✓ Subscription ID:', subscriptionId)
-  console.log('✓ User ID from metadata:', userId)
+  console.log('✅ Customer ID:', customerId)
+  console.log('✅ Subscription ID:', subscriptionId)
+  console.log('✅ User ID from metadata:', userId)
 
   // Get customer details
   const customer = await stripe.customers.retrieve(customerId) as Stripe.Customer
@@ -173,6 +205,108 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
 
   console.log(`✅ SUCCESS! Updated ${email} to ${tier} tier`)
   console.log('Updated profile data:', data)
+}
+
+async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
+  console.log('🆕 Processing NEW subscription created:', subscription.id)
+  console.log('Full subscription object:', JSON.stringify(subscription, null, 2))
+  
+  const customerId = subscription.customer as string
+  const subscriptionId = subscription.id
+  const priceId = subscription.items.data[0]?.price.id
+  const status = subscription.status
+
+  console.log('✓ Customer ID:', customerId)
+  console.log('✓ Subscription ID:', subscriptionId)
+  console.log('✓ Price ID:', priceId)
+  console.log('✓ Status:', status)
+
+  // Determine tier from price ID
+  let tier: 'basic' | 'premium' = 'basic'
+  const env = process.env
+  
+  if (priceId === env.NEXT_PUBLIC_STRIPE_PREMIUM_MONTHLY_PRICE_ID || 
+      priceId === env.NEXT_PUBLIC_STRIPE_PREMIUM_YEARLY_PRICE_ID) {
+    tier = 'premium'
+  } else if (priceId === env.NEXT_PUBLIC_STRIPE_BASIC_MONTHLY_PRICE_ID || 
+             priceId === env.NEXT_PUBLIC_STRIPE_BASIC_YEARLY_PRICE_ID) {
+    tier = 'basic'
+  }
+
+  console.log('✓ Determined tier:', tier)
+
+  // Get customer details
+  const customer = await stripe.customers.retrieve(customerId) as Stripe.Customer
+  const email = customer.email
+  const userId = customer.metadata?.supabase_user_id
+
+  if (!email) {
+    console.error('❌ No email found for customer:', customerId)
+    return
+  }
+
+  console.log('📧 Email:', email)
+  console.log('👤 User ID from customer metadata:', userId)
+
+  const updatePayload = {
+    subscription_tier: tier,
+    stripe_customer_id: customerId,
+    stripe_subscription_id: subscriptionId,
+    updated_at: new Date().toISOString()
+  }
+  
+  console.log('📝 Subscription created - update payload:', JSON.stringify(updatePayload, null, 2))
+
+  // Try updating by user ID first (if available), then by email, then by customer ID
+  let updateResult
+  
+  if (userId) {
+    console.log('Attempting update by user ID:', userId)
+    updateResult = await supabase
+      .from('profiles')
+      .update(updatePayload)
+      .eq('id', userId)
+      .select()
+  } else {
+    console.log('Attempting update by email:', email)
+    updateResult = await supabase
+      .from('profiles')
+      .update(updatePayload)
+      .eq('email', email)
+      .select()
+      
+    // If email didn't work, try by stripe_customer_id
+    if (!updateResult.data || updateResult.data.length === 0) {
+      console.log('Email match failed, trying by stripe_customer_id:', customerId)
+      updateResult = await supabase
+        .from('profiles')
+        .update(updatePayload)
+        .eq('stripe_customer_id', customerId)
+        .select()
+    }
+  }
+
+  const { data, error } = updateResult
+  
+  console.log('💾 Subscription created - database response:')
+  console.log('  - Error:', error)
+  console.log('  - Data returned:', JSON.stringify(data, null, 2))
+  console.log('  - Rows affected:', data?.length || 0)
+
+  if (error) {
+    console.error('❌ Error updating profile for new subscription:', error)
+    console.error('❌ Full error:', JSON.stringify(error, null, 2))
+    throw error
+  }
+
+  if (!data || data.length === 0) {
+    console.error('❌ No profile found for subscription!')
+    console.error('Tried: User ID:', userId, 'Email:', email, 'Customer ID:', customerId)
+    return
+  }
+
+  console.log(`✅ NEW SUBSCRIPTION! Updated ${email} to ${tier} tier with subscription ${subscriptionId}`)
+  console.log('✅ Updated profile:', data[0])
 }
 
 async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
