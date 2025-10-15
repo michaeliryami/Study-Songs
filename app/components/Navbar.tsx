@@ -265,6 +265,19 @@ export default function Navbar() {
                     </MenuItem>
                     <Box h="1px" bg="rgba(217, 70, 239, 0.15)" my={2} />
                     <MenuItem
+                      as={Link}
+                      href="/support"
+                      bg="transparent"
+                      color="whiteAlpha.800"
+                      _hover={{ bg: 'rgba(217, 70, 239, 0.1)', color: 'white' }}
+                      fontWeight="600"
+                      borderRadius="lg"
+                      mx={1}
+                    >
+                      Support
+                    </MenuItem>
+                    <Box h="1px" bg="rgba(217, 70, 239, 0.15)" my={2} />
+                    <MenuItem
                       bg="transparent"
                       color="red.300"
                       _hover={{ bg: 'rgba(239, 68, 68, 0.1)', color: 'red.400' }}
