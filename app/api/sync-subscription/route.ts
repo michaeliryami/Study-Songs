@@ -67,40 +67,58 @@ export async function POST(req: NextRequest) {
     let subscriptionId: string | null = null
     let newTokens = 30 // Default for free tier
 
-    // Find the most recent subscription
-    const activeSubscription = allSubscriptions.data.find(sub => sub.status === 'active')
+    // Find the most recent subscription that's active OR will cancel at period end
+    const currentSubscription = allSubscriptions.data.find(sub => 
+      sub.status === 'active' || sub.status === 'trialing'
+    )
     
-    if (activeSubscription) {
-      subscriptionId = activeSubscription.id
-      console.log('✓ Found active subscription ID:', subscriptionId)
-      console.log('✓ Subscription status:', activeSubscription.status)
+    if (currentSubscription) {
+      console.log('✓ Found subscription ID:', currentSubscription.id)
+      console.log('✓ Subscription status:', currentSubscription.status)
+      console.log('✓ Cancel at period end?', currentSubscription.cancel_at_period_end)
+      console.log('✓ Current period end:', currentSubscription.current_period_end)
       
-      const priceId = activeSubscription.items.data[0]?.price.id
-      console.log('💰 Price ID:', priceId)
+      // Check if subscription is canceled (will end at period end)
+      if (currentSubscription.cancel_at_period_end) {
+        console.log('⚠️ Subscription is CANCELED - will end at:', new Date(currentSubscription.current_period_end * 1000))
+        console.log('   Reverting to free tier immediately')
+        newTier = 'free'
+        newTokens = 30
+        subscriptionId = null // Clear subscription ID since it's canceled
+      } else {
+        // Subscription is active and not canceled
+        subscriptionId = currentSubscription.id
+        const priceId = currentSubscription.items.data[0]?.price.id
+        console.log('💰 Price ID:', priceId)
 
-      // Determine tier and tokens from price ID
-      const env = process.env
-      if (priceId === env.NEXT_PUBLIC_STRIPE_PREMIUM_MONTHLY_PRICE_ID || 
-          priceId === env.NEXT_PUBLIC_STRIPE_PREMIUM_YEARLY_PRICE_ID) {
-        newTier = 'premium'
-        newTokens = 999999 // Unlimited for premium
-      } else if (priceId === env.NEXT_PUBLIC_STRIPE_BASIC_MONTHLY_PRICE_ID || 
-                 priceId === env.NEXT_PUBLIC_STRIPE_BASIC_YEARLY_PRICE_ID) {
-        newTier = 'basic'
-        newTokens = 300 // 300 credits for basic
+        // Determine tier and tokens from price ID
+        const env = process.env
+        if (priceId === env.NEXT_PUBLIC_STRIPE_PREMIUM_MONTHLY_PRICE_ID || 
+            priceId === env.NEXT_PUBLIC_STRIPE_PREMIUM_YEARLY_PRICE_ID) {
+          newTier = 'premium'
+          newTokens = 999999 // Unlimited for premium
+        } else if (priceId === env.NEXT_PUBLIC_STRIPE_BASIC_MONTHLY_PRICE_ID || 
+                   priceId === env.NEXT_PUBLIC_STRIPE_BASIC_YEARLY_PRICE_ID) {
+          newTier = 'basic'
+          newTokens = 300 // 300 credits for basic
+        }
       }
     } else {
       console.log('ℹ️ No active subscriptions found')
       
-      // Check if there's a canceled subscription
+      // Check if there's a canceled/expired subscription
       const canceledSubscription = allSubscriptions.data.find(sub => 
-        sub.status === 'canceled' || sub.status === 'incomplete_expired' || sub.status === 'unpaid'
+        sub.status === 'canceled' || 
+        sub.status === 'incomplete_expired' || 
+        sub.status === 'unpaid' ||
+        sub.status === 'past_due'
       )
       
       if (canceledSubscription) {
-        console.log('⚠️ Found canceled subscription:', canceledSubscription.id)
+        console.log('⚠️ Found canceled/expired subscription:', canceledSubscription.id)
         console.log('   Status:', canceledSubscription.status)
         console.log('   Canceled at:', canceledSubscription.canceled_at)
+        console.log('   Cancel at period end was:', canceledSubscription.cancel_at_period_end)
       }
       
       // Set to free tier

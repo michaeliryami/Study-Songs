@@ -329,17 +329,26 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
   const subscriptionId = subscription.id
   const priceId = subscription.items.data[0]?.price.id
   const status = subscription.status
+  const cancelAtPeriodEnd = subscription.cancel_at_period_end
 
   console.log('Customer ID:', customerId)
   console.log('Subscription ID:', subscriptionId)
   console.log('Price ID:', priceId)
   console.log('Status:', status)
+  console.log('Cancel at period end?', cancelAtPeriodEnd)
 
   // Determine tier and tokens from price ID
   let tier: 'free' | 'basic' | 'premium' = 'free'
   let tokens = 30 // Default to free
+  let subId: string | null = subscriptionId
   
-  if (status === 'active') {
+  // If subscription is marked for cancellation, revert to free immediately
+  if (cancelAtPeriodEnd) {
+    console.log('⚠️ Subscription is marked for cancellation - reverting to free tier')
+    tier = 'free'
+    tokens = 30
+    subId = null // Clear subscription ID
+  } else if (status === 'active') {
     const env = process.env
     console.log('Checking price IDs...')
     console.log('Premium Monthly:', env.NEXT_PUBLIC_STRIPE_PREMIUM_MONTHLY_PRICE_ID)
@@ -375,7 +384,7 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
   const updatePayload = {
     subscription_tier: tier,
     stripe_customer_id: customerId,
-    stripe_subscription_id: subscriptionId,
+    stripe_subscription_id: subId, // Use subId (which may be null if canceled)
     current_tokens: tokens,
     updated_at: new Date().toISOString()
   }
@@ -384,10 +393,11 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
   console.log('📝 Payload values:', {
     tier,
     customerId,
-    subscriptionId,
+    subscriptionId: subId,
     tokens,
-    subscriptionIdType: typeof subscriptionId,
-    subscriptionIdLength: subscriptionId?.length
+    cancelAtPeriodEnd,
+    subscriptionIdType: typeof subId,
+    subscriptionIdLength: subId?.length
   })
 
   // Update profile with subscription tier
