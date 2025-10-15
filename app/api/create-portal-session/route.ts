@@ -40,10 +40,10 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Create portal session
+    // Create portal session with return URL that triggers sync
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: profile.stripe_customer_id,
-      return_url: `${req.headers.get('origin')}/profile`,
+      return_url: `${req.headers.get('origin')}/profile?portal=true`,
     })
 
     return NextResponse.json({ url: portalSession.url })

@@ -64,26 +64,35 @@ export async function POST(req: NextRequest) {
 
     console.log('📋 Active subscriptions found:', subscriptions.data.length)
 
-    let newTier = 'free'
-    let subscriptionId = null
+    let newTier: 'free' | 'basic' | 'premium' = 'free'
+    let subscriptionId: string | null = null
 
     if (subscriptions.data.length > 0) {
       const subscription = subscriptions.data[0]
       subscriptionId = subscription.id
       console.log('✓ Found subscription ID:', subscriptionId)
+      console.log('✓ Subscription status:', subscription.status)
       
       const priceId = subscription.items.data[0]?.price.id
       console.log('💰 Price ID:', priceId)
 
-      // Determine tier from price ID
-      const env = process.env
-      if (priceId === env.NEXT_PUBLIC_STRIPE_PREMIUM_MONTHLY_PRICE_ID || 
-          priceId === env.NEXT_PUBLIC_STRIPE_PREMIUM_YEARLY_PRICE_ID) {
-        newTier = 'premium'
-      } else if (priceId === env.NEXT_PUBLIC_STRIPE_BASIC_MONTHLY_PRICE_ID || 
-                 priceId === env.NEXT_PUBLIC_STRIPE_BASIC_YEARLY_PRICE_ID) {
-        newTier = 'basic'
+      // Determine tier from price ID (only if subscription is active)
+      if (subscription.status === 'active') {
+        const env = process.env
+        if (priceId === env.NEXT_PUBLIC_STRIPE_PREMIUM_MONTHLY_PRICE_ID || 
+            priceId === env.NEXT_PUBLIC_STRIPE_PREMIUM_YEARLY_PRICE_ID) {
+          newTier = 'premium'
+        } else if (priceId === env.NEXT_PUBLIC_STRIPE_BASIC_MONTHLY_PRICE_ID || 
+                   priceId === env.NEXT_PUBLIC_STRIPE_BASIC_YEARLY_PRICE_ID) {
+          newTier = 'basic'
+        }
+      } else {
+        console.log('⚠️ Subscription exists but is not active:', subscription.status)
+        newTier = 'free'
+        subscriptionId = null // Don't store inactive subscription ID
       }
+    } else {
+      console.log('ℹ️ No active subscriptions - setting tier to free')
     }
 
     console.log('🎯 New tier determined:', newTier)

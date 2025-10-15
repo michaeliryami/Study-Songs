@@ -58,15 +58,16 @@ export default function ProfilePage() {
   const [managingSubscription, setManagingSubscription] = useState(false)
   const [syncing, setSyncing] = useState(false)
 
-  // Auto-sync subscription after checkout success
+  // Auto-sync subscription after checkout success or portal return
   useEffect(() => {
-    async function syncAfterCheckout() {
+    async function syncSubscription() {
       if (!user?.email) return
       
-      // Check if we just came from successful checkout or cancellation
+      // Check if we need to sync (from checkout, portal, or cancellation)
       const urlParams = new URLSearchParams(window.location.search)
       const success = urlParams.get('success')
       const canceled = urlParams.get('canceled')
+      const portal = urlParams.get('portal')
       
       // Handle cancellation
       if (canceled === 'true') {
@@ -75,9 +76,12 @@ export default function ProfilePage() {
         return
       }
       
-      // Handle successful checkout
-      if (success === 'true' && !syncing) {
-        console.log('🔄 Auto-syncing subscription after checkout...')
+      // Handle successful checkout OR portal return (upgrade/downgrade/cancel)
+      const shouldSync = (success === 'true' || portal === 'true') && !syncing
+      
+      if (shouldSync) {
+        const source = portal === 'true' ? 'portal' : 'checkout'
+        console.log(`🔄 Auto-syncing subscription after ${source}...`)
         
         // Clean up URL immediately to prevent re-triggering
         window.history.replaceState({}, '', '/profile')
@@ -112,7 +116,7 @@ export default function ProfilePage() {
     }
     
     if (user && !authLoading) {
-      syncAfterCheckout()
+      syncSubscription()
     }
   }, [user, authLoading, syncing])
 
