@@ -131,7 +131,7 @@ CRITICAL REQUIREMENTS:
 - You MUST use the specific information from the notes provided below
 - Do NOT use general knowledge - only what is in the notes
 - Only use 6 lines if you need more space to include ALL the information
-- ALL formulas with = or variables should be written in full so an AI can easily pronounce- f = ma should be f equals m a
+- ALL formulas with = or variables should be written in full so an AI can easily pronounce- f = ma should be eff equals emm ay
 
 Instructions:
 
