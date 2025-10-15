@@ -136,15 +136,22 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
   
   console.log('Price ID:', priceId)
   
-  // Determine tier from price ID
+  // Determine tier and tokens from price ID
   let tier: 'basic' | 'premium' = 'basic'
+  let tokens = 300 // Default to basic
   const env = process.env
   if (priceId === env.NEXT_PUBLIC_STRIPE_PREMIUM_MONTHLY_PRICE_ID || 
       priceId === env.NEXT_PUBLIC_STRIPE_PREMIUM_YEARLY_PRICE_ID) {
     tier = 'premium'
+    tokens = 999999 // Unlimited
+  } else if (priceId === env.NEXT_PUBLIC_STRIPE_BASIC_MONTHLY_PRICE_ID || 
+             priceId === env.NEXT_PUBLIC_STRIPE_BASIC_YEARLY_PRICE_ID) {
+    tier = 'basic'
+    tokens = 300
   }
 
   console.log('Determined tier:', tier)
+  console.log('Setting tokens:', tokens)
 
   // Try to update by user ID first (most reliable), then by email
   let updateResult
@@ -153,6 +160,7 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
     subscription_tier: tier,
     stripe_customer_id: customerId,
     stripe_subscription_id: subscriptionId,
+    current_tokens: tokens,
   }
   
   console.log('📝 Update payload:', JSON.stringify(updatePayload, null, 2))
@@ -221,19 +229,23 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
   console.log('✓ Price ID:', priceId)
   console.log('✓ Status:', status)
 
-  // Determine tier from price ID
+  // Determine tier and tokens from price ID
   let tier: 'basic' | 'premium' = 'basic'
+  let tokens = 300 // Default to basic
   const env = process.env
   
   if (priceId === env.NEXT_PUBLIC_STRIPE_PREMIUM_MONTHLY_PRICE_ID || 
       priceId === env.NEXT_PUBLIC_STRIPE_PREMIUM_YEARLY_PRICE_ID) {
     tier = 'premium'
+    tokens = 999999 // Unlimited
   } else if (priceId === env.NEXT_PUBLIC_STRIPE_BASIC_MONTHLY_PRICE_ID || 
              priceId === env.NEXT_PUBLIC_STRIPE_BASIC_YEARLY_PRICE_ID) {
     tier = 'basic'
+    tokens = 300
   }
 
   console.log('✓ Determined tier:', tier)
+  console.log('✓ Setting tokens:', tokens)
 
   // Get customer details
   const customer = await stripe.customers.retrieve(customerId) as Stripe.Customer
@@ -252,6 +264,7 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
     subscription_tier: tier,
     stripe_customer_id: customerId,
     stripe_subscription_id: subscriptionId,
+    current_tokens: tokens,
     updated_at: new Date().toISOString()
   }
   
@@ -322,8 +335,9 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
   console.log('Price ID:', priceId)
   console.log('Status:', status)
 
-  // Determine tier from price ID
+  // Determine tier and tokens from price ID
   let tier: 'free' | 'basic' | 'premium' = 'free'
+  let tokens = 30 // Default to free
   
   if (status === 'active') {
     const env = process.env
@@ -336,13 +350,16 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
     if (priceId === env.NEXT_PUBLIC_STRIPE_PREMIUM_MONTHLY_PRICE_ID || 
         priceId === env.NEXT_PUBLIC_STRIPE_PREMIUM_YEARLY_PRICE_ID) {
       tier = 'premium'
+      tokens = 999999 // Unlimited
     } else if (priceId === env.NEXT_PUBLIC_STRIPE_BASIC_MONTHLY_PRICE_ID || 
                priceId === env.NEXT_PUBLIC_STRIPE_BASIC_YEARLY_PRICE_ID) {
       tier = 'basic'
+      tokens = 300
     }
   }
 
   console.log('Determined tier:', tier)
+  console.log('Setting tokens:', tokens)
 
   // Get customer email
   const customer = await stripe.customers.retrieve(customerId) as Stripe.Customer
@@ -359,6 +376,7 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
     subscription_tier: tier,
     stripe_customer_id: customerId,
     stripe_subscription_id: subscriptionId,
+    current_tokens: tokens,
     updated_at: new Date().toISOString()
   }
   
@@ -367,6 +385,7 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
     tier,
     customerId,
     subscriptionId,
+    tokens,
     subscriptionIdType: typeof subscriptionId,
     subscriptionIdLength: subscriptionId?.length
   })
@@ -399,21 +418,30 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
 }
 
 async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
+  console.log('🗑️ Processing subscription deletion:', subscription.id)
+  
   const customerId = subscription.customer as string
+  console.log('Customer ID:', customerId)
 
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from('profiles')
     .update({
       subscription_tier: 'free',
+      stripe_subscription_id: null, // Clear subscription ID
+      current_tokens: 30, // Reset to free tier tokens
+      updated_at: new Date().toISOString()
     })
     .eq('stripe_customer_id', customerId)
+    .select()
 
   if (error) {
-    console.error('Error canceling subscription:', error)
+    console.error('❌ Error canceling subscription:', error)
     throw error
   }
 
-  console.log(`Subscription canceled for customer ${customerId}`)
+  console.log(`✅ Subscription canceled for customer ${customerId}`)
+  console.log('Updated profile to free tier with 30 tokens')
+  console.log('Updated data:', data)
 }
 
 async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {

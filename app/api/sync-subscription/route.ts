@@ -55,57 +55,76 @@ export async function POST(req: NextRequest) {
     const customer = await stripe.customers.retrieve(profile.stripe_customer_id) as any
     console.log('📧 Customer email:', customer.email)
 
-    // Get active subscriptions
-    const subscriptions = await stripe.subscriptions.list({
+    // Get ALL subscriptions (including canceled) to check status
+    const allSubscriptions = await stripe.subscriptions.list({
       customer: profile.stripe_customer_id,
-      status: 'active',
-      limit: 1
+      limit: 10 // Get recent subscriptions
     })
 
-    console.log('📋 Active subscriptions found:', subscriptions.data.length)
+    console.log('📋 Total subscriptions found:', allSubscriptions.data.length)
 
     let newTier: 'free' | 'basic' | 'premium' = 'free'
     let subscriptionId: string | null = null
+    let newTokens = 30 // Default for free tier
 
-    if (subscriptions.data.length > 0) {
-      const subscription = subscriptions.data[0]
-      subscriptionId = subscription.id
-      console.log('✓ Found subscription ID:', subscriptionId)
-      console.log('✓ Subscription status:', subscription.status)
+    // Find the most recent subscription
+    const activeSubscription = allSubscriptions.data.find(sub => sub.status === 'active')
+    
+    if (activeSubscription) {
+      subscriptionId = activeSubscription.id
+      console.log('✓ Found active subscription ID:', subscriptionId)
+      console.log('✓ Subscription status:', activeSubscription.status)
       
-      const priceId = subscription.items.data[0]?.price.id
+      const priceId = activeSubscription.items.data[0]?.price.id
       console.log('💰 Price ID:', priceId)
 
-      // Determine tier from price ID (only if subscription is active)
-      if (subscription.status === 'active') {
-        const env = process.env
-        if (priceId === env.NEXT_PUBLIC_STRIPE_PREMIUM_MONTHLY_PRICE_ID || 
-            priceId === env.NEXT_PUBLIC_STRIPE_PREMIUM_YEARLY_PRICE_ID) {
-          newTier = 'premium'
-        } else if (priceId === env.NEXT_PUBLIC_STRIPE_BASIC_MONTHLY_PRICE_ID || 
-                   priceId === env.NEXT_PUBLIC_STRIPE_BASIC_YEARLY_PRICE_ID) {
-          newTier = 'basic'
-        }
-      } else {
-        console.log('⚠️ Subscription exists but is not active:', subscription.status)
-        newTier = 'free'
-        subscriptionId = null // Don't store inactive subscription ID
+      // Determine tier and tokens from price ID
+      const env = process.env
+      if (priceId === env.NEXT_PUBLIC_STRIPE_PREMIUM_MONTHLY_PRICE_ID || 
+          priceId === env.NEXT_PUBLIC_STRIPE_PREMIUM_YEARLY_PRICE_ID) {
+        newTier = 'premium'
+        newTokens = 999999 // Unlimited for premium
+      } else if (priceId === env.NEXT_PUBLIC_STRIPE_BASIC_MONTHLY_PRICE_ID || 
+                 priceId === env.NEXT_PUBLIC_STRIPE_BASIC_YEARLY_PRICE_ID) {
+        newTier = 'basic'
+        newTokens = 300 // 300 credits for basic
       }
     } else {
-      console.log('ℹ️ No active subscriptions - setting tier to free')
+      console.log('ℹ️ No active subscriptions found')
+      
+      // Check if there's a canceled subscription
+      const canceledSubscription = allSubscriptions.data.find(sub => 
+        sub.status === 'canceled' || sub.status === 'incomplete_expired' || sub.status === 'unpaid'
+      )
+      
+      if (canceledSubscription) {
+        console.log('⚠️ Found canceled subscription:', canceledSubscription.id)
+        console.log('   Status:', canceledSubscription.status)
+        console.log('   Canceled at:', canceledSubscription.canceled_at)
+      }
+      
+      // Set to free tier
+      newTier = 'free'
+      newTokens = 30
+      subscriptionId = null // Clear subscription ID for canceled/no subscription
     }
 
     console.log('🎯 New tier determined:', newTier)
     console.log('🎯 New subscription ID:', subscriptionId)
+    console.log('🪙 New token amount:', newTokens)
 
-    // Update profile
+    // Update profile with tier, subscription ID, and tokens
     const updatePayload = {
       subscription_tier: newTier,
       stripe_subscription_id: subscriptionId,
+      current_tokens: newTokens,
       updated_at: new Date().toISOString()
     }
     
     console.log('📝 Updating profile with payload:', JSON.stringify(updatePayload, null, 2))
+    console.log('   Old tier:', profile.subscription_tier, '→ New tier:', newTier)
+    console.log('   Old sub ID:', profile.stripe_subscription_id, '→ New sub ID:', subscriptionId)
+    console.log('   Setting tokens to:', newTokens)
     
     const { data: updatedProfile, error: updateError } = await supabase
       .from('profiles')
