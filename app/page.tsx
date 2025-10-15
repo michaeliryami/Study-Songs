@@ -722,10 +722,7 @@ export default function Home() {
                       <Box color="green.400">✓</Box>
                       <Text color="white" fontSize="sm" fontWeight="600">All genres</Text>
                     </HStack>
-                    <HStack>
-                      <Box color="green.400">✓</Box>
-                      <Text color="white" fontSize="sm" fontWeight="600">Share jingles</Text>
-                    </HStack>
+                    
                   </VStack>
                 </VStack>
               </Box>
@@ -780,10 +777,7 @@ export default function Home() {
                       <Box color="green.400">✓</Box>
                       <Text color="whiteAlpha.800" fontSize="sm" fontWeight="600">Priority generation</Text>
                     </HStack>
-                    <HStack>
-                      <Box color="green.400">✓</Box>
-                      <Text color="whiteAlpha.800" fontSize="sm" fontWeight="600">Advanced analytics</Text>
-                    </HStack>
+                    
                   </VStack>
                 </VStack>
               </Box>

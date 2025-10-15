@@ -482,9 +482,6 @@ export default function ProfilePage() {
                       <Text color="whiteAlpha.600" fontSize="sm">
                         ✓ Priority generation
                       </Text>
-                      <Text color="whiteAlpha.600" fontSize="sm">
-                        ✓ Advanced analytics
-                      </Text>
                     </>
                   )}
                 </VStack>

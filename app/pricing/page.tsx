@@ -125,7 +125,6 @@ export default function PricingPage() {
         'Unlimited study sets',
         'Download MP3s',
         'Pre-set music genres',
-        'Share jingles',
       ],
       popular: true,
     },
@@ -142,10 +141,8 @@ export default function PricingPage() {
         'Unlimited study sets',
         'Download MP3s',
         'All music genres + Custom genres',
-        'Share jingles',
         'Priority generation',
         'Audio stitching',
-        'Advanced analytics',
       ],
     },
   ]
