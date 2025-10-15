@@ -64,20 +64,28 @@ export async function POST(req: NextRequest) {
 
 async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
   console.log('🎯 Processing checkout.session.completed:', session.id)
+  console.log('Full session object:', JSON.stringify(session, null, 2))
   console.log('Session metadata:', session.metadata)
   
   const customerId = session.customer as string
   const subscriptionId = session.subscription as string
   const userId = session.metadata?.supabase_user_id
   
+  console.log('Raw customer value:', session.customer)
+  console.log('Raw subscription value:', session.subscription)
+  console.log('Customer ID (as string):', customerId)
+  console.log('Subscription ID (as string):', subscriptionId)
+  console.log('Type of subscription:', typeof session.subscription)
+  
   if (!customerId || !subscriptionId) {
     console.error('❌ Missing customer or subscription ID in checkout session')
+    console.error('Customer exists?', !!customerId, 'Subscription exists?', !!subscriptionId)
     return
   }
 
-  console.log('Customer ID:', customerId)
-  console.log('Subscription ID:', subscriptionId)
-  console.log('User ID from metadata:', userId)
+  console.log('✓ Customer ID:', customerId)
+  console.log('✓ Subscription ID:', subscriptionId)
+  console.log('✓ User ID from metadata:', userId)
 
   // Get customer details
   const customer = await stripe.customers.retrieve(customerId) as Stripe.Customer
@@ -109,31 +117,43 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
   // Try to update by user ID first (most reliable), then by email
   let updateResult
   
+  const updatePayload = {
+    subscription_tier: tier,
+    stripe_customer_id: customerId,
+    stripe_subscription_id: subscriptionId,
+  }
+  
+  console.log('📝 Update payload:', JSON.stringify(updatePayload, null, 2))
+  console.log('📝 Payload types:', {
+    tier: typeof tier,
+    customerId: typeof customerId,
+    subscriptionId: typeof subscriptionId,
+    tierValue: tier,
+    customerIdValue: customerId,
+    subscriptionIdValue: subscriptionId
+  })
+  
   if (userId) {
     console.log('Attempting update by user ID:', userId)
     updateResult = await supabase
       .from('profiles')
-      .update({
-        subscription_tier: tier,
-        stripe_customer_id: customerId,
-        stripe_subscription_id: subscriptionId,
-      })
+      .update(updatePayload)
       .eq('id', userId)
       .select()
   } else {
     console.log('Attempting update by email:', email)
     updateResult = await supabase
       .from('profiles')
-      .update({
-        subscription_tier: tier,
-        stripe_customer_id: customerId,
-        stripe_subscription_id: subscriptionId,
-      })
+      .update(updatePayload)
       .eq('email', email)
       .select()
   }
 
   const { data, error } = updateResult
+  
+  console.log('💾 Database update response:')
+  console.log('  - Error:', error)
+  console.log('  - Data returned:', JSON.stringify(data, null, 2))
 
   if (error) {
     console.error('❌ Error updating profile after checkout:', error)
@@ -201,20 +221,37 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
 
   console.log('📧 Updating subscription for email:', email)
 
+  const updatePayload = {
+    subscription_tier: tier,
+    stripe_customer_id: customerId,
+    stripe_subscription_id: subscriptionId,
+    updated_at: new Date().toISOString()
+  }
+  
+  console.log('📝 Subscription update payload:', JSON.stringify(updatePayload, null, 2))
+  console.log('📝 Payload values:', {
+    tier,
+    customerId,
+    subscriptionId,
+    subscriptionIdType: typeof subscriptionId,
+    subscriptionIdLength: subscriptionId?.length
+  })
+
   // Update profile with subscription tier
   const { data, error } = await supabase
     .from('profiles')
-    .update({
-      subscription_tier: tier,
-      stripe_customer_id: customerId,
-      stripe_subscription_id: subscriptionId,
-      updated_at: new Date().toISOString()
-    })
+    .update(updatePayload)
     .eq('email', email)
     .select()
+  
+  console.log('💾 Subscription update response:')
+  console.log('  - Error:', error)
+  console.log('  - Data returned:', JSON.stringify(data, null, 2))
+  console.log('  - Rows affected:', data?.length || 0)
 
   if (error) {
     console.error('❌ Error updating subscription:', error)
+    console.error('❌ Full error object:', JSON.stringify(error, null, 2))
     throw error
   }
 
