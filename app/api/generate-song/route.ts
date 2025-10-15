@@ -8,8 +8,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Study notes or lyrics are required' }, { status: 400 })
     }
 
-    // Deduct token if userId is provided and we're generating new lyrics (not just audio)
-    if (userId && !existingLyrics) {
+    // Deduct token for any generation/regeneration when a userId is provided
+    if (userId) {
       console.log('🪙 Deducting token for user:', userId)
       
       // Create Supabase client for token deduction
