@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+// Ensure Node.js runtime (not Edge) for Nodemailer support
+export const runtime = 'nodejs'
+
 export async function POST(req: NextRequest) {
   try {
     const { email, subject, message } = await req.json()
