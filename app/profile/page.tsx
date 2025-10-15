@@ -69,6 +69,9 @@ export default function ProfilePage() {
       
       if (success === 'true' && !syncing) {
         console.log('🔄 Auto-syncing subscription after checkout...')
+        
+        // Clean up URL immediately to prevent re-triggering
+        window.history.replaceState({}, '', '/profile')
         setSyncing(true)
         
         try {
@@ -82,17 +85,17 @@ export default function ProfilePage() {
           
           if (data.success) {
             console.log('✅ Subscription synced successfully')
-            // Reload profile data
-            window.location.reload()
+            // Reload profile data after a short delay
+            setTimeout(() => {
+              window.location.reload()
+            }, 500)
           } else {
             console.error('❌ Sync failed:', data.error)
+            setSyncing(false)
           }
         } catch (error) {
           console.error('Error syncing subscription:', error)
-        } finally {
           setSyncing(false)
-          // Clean up URL
-          window.history.replaceState({}, '', '/profile')
         }
       }
     }
