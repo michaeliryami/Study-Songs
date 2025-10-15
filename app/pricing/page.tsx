@@ -352,9 +352,7 @@ export default function PricingPage() {
             })}
           </SimpleGrid>
 
-          <Text fontSize="sm" color="whiteAlpha.500" textAlign="center" maxW="2xl">
-            All plans include a 7-day free trial. Cancel anytime. No questions asked.
-          </Text>
+         
         </VStack>
       </Container>
     </Box>
