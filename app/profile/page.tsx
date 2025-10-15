@@ -100,10 +100,8 @@ export default function ProfilePage() {
             console.log('✅ Subscription synced successfully:', data)
             console.log('New tier:', data.tier)
             console.log('Subscription ID:', data.subscriptionId)
-            // Reload profile data after delay to ensure hook updates
-            setTimeout(() => {
-              window.location.reload()
-            }, 1500)
+            // Don't reload - let the real-time subscription hook handle the update
+            setSyncing(false)
           } else {
             console.error('❌ Sync failed:', data.error)
             setSyncing(false)
@@ -548,37 +546,6 @@ export default function ProfilePage() {
               View My Sets
             </Button>
           </SimpleGrid>
-
-          {/* Subscription Management */}
-          {(isPremium || isBasic) && (
-            <VStack spacing={3} align="stretch">
-              <Text fontSize="sm" color="whiteAlpha.600" textAlign="center">
-                Subscription Management
-              </Text>
-              <HStack spacing={3} justify="center">
-                <Button
-                  h={{ base: "40px", sm: "45px" }}
-                  bg="rgba(59, 130, 246, 0.1)"
-                  color="blue.300"
-                  fontWeight="600"
-                  fontSize={{ base: "sm", sm: "md" }}
-                  leftIcon={<CreditCard size={16} />}
-                  borderWidth={1}
-                  borderColor="blue.500"
-                  onClick={handleManageSubscription}
-                  isLoading={managingSubscription}
-                  loadingText="Opening..."
-                  _hover={{
-                    bg: 'rgba(59, 130, 246, 0.15)',
-                    transform: 'translateY(-1px)',
-                  }}
-                  transition="all 0.2s"
-                >
-                  Manage Subscription
-                </Button>
-              </HStack>
-            </VStack>
-          )}
         </VStack>
       </Container>
     </Box>
