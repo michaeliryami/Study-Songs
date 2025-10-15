@@ -56,6 +56,51 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true)
   const { tier, features, isPremium, isBasic, isFree, hasUnlimited } = useSubscription()
   const [managingSubscription, setManagingSubscription] = useState(false)
+  const [syncing, setSyncing] = useState(false)
+
+  // Auto-sync subscription after checkout success
+  useEffect(() => {
+    async function syncAfterCheckout() {
+      if (!user?.email) return
+      
+      // Check if we just came from successful checkout
+      const urlParams = new URLSearchParams(window.location.search)
+      const success = urlParams.get('success')
+      
+      if (success === 'true' && !syncing) {
+        console.log('🔄 Auto-syncing subscription after checkout...')
+        setSyncing(true)
+        
+        try {
+          const response = await fetch('/api/sync-subscription', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: user.email }),
+          })
+          
+          const data = await response.json()
+          
+          if (data.success) {
+            console.log('✅ Subscription synced successfully')
+            // Reload profile data
+            window.location.reload()
+          } else {
+            console.error('❌ Sync failed:', data.error)
+          }
+        } catch (error) {
+          console.error('Error syncing subscription:', error)
+        } finally {
+          setSyncing(false)
+          // Clean up URL
+          window.history.replaceState({}, '', '/profile')
+        }
+      }
+    }
+    
+    if (user && !authLoading) {
+      syncAfterCheckout()
+    }
+  }, [user, authLoading, syncing])
 
   // Redirect if not logged in
   useEffect(() => {

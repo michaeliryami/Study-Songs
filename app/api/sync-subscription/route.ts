@@ -48,6 +48,8 @@ export async function POST(req: NextRequest) {
     }
 
     console.log('🔄 Syncing subscription for customer:', profile.stripe_customer_id)
+    console.log('   Current tier in DB:', profile.subscription_tier)
+    console.log('   Current subscription ID in DB:', profile.stripe_subscription_id)
 
     // Get customer from Stripe
     const customer = await stripe.customers.retrieve(profile.stripe_customer_id) as any
@@ -60,7 +62,7 @@ export async function POST(req: NextRequest) {
       limit: 1
     })
 
-    console.log('📋 Active subscriptions:', subscriptions.data.length)
+    console.log('📋 Active subscriptions found:', subscriptions.data.length)
 
     let newTier = 'free'
     let subscriptionId = null
@@ -68,6 +70,7 @@ export async function POST(req: NextRequest) {
     if (subscriptions.data.length > 0) {
       const subscription = subscriptions.data[0]
       subscriptionId = subscription.id
+      console.log('✓ Found subscription ID:', subscriptionId)
       
       const priceId = subscription.items.data[0]?.price.id
       console.log('💰 Price ID:', priceId)
@@ -83,29 +86,36 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    console.log('🎯 New tier:', newTier)
+    console.log('🎯 New tier determined:', newTier)
+    console.log('🎯 New subscription ID:', subscriptionId)
 
     // Update profile
+    const updatePayload = {
+      subscription_tier: newTier,
+      stripe_subscription_id: subscriptionId,
+      updated_at: new Date().toISOString()
+    }
+    
+    console.log('📝 Updating profile with payload:', JSON.stringify(updatePayload, null, 2))
+    
     const { data: updatedProfile, error: updateError } = await supabase
       .from('profiles')
-      .update({
-        subscription_tier: newTier,
-        stripe_subscription_id: subscriptionId,
-        updated_at: new Date().toISOString()
-      })
+      .update(updatePayload)
       .eq('id', profile.id)
       .select()
       .single()
 
     if (updateError) {
       console.error('❌ Error updating profile:', updateError)
+      console.error('❌ Full error:', JSON.stringify(updateError, null, 2))
       return NextResponse.json(
         { error: 'Failed to update subscription' },
         { status: 500 }
       )
     }
 
-    console.log('✅ Subscription synced successfully')
+    console.log('✅ Subscription synced successfully!')
+    console.log('✅ Updated profile:', JSON.stringify(updatedProfile, null, 2))
 
     return NextResponse.json({
       success: true,
