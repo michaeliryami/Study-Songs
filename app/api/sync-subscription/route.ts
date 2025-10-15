@@ -76,12 +76,10 @@ export async function POST(req: NextRequest) {
       console.log('✓ Found subscription ID:', currentSubscription.id)
       console.log('✓ Subscription status:', currentSubscription.status)
       console.log('✓ Cancel at period end?', currentSubscription.cancel_at_period_end)
-      console.log('✓ Current period end:', currentSubscription.current_period_end)
       
       // Check if subscription is canceled (will end at period end)
       if (currentSubscription.cancel_at_period_end) {
-        console.log('⚠️ Subscription is CANCELED - will end at:', new Date(currentSubscription.current_period_end * 1000))
-        console.log('   Reverting to free tier immediately')
+        console.log('⚠️ Subscription is CANCELED - reverting to free tier immediately')
         newTier = 'free'
         newTokens = 30
         subscriptionId = null // Clear subscription ID since it's canceled
