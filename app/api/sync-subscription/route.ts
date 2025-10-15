@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
 
     let newTier: 'free' | 'basic' | 'premium' = 'free'
     let subscriptionId: string | null = null
-    let newTokens = 30 // Default for free tier
+    let newTokens = 10 // Default for free tier
 
     // Find the most recent subscription that's active OR will cancel at period end
     const currentSubscription = allSubscriptions.data.find(sub => 
@@ -81,7 +81,7 @@ export async function POST(req: NextRequest) {
       if (currentSubscription.cancel_at_period_end) {
         console.log('⚠️ Subscription is CANCELED - reverting to free tier immediately')
         newTier = 'free'
-        newTokens = 30
+        newTokens = 10
         subscriptionId = null // Clear subscription ID since it's canceled
       } else {
         // Subscription is active and not canceled
@@ -98,7 +98,7 @@ export async function POST(req: NextRequest) {
         } else if (priceId === env.NEXT_PUBLIC_STRIPE_BASIC_MONTHLY_PRICE_ID || 
                    priceId === env.NEXT_PUBLIC_STRIPE_BASIC_YEARLY_PRICE_ID) {
           newTier = 'basic'
-          newTokens = 300 // 300 credits for basic
+          newTokens = 100 // 100 credits for basic
         }
       }
     } else {
@@ -121,7 +121,7 @@ export async function POST(req: NextRequest) {
       
       // Set to free tier
       newTier = 'free'
-      newTokens = 30
+      newTokens = 10
       subscriptionId = null // Clear subscription ID for canceled/no subscription
     }
 

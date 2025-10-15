@@ -131,12 +131,13 @@ CRITICAL REQUIREMENTS:
 - You MUST use the specific information from the notes provided below
 - Do NOT use general knowledge - only what is in the notes
 - Only use 6 lines if you need more space to include ALL the information
+- ALL formulas with = or variables should be written in full so an AI can easily pronounce- f = ma should be f equals m a
 
 Instructions:
 
 The user will provide notes on a specific concept. Read them carefully.
 
-Create a concise jingle (4-6 lines, preferring shorter) that:
+Create a concise jingle (4-6 lines, STRONGLY PREFER SHORTER (4 lines)) that:
 
 1. Has a clear rhyme scheme (e.g., AABB, ABAB, or ABCB)
 2. Includes ALL key terms and facts from the notes

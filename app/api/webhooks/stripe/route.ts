@@ -138,7 +138,7 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
   
   // Determine tier and tokens from price ID
   let tier: 'basic' | 'premium' = 'basic'
-  let tokens = 300 // Default to basic
+  let tokens = 100 // Default to basic
   const env = process.env
   if (priceId === env.NEXT_PUBLIC_STRIPE_PREMIUM_MONTHLY_PRICE_ID || 
       priceId === env.NEXT_PUBLIC_STRIPE_PREMIUM_YEARLY_PRICE_ID) {
@@ -147,7 +147,7 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
   } else if (priceId === env.NEXT_PUBLIC_STRIPE_BASIC_MONTHLY_PRICE_ID || 
              priceId === env.NEXT_PUBLIC_STRIPE_BASIC_YEARLY_PRICE_ID) {
     tier = 'basic'
-    tokens = 300
+    tokens = 100
   }
 
   console.log('Determined tier:', tier)
@@ -231,7 +231,7 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
 
   // Determine tier and tokens from price ID
   let tier: 'basic' | 'premium' = 'basic'
-  let tokens = 300 // Default to basic
+  let tokens = 100 // Default to basic
   const env = process.env
   
   if (priceId === env.NEXT_PUBLIC_STRIPE_PREMIUM_MONTHLY_PRICE_ID || 
@@ -241,7 +241,7 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
   } else if (priceId === env.NEXT_PUBLIC_STRIPE_BASIC_MONTHLY_PRICE_ID || 
              priceId === env.NEXT_PUBLIC_STRIPE_BASIC_YEARLY_PRICE_ID) {
     tier = 'basic'
-    tokens = 300
+    tokens = 100
   }
 
   console.log('✓ Determined tier:', tier)
@@ -339,14 +339,14 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
 
   // Determine tier and tokens from price ID
   let tier: 'free' | 'basic' | 'premium' = 'free'
-  let tokens = 30 // Default to free
+  let tokens = 10 // Default to free
   let subId: string | null = subscriptionId
   
   // If subscription is marked for cancellation, revert to free immediately
   if (cancelAtPeriodEnd) {
     console.log('⚠️ Subscription is marked for cancellation - reverting to free tier')
     tier = 'free'
-    tokens = 30
+    tokens = 10
     subId = null // Clear subscription ID
   } else if (status === 'active') {
     const env = process.env
@@ -363,7 +363,7 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
     } else if (priceId === env.NEXT_PUBLIC_STRIPE_BASIC_MONTHLY_PRICE_ID || 
                priceId === env.NEXT_PUBLIC_STRIPE_BASIC_YEARLY_PRICE_ID) {
       tier = 'basic'
-      tokens = 300
+      tokens = 100
     }
   }
 
@@ -438,7 +438,7 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
     .update({
       subscription_tier: 'free',
       stripe_subscription_id: null, // Clear subscription ID
-      current_tokens: 30, // Reset to free tier tokens
+      current_tokens: 10, // Reset to free tier tokens
       updated_at: new Date().toISOString()
     })
     .eq('stripe_customer_id', customerId)
@@ -450,7 +450,7 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
   }
 
   console.log(`✅ Subscription canceled for customer ${customerId}`)
-  console.log('Updated profile to free tier with 30 tokens')
+  console.log('Updated profile to free tier with 10 tokens')
   console.log('Updated data:', data)
 }
 

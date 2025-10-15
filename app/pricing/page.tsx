@@ -121,7 +121,7 @@ export default function PricingPage() {
       yearlyPriceId: process.env.NEXT_PUBLIC_STRIPE_BASIC_YEARLY_PRICE_ID!,
       description: 'Perfect for students getting started',
       features: [
-        '300 tokens per month',
+        '100 tokens per month',
         'Unlimited study sets',
         'Download MP3s',
         'Pre-set music genres',

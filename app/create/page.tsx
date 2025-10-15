@@ -262,7 +262,7 @@ export default function CreatePage() {
                 ⚠️ Free Plan Limit
               </Text>
               <Text fontSize="xs" color="whiteAlpha.700">
-                You can create 1 study set with 30 tokens. Upgrade for unlimited sets and more tokens.
+                You can create 1 study set with 10 tokens. Upgrade for unlimited sets and more tokens.
               </Text>
             </Box>
           )}

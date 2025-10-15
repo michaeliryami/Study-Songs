@@ -126,8 +126,8 @@ The backend uses Next.js API routes with:
 - **Multi-tier System**: Free, Basic ($10/month), Premium ($14/month)
 
 ### Business Model
-- **Free Plan**: 1 study set, 30 tokens, basic features
-- **Basic Plan**: 300 credits/month, pre-set genres, MP3 downloads
+- **Free Plan**: 1 study set, 10 tokens, basic features
+- **Basic Plan**: 100 credits/month, pre-set genres, MP3 downloads
 - **Premium Plan**: Unlimited credits, custom genres, audio stitching
 
 ## Development

@@ -120,7 +120,7 @@ export default function Home() {
               lineHeight="1.6"
               px={{ base: 4, sm: 0 }}
             >
-              Turn any study material into catchy, memorable jingles. Start with 30 free tokens and unlock unlimited learning potential.
+              Turn any study material into catchy, memorable jingles. Start with 10 free tokens and unlock unlimited learning potential.
             </Text>
 
             <VStack spacing={4} pt={6} w="full" maxW={{ base: "100%", sm: "auto" }}>
@@ -200,7 +200,7 @@ export default function Home() {
                 <HStack>
                   <Zap size={20} color="#f97316" />
                   <Heading fontSize="3xl" fontWeight="900" bgGradient="linear(135deg, brand.400 0%, accent.400 100%)" bgClip="text">
-                    30
+                    10
                   </Heading>
                 </HStack>
                 <Text fontSize="sm" color="whiteAlpha.600" fontWeight="500">
@@ -649,7 +649,7 @@ export default function Home() {
                   <VStack align="start" spacing={3} flex="1">
                     <HStack>
                       <Box color="green.400">✓</Box>
-                      <Text color="whiteAlpha.800" fontSize="sm">30 tokens (30 jingles)</Text>
+                  <Text color="whiteAlpha.800" fontSize="sm">10 tokens (10 jingles)</Text>
                     </HStack>
                     <HStack>
                       <Box color="green.400">✓</Box>
@@ -708,7 +708,7 @@ export default function Home() {
                   <VStack align="start" spacing={3} flex="1">
                     <HStack>
                       <Box color="green.400">✓</Box>
-                      <Text color="white" fontSize="sm" fontWeight="600">300 tokens per month</Text>
+                      <Text color="white" fontSize="sm" fontWeight="600">100 tokens per month</Text>
                     </HStack>
                     <HStack>
                       <Box color="green.400">✓</Box>
