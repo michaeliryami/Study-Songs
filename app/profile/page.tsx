@@ -63,10 +63,19 @@ export default function ProfilePage() {
     async function syncAfterCheckout() {
       if (!user?.email) return
       
-      // Check if we just came from successful checkout
+      // Check if we just came from successful checkout or cancellation
       const urlParams = new URLSearchParams(window.location.search)
       const success = urlParams.get('success')
+      const canceled = urlParams.get('canceled')
       
+      // Handle cancellation
+      if (canceled === 'true') {
+        console.log('❌ Checkout was canceled')
+        window.history.replaceState({}, '', '/profile')
+        return
+      }
+      
+      // Handle successful checkout
       if (success === 'true' && !syncing) {
         console.log('🔄 Auto-syncing subscription after checkout...')
         
@@ -84,11 +93,13 @@ export default function ProfilePage() {
           const data = await response.json()
           
           if (data.success) {
-            console.log('✅ Subscription synced successfully')
-            // Reload profile data after a short delay
+            console.log('✅ Subscription synced successfully:', data)
+            console.log('New tier:', data.tier)
+            console.log('Subscription ID:', data.subscriptionId)
+            // Reload profile data after delay to ensure hook updates
             setTimeout(() => {
               window.location.reload()
-            }, 500)
+            }, 1500)
           } else {
             console.error('❌ Sync failed:', data.error)
             setSyncing(false)
@@ -177,11 +188,12 @@ export default function ProfilePage() {
 
   const tierColors = {
     free: { bg: 'gray', text: 'Free', icon: User },
-    pro: { bg: 'purple', text: 'Pro', icon: Sparkles },
+    basic: { bg: 'blue', text: 'Basic', icon: Sparkles },
     premium: { bg: 'orange', text: 'Premium', icon: Crown },
   }
 
-  const currentTier = tierColors[stats.subscription_tier as keyof typeof tierColors] || tierColors.free
+  // Use tier from useSubscription hook (source of truth) instead of stats
+  const currentTier = tierColors[tier as keyof typeof tierColors] || tierColors.free
   const joinedDate = new Date(stats.created_at).toLocaleDateString('en-US', { 
     month: 'long', 
     year: 'numeric' 
