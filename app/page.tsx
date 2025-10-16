@@ -800,10 +800,10 @@ export default function Home() {
                     color="whiteAlpha.700"
                     _hover={{ color: "brand.400" }}
                     fontSize="sm"
-                    onClick={() => {
-                      // You can implement a modal or separate page for privacy policy
-                      alert('Privacy Policy: We collect email addresses for account creation and subscription management. Audio files are stored securely in our database. We do not share personal data with third parties except for payment processing through Stripe. All data is encrypted and stored in compliance with GDPR and CCPA regulations.')
-                    }}
+                    as="a"
+                    href="/privacy-policy.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
                     Privacy Policy
                   </Button>
@@ -822,7 +822,7 @@ export default function Home() {
                 
                 <VStack spacing={2}>
                   <Text color="whiteAlpha.600" fontSize="sm" textAlign="center">
-                    © 2024 Noomo AI. All rights reserved.
+                    © 2025 Noomo AI. All rights reserved.
                   </Text>
                   <Text color="whiteAlpha.500" fontSize="xs" textAlign="center" maxW="2xl">
                     Transform your study notes into unforgettable jingles with AI-powered music generation.

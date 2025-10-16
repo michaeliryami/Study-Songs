@@ -1,0 +1,137 @@
+%PDF-1.4
+1 0 obj
+<<
+/Type /Catalog
+/Pages 2 0 R
+>>
+endobj
+
+2 0 obj
+<<
+/Type /Pages
+/Kids [3 0 R]
+/Count 1
+>>
+endobj
+
+3 0 obj
+<<
+/Type /Page
+/Parent 2 0 R
+/MediaBox [0 0 612 792]
+/Contents 4 0 R
+/Resources <<
+/Font <<
+/F1 5 0 R
+>>
+>>
+>>
+endobj
+
+4 0 obj
+<<
+/Length 2000
+>>
+stream
+BT
+/F1 12 Tf
+72 720 Td
+(Noomo AI Privacy Policy) Tj
+0 -20 Td
+/F1 10 Tf
+(Last Updated: January 2025) Tj
+0 -30 Td
+/F1 9 Tf
+(Information We Collect) Tj
+0 -20 Td
+/F1 8 Tf
+(We collect email addresses for account creation and subscription management.) Tj
+0 -15 Td
+(We store audio files and study materials you create using our service.) Tj
+0 -15 Td
+(We collect payment information through Stripe for subscription processing.) Tj
+0 -20 Td
+/F1 9 Tf
+(How We Use Your Information) Tj
+0 -20 Td
+/F1 8 Tf
+(To provide and improve our AI-powered study jingle generation service.) Tj
+0 -15 Td
+(To process payments and manage your subscription.) Tj
+0 -15 Td
+(To communicate with you about your account and our service.) Tj
+0 -20 Td
+/F1 9 Tf
+(Data Storage and Security) Tj
+0 -20 Td
+/F1 8 Tf
+(All data is encrypted and stored securely using industry-standard practices.) Tj
+0 -15 Td
+(Audio files are stored in secure cloud storage with access controls.) Tj
+0 -15 Td
+(We implement appropriate technical and organizational measures to protect your data.) Tj
+0 -20 Td
+/F1 9 Tf
+(Third-Party Services) Tj
+0 -20 Td
+/F1 8 Tf
+(We use Stripe for payment processing - they have their own privacy policy.) Tj
+0 -15 Td
+(We use Supabase for data storage - they comply with GDPR and SOC 2.) Tj
+0 -15 Td
+(We use Replicate for AI music generation - they process your lyrics to create audio.) Tj
+0 -20 Td
+/F1 9 Tf
+(Your Rights) Tj
+0 -20 Td
+/F1 8 Tf
+(You can request access to your personal data at any time.) Tj
+0 -15 Td
+(You can request deletion of your account and associated data.) Tj
+0 -15 Td
+(You can opt out of marketing communications.) Tj
+0 -20 Td
+/F1 9 Tf
+(Contact Information) Tj
+0 -20 Td
+/F1 8 Tf
+(For privacy-related questions, contact us at: noomoaihq@gmail.com) Tj
+0 -20 Td
+/F1 9 Tf
+(Changes to This Policy) Tj
+0 -20 Td
+/F1 8 Tf
+(We may update this privacy policy from time to time.) Tj
+0 -15 Td
+(We will notify you of any material changes via email or our website.) Tj
+0 -20 Td
+/F1 8 Tf
+(This policy is effective as of January 2025.) Tj
+ET
+endstream
+endobj
+
+5 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/BaseFont /Helvetica
+>>
+endobj
+
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000204 00000 n 
+0000002220 00000 n 
+trailer
+<<
+/Size 6
+/Root 1 0 R
+>>
+startxref
+2274
+%%EOF
