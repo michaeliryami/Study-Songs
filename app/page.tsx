@@ -147,28 +147,6 @@ export default function Home() {
                 >
                   Start Creating Now
                 </Button>
-                <Button
-                  bg="rgba(26, 26, 46, 0.8)"
-                  color="white"
-                  size={{ base: "md", sm: "lg" }}
-                  h={{ base: "56px", sm: "72px" }}
-                  px={{ base: 6, sm: 10 }}
-                  fontSize={{ base: "lg", sm: "xl" }}
-                  fontWeight="600"
-                  borderWidth={2}
-                  borderColor="rgba(217, 70, 239, 0.3)"
-                  w={{ base: "full", sm: "auto" }}
-                  minW={{ base: "280px", sm: "auto" }}
-                onClick={() => router.push('/my-sets')}
-                _hover={{
-                  bg: "rgba(37, 37, 64, 0.9)",
-                  transform: "translateY(-4px)",
-                  borderColor: "brand.500"
-                }}
-                transition="all 0.3s"
-              >
-                View Demo
-              </Button>
             </HStack>
             </VStack>
 
