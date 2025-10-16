@@ -784,6 +784,54 @@ export default function Home() {
             </SimpleGrid>
           </VStack>
 
+          {/* Footer */}
+          <Box
+            bg="rgba(26, 26, 46, 0.8)"
+            borderTop="1px solid"
+            borderColor="rgba(217, 70, 239, 0.2)"
+            mt={20}
+            py={12}
+          >
+            <Container maxW="container.xl">
+              <VStack spacing={8}>
+                <HStack spacing={8} flexWrap="wrap" justify="center">
+                  <Button
+                    variant="link"
+                    color="whiteAlpha.700"
+                    _hover={{ color: "brand.400" }}
+                    fontSize="sm"
+                    onClick={() => {
+                      // You can implement a modal or separate page for privacy policy
+                      alert('Privacy Policy: We collect email addresses for account creation and subscription management. Audio files are stored securely in our database. We do not share personal data with third parties except for payment processing through Stripe. All data is encrypted and stored in compliance with GDPR and CCPA regulations.')
+                    }}
+                  >
+                    Privacy Policy
+                  </Button>
+                  <Text color="whiteAlpha.500" fontSize="sm">•</Text>
+                  <Button
+                    variant="link"
+                    color="whiteAlpha.700"
+                    _hover={{ color: "brand.400" }}
+                    fontSize="sm"
+                    as="a"
+                    href="mailto:noomoaihq@gmail.com"
+                  >
+                    Contact Us
+                  </Button>
+                </HStack>
+                
+                <VStack spacing={2}>
+                  <Text color="whiteAlpha.600" fontSize="sm" textAlign="center">
+                    © 2024 Noomo AI. All rights reserved.
+                  </Text>
+                  <Text color="whiteAlpha.500" fontSize="xs" textAlign="center" maxW="2xl">
+                    Transform your study notes into unforgettable jingles with AI-powered music generation.
+                  </Text>
+                </VStack>
+              </VStack>
+            </Container>
+          </Box>
+
         </VStack>
       </Container>
     </Box>
