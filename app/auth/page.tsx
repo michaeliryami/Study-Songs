@@ -155,6 +155,45 @@ export default function AuthPage() {
     }
   }
 
+  const handleGoogleSignIn = async () => {
+    if (!supabase) {
+      toast({
+        title: 'Error',
+        description: 'Authentication not configured',
+        status: 'error',
+        duration: 3000,
+      })
+      return
+    }
+
+    setLoading(true)
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/my-sets`
+        }
+      })
+
+      if (error) throw error
+
+      toast({
+        title: 'Redirecting to Google...',
+        description: 'Please complete sign-in with Google',
+        status: 'info',
+        duration: 3000,
+      })
+    } catch (error: any) {
+      toast({
+        title: 'Google sign-in failed',
+        description: error.message || 'An error occurred',
+        status: 'error',
+        duration: 5000,
+      })
+      setLoading(false)
+    }
+  }
+
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!supabase) {
@@ -341,6 +380,37 @@ export default function AuthPage() {
                           Sign In
                         </Button>
 
+                        <HStack w="100%" spacing={2}>
+                          <Box flex="1" h="1px" bg="whiteAlpha.200" />
+                          <Text color="whiteAlpha.500" fontSize="sm" px={2}>
+                            or
+                          </Text>
+                          <Box flex="1" h="1px" bg="whiteAlpha.200" />
+                        </HStack>
+
+                        <Button
+                          w="100%"
+                          size={{ base: "md", sm: "lg" }}
+                          h={{ base: "48px", sm: "56px" }}
+                          bg="white"
+                          color="gray.800"
+                          fontWeight="600"
+                          leftIcon={
+                            <Box w="20px" h="20px" bg="url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTIyLjU2IDEyLjI1QzIyLjU2IDExLjQ3IDIyLjQ5IDEwLjggMjIuMzYgMTAuMTJIMTIuNVYxNC4yNUgxOC4xNEMxNy45MyAxNS42MiAxNy4wOCAxNi43NSAxNS42NyAxNy40MlYxOS44NEgxOS4zOEMyMS4xMyAxOC4xMSAyMi41NiAxNS41OCAyMi41NiAxMi4yNVoiIGZpbGw9IiM0Mjg1RjQiLz4KPHBhdGggZD0iTTEyLjUgMjNDMTUuNTMgMjMgMTguMTMgMjEuNjYgMTkuODggMTkuODRMMTUuNjcgMTcuNDJDMTQuNzMgMTguMDcgMTMuNDcgMTguNSAxMi41IDE4LjVDOS41NiAxOC41IDcuMDMgMTYuNDcgNi4xIDEzLjYyTDEuODIgMTUuOTNDMy41NSAxOS4zNSA3LjE4IDIyIDEyLjUgMjJaIiBmaWxsPSIjMzRBODUzIi8+CjxwYXRoIGQ9Ik02LjEgMTMuNjJDNS44MyAxMi44NyA1LjY3IDEyLjE0IDUuNjcgMTEuM0M1LjY3IDEwLjQ2IDUuODMgOS43MyA2LjA5IDguOThMMS44MiA2LjYxQzAuNzMgOC40NiAwIDEwLjU4IDAgMTIuOTlDMCAxNS40MSAwLjczIDE3LjUzIDEuODIgMTkuMzlMNi4xIDEzLjYyWiIgZmlsbD0iI0ZCQkMwNSIvPgo8cGF0aCBkPSJNMTIuNSA0LjU4QzE0LjI0IDQuNTggMTUuNzggNS4yIDE2Ljk2IDYuMThMMTkuOTMgMy4yMUMxOC4xMyAxLjQ1IDE1LjUzIDAgMTIuNSAwQzcuMTggMCAzLjU1IDIuNjUgMS44MiA2LjYxTDYuMDkgOC45OEM3LjAzIDYuMTMgOS41NiA0LjU4IDEyLjUgNC41OFoiIGZpbGw9IiNFQjQzMzUiLz4KPC9zdmc+')" />
+                          }
+                          onClick={handleGoogleSignIn}
+                          isLoading={loading}
+                          _hover={{
+                            bg: 'gray.50',
+                            transform: 'translateY(-1px)',
+                          }}
+                          _active={{
+                            bg: 'gray.100',
+                          }}
+                        >
+                          Continue with Google
+                        </Button>
+
                         <Link
                           color="brand.300"
                           fontSize={{ base: "xs", sm: "sm" }}
@@ -470,6 +540,36 @@ export default function AuthPage() {
                           }}
                         >
                           Create Account
+                        </Button>
+
+                        <HStack w="100%" spacing={2}>
+                          <Box flex="1" h="1px" bg="whiteAlpha.200" />
+                          <Text color="whiteAlpha.500" fontSize="sm" px={2}>
+                            or
+                          </Text>
+                          <Box flex="1" h="1px" bg="whiteAlpha.200" />
+                        </HStack>
+
+                        <Button
+                          w="100%"
+                          size="lg"
+                          bg="white"
+                          color="gray.800"
+                          fontWeight="600"
+                          leftIcon={
+                            <Box w="20px" h="20px" bg="url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTIyLjU2IDEyLjI1QzIyLjU2IDExLjQ3IDIyLjQ5IDEwLjggMjIuMzYgMTAuMTJIMTIuNVYxNC4yNUgxOC4xNEMxNy45MyAxNS42MiAxNy4wOCAxNi43NSAxNS42NyAxNy40MlYxOS44NEgxOS4zOEMyMS4xMyAxOC4xMSAyMi41NiAxNS41OCAyMi41NiAxMi4yNVoiIGZpbGw9IiM0Mjg1RjQiLz4KPHBhdGggZD0iTTEyLjUgMjNDMTUuNTMgMjMgMTguMTMgMjEuNjYgMTkuODggMTkuODRMMTUuNjcgMTcuNDJDMTQuNzMgMTguMDcgMTMuNDcgMTguNSAxMi41IDE4LjVDOS41NiAxOC41IDcuMDMgMTYuNDcgNi4xIDEzLjYyTDEuODIgMTUuOTNDMy41NSAxOS4zNSA3LjE4IDIyIDEyLjUgMjJaIiBmaWxsPSIjMzRBODUzIi8+CjxwYXRoIGQ9Ik02LjEgMTMuNjJDNS44MyAxMi44NyA1LjY3IDEyLjE0IDUuNjcgMTEuM0M1LjY3IDEwLjQ2IDUuODMgOS43MyA2LjA5IDguOThMMS44MiA2LjYxQzAuNzMgOC40NiAwIDEwLjU4IDAgMTIuOTlDMCAxNS40MSAwLjczIDE3LjUzIDEuODIgMTkuMzlMNi4xIDEzLjYyWiIgZmlsbD0iI0ZCQkMwNSIvPgo8cGF0aCBkPSJNMTIuNSA0LjU4QzE0LjI0IDQuNTggMTUuNzggNS4yIDE2Ljk2IDYuMThMMTkuOTMgMy4yMUMxOC4xMyAxLjQ1IDE1LjUzIDAgMTIuNSAwQzcuMTggMCAzLjU1IDIuNjUgMS44MiA2LjYxTDYuMDkgOC45OEM3LjAzIDYuMTMgOS41NiA0LjU4IDEyLjUgNC41OFoiIGZpbGw9IiNFQjQzMzUiLz4KPC9zdmc+')" />
+                          }
+                          onClick={handleGoogleSignIn}
+                          isLoading={loading}
+                          _hover={{
+                            bg: 'gray.50',
+                            transform: 'translateY(-1px)',
+                          }}
+                          _active={{
+                            bg: 'gray.100',
+                          }}
+                        >
+                          Continue with Google
                         </Button>
 
                         <Text color="whiteAlpha.600" fontSize="xs" textAlign="center">
