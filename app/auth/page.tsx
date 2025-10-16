@@ -396,7 +396,7 @@ export default function AuthPage() {
                           color="gray.800"
                           fontWeight="600"
                           leftIcon={
-                            <Box w="16px" h="16px" bg="url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTIyLjU2IDEyLjI1QzIyLjU2IDExLjQ3IDIyLjQ5IDEwLjggMjIuMzYgMTAuMTJIMTIuNVYxNC4yNUgxOC4xNEMxNy45MyAxNS42MiAxNy4wOCAxNi43NSAxNS42NyAxNy40MlYxOS44NEgxOS4zOEMyMS4xMyAxOC4xMSAyMi41NiAxNS41OCAyMi41NiAxMi4yNVoiIGZpbGw9IiM0Mjg1RjQiLz4KPHBhdGggZD0iTTEyLjUgMjNDMTUuNTMgMjMgMTguMTMgMjEuNjYgMTkuODggMTkuODRMMTUuNjcgMTcuNDJDMTQuNzMgMTguMDcgMTMuNDcgMTguNSAxMi41IDE4LjVDOS41NiAxOC41IDcuMDMgMTYuNDcgNi4xIDEzLjYyTDEuODIgMTUuOTNDMy41NSAxOS4zNSA3LjE4IDIyIDEyLjUgMjJaIiBmaWxsPSIjMzRBODUzIi8+CjxwYXRoIGQ9Ik02LjEgMTMuNjJDNS44MyAxMi44NyA1LjY3IDEyLjE0IDUuNjcgMTEuM0M1LjY3IDEwLjQ2IDUuODMgOS43MyA2LjA5IDguOThMMS44MiA2LjYxQzAuNzMgOC40NiAwIDEwLjU4IDAgMTIuOTlDMCAxNS40MSAwLjczIDE3LjUzIDEuODIgMTkuMzlMNi4xIDEzLjYyWiIgZmlsbD0iI0ZCQkMwNSIvPgo8cGF0aCBkPSJNMTIuNSA0LjU4QzE0LjI0IDQuNTggMTUuNzggNS4yIDE2Ljk2IDYuMThMMTkuOTMgMy4yMUMxOC4xMyAxLjQ1IDE1LjUzIDAgMTIuNSAwQzcuMTggMCAzLjU1IDIuNjUgMS44MiA2LjYxTDYuMDkgOC45OEM3LjAzIDYuMTMgOS41NiA0LjU4IDEyLjUgNC41OFoiIGZpbGw9IiNFQjQzMzUiLz4KPC9zdmc+')" bgSize="contain" bgRepeat="no-repeat" />
+                            <Text fontSize="16px" fontWeight="bold" color="#4285F4">G</Text>
                           }
                           onClick={handleGoogleSignIn}
                           isLoading={loading}
@@ -557,7 +557,7 @@ export default function AuthPage() {
                           color="gray.800"
                           fontWeight="600"
                           leftIcon={
-                            <Box w="16px" h="16px" bg="url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTIyLjU2IDEyLjI1QzIyLjU2IDExLjQ3IDIyLjQ5IDEwLjggMjIuMzYgMTAuMTJIMTIuNVYxNC4yNUgxOC4xNEMxNy45MyAxNS42MiAxNy4wOCAxNi43NSAxNS42NyAxNy40MlYxOS44NEgxOS4zOEMyMS4xMyAxOC4xMSAyMi41NiAxNS41OCAyMi41NiAxMi4yNVoiIGZpbGw9IiM0Mjg1RjQiLz4KPHBhdGggZD0iTTEyLjUgMjNDMTUuNTMgMjMgMTguMTMgMjEuNjYgMTkuODggMTkuODRMMTUuNjcgMTcuNDJDMTQuNzMgMTguMDcgMTMuNDcgMTguNSAxMi41IDE4LjVDOS41NiAxOC41IDcuMDMgMTYuNDcgNi4xIDEzLjYyTDEuODIgMTUuOTNDMy41NSAxOS4zNSA3LjE4IDIyIDEyLjUgMjJaIiBmaWxsPSIjMzRBODUzIi8+CjxwYXRoIGQ9Ik02LjEgMTMuNjJDNS44MyAxMi44NyA1LjY3IDEyLjE0IDUuNjcgMTEuM0M1LjY3IDEwLjQ2IDUuODMgOS43MyA2LjA5IDguOThMMS44MiA2LjYxQzAuNzMgOC40NiAwIDEwLjU4IDAgMTIuOTlDMCAxNS40MSAwLjczIDE3LjUzIDEuODIgMTkuMzlMNi4xIDEzLjYyWiIgZmlsbD0iI0ZCQkMwNSIvPgo8cGF0aCBkPSJNMTIuNSA0LjU4QzE0LjI0IDQuNTggMTUuNzggNS4yIDE2Ljk2IDYuMThMMTkuOTMgMy4yMUMxOC4xMyAxLjQ1IDE1LjUzIDAgMTIuNSAwQzcuMTggMCAzLjU1IDIuNjUgMS44MiA2LjYxTDYuMDkgOC45OEM3LjAzIDYuMTMgOS41NiA0LjU4IDEyLjUgNC41OFoiIGZpbGw9IiNFQjQzMzUiLz4KPC9zdmc+')" bgSize="contain" bgRepeat="no-repeat" />
+                            <Text fontSize="16px" fontWeight="bold" color="#4285F4">G</Text>
                           }
                           onClick={handleGoogleSignIn}
                           isLoading={loading}
