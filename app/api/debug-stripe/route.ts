@@ -41,11 +41,13 @@ export async function POST(req: NextRequest) {
     if (subscriptions.data.length > 0) {
       const sub = subscriptions.data[0]
       const priceId = sub.items.data[0]?.price.id
-      
+
       let tier: 'basic' | 'premium' = 'basic'
       const env = process.env
-      if (priceId === env.NEXT_PUBLIC_STRIPE_PREMIUM_MONTHLY_PRICE_ID || 
-          priceId === env.NEXT_PUBLIC_STRIPE_PREMIUM_YEARLY_PRICE_ID) {
+      if (
+        priceId === env.NEXT_PUBLIC_STRIPE_PREMIUM_MONTHLY_PRICE_ID ||
+        priceId === env.NEXT_PUBLIC_STRIPE_PREMIUM_YEARLY_PRICE_ID
+      ) {
         tier = 'premium'
       }
 
@@ -63,21 +65,29 @@ export async function POST(req: NextRequest) {
 
       if (error) {
         console.error('Error updating:', error)
-        
+
         // Check if it's a constraint violation
         if (error.code === '23514') {
-          return NextResponse.json({ 
-            error: 'Database constraint violation',
-            message: 'Your Supabase table has a check constraint that doesn\'t allow the value "basic" or "premium" for subscription_tier.',
-            solution: 'Run the SQL script fix-constraint.sql in your Supabase SQL Editor to fix this.',
-            details: error 
-          }, { status: 500 })
+          return NextResponse.json(
+            {
+              error: 'Database constraint violation',
+              message:
+                'Your Supabase table has a check constraint that doesn\'t allow the value "basic" or "premium" for subscription_tier.',
+              solution:
+                'Run the SQL script fix-constraint.sql in your Supabase SQL Editor to fix this.',
+              details: error,
+            },
+            { status: 500 }
+          )
         }
-        
-        return NextResponse.json({ 
-          error: 'Failed to update',
-          details: error 
-        }, { status: 500 })
+
+        return NextResponse.json(
+          {
+            error: 'Failed to update',
+            details: error,
+          },
+          { status: 500 }
+        )
       }
 
       return NextResponse.json({
@@ -100,10 +110,12 @@ export async function POST(req: NextRequest) {
     })
   } catch (error) {
     console.error('Debug error:', error)
-    return NextResponse.json({ 
-      error: 'Debug failed', 
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 })
+    return NextResponse.json(
+      {
+        error: 'Debug failed',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    )
   }
 }
-

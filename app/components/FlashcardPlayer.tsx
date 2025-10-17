@@ -125,10 +125,7 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
 
             // Update in Supabase
             if (supabase) {
-              await supabase
-                .from('sets')
-                .update({ jingles: updatedJingles })
-                .eq('id', studySet.id)
+              await supabase.from('sets').update({ jingles: updatedJingles }).eq('id', studySet.id)
             }
 
             setStudySet({ ...studySet, jingles: updatedJingles })
@@ -155,13 +152,14 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
     const handleKeyPress = (e: KeyboardEvent) => {
       // Don't trigger keyboard shortcuts when typing in form elements
       const target = e.target as HTMLElement
-      const isFormElement = target.tagName === 'INPUT' || 
-                           target.tagName === 'TEXTAREA' || 
-                           target.tagName === 'SELECT' ||
-                           target.contentEditable === 'true'
-      
+      const isFormElement =
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.tagName === 'SELECT' ||
+        target.contentEditable === 'true'
+
       if (isFormElement) return
-      
+
       if (e.key === 'ArrowLeft') handlePrevious()
       if (e.key === 'ArrowRight') handleNext()
       if (e.key === ' ') {
@@ -178,7 +176,7 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
   useEffect(() => {
     if (audioRef.current && currentJingle?.audioUrl) {
       audioRef.current.src = currentJingle.audioUrl
-      
+
       const handleEnded = () => {
         if (currentIndex < studySet.jingles.length - 1) {
           setTimeout(() => {
@@ -191,7 +189,7 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
       }
 
       audioRef.current.addEventListener('ended', handleEnded)
-      
+
       if (isPlaying) {
         audioRef.current.play().catch(() => setIsPlaying(false))
       }
@@ -209,7 +207,7 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
       audioRef.current.pause()
       setIsPlaying(false)
     } else {
-      audioRef.current.play().catch((err) => {
+      audioRef.current.play().catch(err => {
         console.error('Play error:', err)
         setIsPlaying(false)
       })
@@ -259,7 +257,7 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
       const response = await fetch('/api/generate-song', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           studyNotes: notes,
           genre: genre,
           userId: user?.id, // Pass userId for token deduction
@@ -346,12 +344,13 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
     setRegenerating(true)
     try {
       // Determine the genre to use (custom genre for premium users)
-      const selectedGenre = editedGenre === 'custom' && customGenre.trim() ? customGenre.trim() : editedGenre
+      const selectedGenre =
+        editedGenre === 'custom' && customGenre.trim() ? customGenre.trim() : editedGenre
 
       const response = await fetch('/api/generate-song', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           studyNotes: editedNotes,
           genre: selectedGenre,
           userId: user?.id, // Pass userId for token deduction
@@ -451,12 +450,12 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
       // Parse the notes to extract term-definition pairs
       const lines = newTerms.split('\n').filter(line => line.trim())
       const newJingles: any[] = []
-      
+
       for (const line of lines) {
         const separators = ['—', ':', '-', '–']
         let term = ''
         let definition = ''
-        
+
         // Try to find a separator
         for (const sep of separators) {
           if (line.includes(sep)) {
@@ -468,15 +467,15 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
             }
           }
         }
-        
+
         // If no separator found, treat the whole line as the term
         if (!term) {
           term = line.trim()
         }
-        
+
         // Generate jingle for this term
         const studyNotes = definition ? `${term} — ${definition}` : term
-        
+
         const response = await fetch('/api/generate-song', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -551,7 +550,7 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
 
   const handleTouchEnd = () => {
     if (!touchStart || !touchEnd) return
-    
+
     const distance = touchStart - touchEnd
     const isLeftSwipe = distance > 50
     const isRightSwipe = distance < -50
@@ -568,7 +567,8 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
     if (!features.canDownload) {
       toast({
         title: 'Upgrade Required',
-        description: 'Download MP3s is a premium feature. Upgrade to Basic or Premium to unlock downloads.',
+        description:
+          'Download MP3s is a premium feature. Upgrade to Basic or Premium to unlock downloads.',
         status: 'warning',
         duration: 5000,
       })
@@ -621,7 +621,8 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
     if (tier !== 'premium') {
       toast({
         title: 'Premium Feature',
-        description: 'Audio stitching is only available for Premium users. Upgrade to unlock this feature.',
+        description:
+          'Audio stitching is only available for Premium users. Upgrade to unlock this feature.',
         status: 'warning',
         duration: 5000,
       })
@@ -651,7 +652,7 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
       console.log('🔄 Updating studySet with stitch URL:', data.stitchedAudioUrl)
       setStudySet({
         ...studySet,
-        stitch: data.stitchedAudioUrl
+        stitch: data.stitchedAudioUrl,
       })
 
       console.log('✅ StudySet updated, stitch URL should now be available')
@@ -662,7 +663,6 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
         status: 'success',
         duration: 5000,
       })
-
     } catch (error) {
       console.error('Error stitching audio:', error)
       toast({
@@ -709,7 +709,7 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
     try {
       const response = await fetch(studySet.stitch)
       console.log('📥 Fetch response:', response.status, response.statusText)
-      
+
       if (!response.ok) {
         console.error('❌ Fetch failed:', response.status, response.statusText)
         throw new Error(`Failed to fetch audio: ${response.status} ${response.statusText}`)
@@ -717,17 +717,17 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
 
       const blob = await response.blob()
       console.log('📦 Blob created:', blob.size, 'bytes')
-      
+
       const url = window.URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.href = url
       link.download = `${studySet.subject.replace(/[^a-zA-Z0-9]/g, '_')}_complete.mp3`
       link.style.display = 'none'
-      
+
       document.body.appendChild(link)
       console.log('🔗 Triggering download...')
       link.click()
-      
+
       // Clean up
       setTimeout(() => {
         document.body.removeChild(link)
@@ -745,7 +745,8 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
       console.error('❌ Download error:', error)
       toast({
         title: 'Download failed',
-        description: error instanceof Error ? error.message : 'Could not download the stitched audio file',
+        description:
+          error instanceof Error ? error.message : 'Could not download the stitched audio file',
         status: 'error',
         duration: 5000,
       })
@@ -755,8 +756,8 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
   return (
     <VStack spacing={4} align="stretch" w="100%">
       <audio ref={audioRef} />
-      <audio 
-        ref={stitchedAudioRef} 
+      <audio
+        ref={stitchedAudioRef}
         src={studySet.stitch}
         onEnded={() => setPlayingStitched(false)}
       />
@@ -804,13 +805,13 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
           bg="rgba(26, 26, 46, 0.6)"
           color="whiteAlpha.700"
           _hover={{ bg: 'rgba(37, 37, 64, 0.8)' }}
-          size={{ base: "sm", sm: "md" }}
+          size={{ base: 'sm', sm: 'md' }}
           borderRadius="xl"
         />
-        <Heading 
-          size={{ base: "md", sm: "lg" }} 
-          color="white" 
-          textAlign="center" 
+        <Heading
+          size={{ base: 'md', sm: 'lg' }}
+          color="white"
+          textAlign="center"
           flex={1}
           px={{ base: 2, sm: 0 }}
           isTruncated
@@ -825,7 +826,7 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
             bg={isAddingTerms ? 'brand.500' : 'rgba(26, 26, 46, 0.6)'}
             color="white"
             _hover={{ bg: isAddingTerms ? 'brand.600' : 'rgba(37, 37, 64, 0.8)' }}
-            size={{ base: "sm", sm: "md" }}
+            size={{ base: 'sm', sm: 'md' }}
             borderRadius="xl"
           />
         </HStack>
@@ -842,13 +843,16 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
         >
           <VStack spacing={{ base: 4, sm: 5 }} align="stretch">
             <VStack align="start" spacing={3}>
-              <Heading size={{ base: "xs", sm: "sm" }} color="white">
+              <Heading size={{ base: 'xs', sm: 'sm' }} color="white">
                 Add More Terms
               </Heading>
-              <Text color="whiteAlpha.600" fontSize={{ base: "xs", sm: "sm" }}>
-                Add new terms with definitions to generate more mnemonics. Format: <Text as="span" color="brand.400" fontWeight="600">Term — Definition</Text>
+              <Text color="whiteAlpha.600" fontSize={{ base: 'xs', sm: 'sm' }}>
+                Add new terms with definitions to generate more mnemonics. Format:{' '}
+                <Text as="span" color="brand.400" fontWeight="600">
+                  Term — Definition
+                </Text>
               </Text>
-              
+
               {/* Show current terms */}
               <Box
                 bg="rgba(42, 42, 64, 0.6)"
@@ -858,7 +862,13 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
                 borderColor="rgba(217, 70, 239, 0.1)"
                 w="100%"
               >
-                <Text color="whiteAlpha.500" fontSize="xs" fontWeight="600" textTransform="uppercase" mb={2}>
+                <Text
+                  color="whiteAlpha.500"
+                  fontSize="xs"
+                  fontWeight="600"
+                  textTransform="uppercase"
+                  mb={2}
+                >
                   Current Terms in Set ({studySet.jingles.length})
                 </Text>
                 <HStack spacing={2} flexWrap="wrap">
@@ -882,7 +892,7 @@ export default function FlashcardPlayer({ studySet: initialStudySet }: Flashcard
 
             <Textarea
               value={newTerms}
-              onChange={(e) => setNewTerms(e.target.value)}
+              onChange={e => setNewTerms(e.target.value)}
               placeholder="Mitosis — Cell division that produces two identical daughter cells
 
 Meiosis — Cell division that produces four gametes with half the chromosomes
@@ -904,7 +914,7 @@ Format: Term — Definition (one per line)"
                 isLoading={addingNewTerms}
                 bgGradient="linear(135deg, brand.500 0%, accent.500 100%)"
                 color="white"
-                _hover={{ bgGradient: "linear(135deg, brand.600 0%, accent.600 100%)" }}
+                _hover={{ bgGradient: 'linear(135deg, brand.600 0%, accent.600 100%)' }}
                 flex={1}
                 h="48px"
                 fontSize="md"
@@ -931,10 +941,10 @@ Format: Term — Definition (one per line)"
       {/* Progress Bar */}
       <Box mb={2}>
         <HStack justify="space-between" mb={1}>
-          <Text color="whiteAlpha.600" fontSize={{ base: "xs", sm: "sm" }} fontWeight="500">
+          <Text color="whiteAlpha.600" fontSize={{ base: 'xs', sm: 'sm' }} fontWeight="500">
             {currentIndex + 1} of {studySet.jingles.length}
           </Text>
-          <Text color="whiteAlpha.600" fontSize={{ base: "xs", sm: "sm" }} fontWeight="500">
+          <Text color="whiteAlpha.600" fontSize={{ base: 'xs', sm: 'sm' }} fontWeight="500">
             {Math.round(((currentIndex + 1) / studySet.jingles.length) * 100)}%
           </Text>
         </HStack>
@@ -943,7 +953,7 @@ Format: Term — Definition (one per line)"
           colorScheme="brand"
           bg="rgba(26, 26, 46, 0.6)"
           borderRadius="full"
-          height={{ base: "6px", sm: "8px" }}
+          height={{ base: '6px', sm: '8px' }}
           sx={{
             '& > div': {
               background: 'linear-gradient(135deg, #d946ef 0%, #f97316 100%)',
@@ -974,19 +984,27 @@ Format: Term — Definition (one per line)"
       >
         {isEditing ? (
           <VStack spacing={{ base: 3, sm: 4 }} w="100%" align="stretch">
-            <Heading size={{ base: "md", sm: "lg" }} color="white" textAlign="center">
+            <Heading size={{ base: 'md', sm: 'lg' }} color="white" textAlign="center">
               {currentJingle.term}
             </Heading>
-            
-            <Text color="brand.300" fontWeight="600" fontSize={{ base: "xs", sm: "sm" }} textTransform="uppercase" textAlign="center">
+
+            <Text
+              color="brand.300"
+              fontWeight="600"
+              fontSize={{ base: 'xs', sm: 'sm' }}
+              textTransform="uppercase"
+              textAlign="center"
+            >
               Edit & Regenerate
             </Text>
 
             <Box>
-              <Text color="whiteAlpha.600" fontSize={{ base: "xs", sm: "sm" }} mb={2}>Notes (for jingle content)</Text>
+              <Text color="whiteAlpha.600" fontSize={{ base: 'xs', sm: 'sm' }} mb={2}>
+                Notes (for jingle content)
+              </Text>
               <Textarea
                 value={editedNotes}
-                onChange={(e) => setEditedNotes(e.target.value)}
+                onChange={e => setEditedNotes(e.target.value)}
                 placeholder="Term — Definition/Explanation"
                 bg="rgba(42, 42, 64, 0.6)"
                 color="white"
@@ -996,20 +1014,22 @@ Format: Term — Definition (one per line)"
                 rows={4}
                 resize="vertical"
                 borderRadius="xl"
-                fontSize={{ base: "sm", sm: "md" }}
+                fontSize={{ base: 'sm', sm: 'md' }}
               />
             </Box>
 
             <Box>
-              <Text color="whiteAlpha.600" fontSize="sm" mb={2}>Music Genre</Text>
-                <Select
-                  value={editedGenre}
-                  onChange={(e) => {
-                    setEditedGenre(e.target.value)
-                    if (e.target.value !== 'custom') {
-                      setCustomGenre('')
-                    }
-                  }}
+              <Text color="whiteAlpha.600" fontSize="sm" mb={2}>
+                Music Genre
+              </Text>
+              <Select
+                value={editedGenre}
+                onChange={e => {
+                  setEditedGenre(e.target.value)
+                  if (e.target.value !== 'custom') {
+                    setCustomGenre('')
+                  }
+                }}
                 bg="rgba(42, 42, 64, 0.6)"
                 color="white"
                 borderColor="rgba(217, 70, 239, 0.2)"
@@ -1017,15 +1037,31 @@ Format: Term — Definition (one per line)"
                 _focus={{ borderColor: 'brand.500', boxShadow: '0 0 0 1px #d946ef' }}
                 borderRadius="xl"
               >
-                <option value="random" style={{ background: '#1a1a2e' }}>🎲 Random</option>
-                <option value="pop" style={{ background: '#1a1a2e' }}>🎵 Pop</option>
-                <option value="rnb" style={{ background: '#1a1a2e' }}>🎤 R&B</option>
-                <option value="hiphop" style={{ background: '#1a1a2e' }}>🎤 Hip-Hop</option>
-                <option value="rock" style={{ background: '#1a1a2e' }}>🎸 Rock</option>
-                <option value="country" style={{ background: '#1a1a2e' }}>🤠 Country</option>
-                <option value="electronic" style={{ background: '#1a1a2e' }}>🎛️ Electronic</option>
+                <option value="random" style={{ background: '#1a1a2e' }}>
+                  🎲 Random
+                </option>
+                <option value="pop" style={{ background: '#1a1a2e' }}>
+                  🎵 Pop
+                </option>
+                <option value="rnb" style={{ background: '#1a1a2e' }}>
+                  🎤 R&B
+                </option>
+                <option value="hiphop" style={{ background: '#1a1a2e' }}>
+                  🎤 Hip-Hop
+                </option>
+                <option value="rock" style={{ background: '#1a1a2e' }}>
+                  🎸 Rock
+                </option>
+                <option value="country" style={{ background: '#1a1a2e' }}>
+                  🤠 Country
+                </option>
+                <option value="electronic" style={{ background: '#1a1a2e' }}>
+                  🎛️ Electronic
+                </option>
                 {tier === 'premium' && (
-                  <option value="custom" style={{ background: '#1a1a2e' }}>✨ Other custom</option>
+                  <option value="custom" style={{ background: '#1a1a2e' }}>
+                    ✨ Other custom
+                  </option>
                 )}
               </Select>
             </Box>
@@ -1033,11 +1069,15 @@ Format: Term — Definition (one per line)"
             {/* Custom genre input for premium users */}
             {tier === 'premium' && editedGenre === 'custom' && (
               <Box>
-                <Text color="whiteAlpha.600" fontSize="sm" mb={2}>Custom Genre</Text>
+                <Text color="whiteAlpha.600" fontSize="sm" mb={2}>
+                  Custom Genre
+                </Text>
                 <Input
                   placeholder="Describe your custom music style (min 10 characters)..."
                   value={customGenre}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCustomGenre(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setCustomGenre(e.target.value)
+                  }
                   bg="rgba(42, 42, 64, 0.6)"
                   borderColor="rgba(217, 70, 239, 0.2)"
                   color="white"
@@ -1059,7 +1099,10 @@ Format: Term — Definition (one per line)"
                 isLoading={regenerating}
                 bgGradient="linear(135deg, brand.500 0%, accent.500 100%)"
                 color="white"
-                _hover={{ bgGradient: "linear(135deg, brand.600 0%, accent.600 100%)", transform: 'translateY(-2px)' }}
+                _hover={{
+                  bgGradient: 'linear(135deg, brand.600 0%, accent.600 100%)',
+                  transform: 'translateY(-2px)',
+                }}
                 leftIcon={<RefreshCw size={18} />}
                 flex={1}
                 size="lg"
@@ -1168,7 +1211,10 @@ Format: Term — Definition (one per line)"
           isDisabled={!currentJingle?.audioUrl}
           bgGradient="linear(135deg, brand.500 0%, accent.500 100%)"
           color="white"
-          _hover={{ bgGradient: "linear(135deg, brand.600 0%, accent.600 100%)", transform: 'scale(1.05)' }}
+          _hover={{
+            bgGradient: 'linear(135deg, brand.600 0%, accent.600 100%)',
+            transform: 'scale(1.05)',
+          }}
           size="lg"
           width="80px"
           height="80px"
@@ -1213,10 +1259,10 @@ Format: Term — Definition (one per line)"
             color="brand.300"
             borderWidth={1}
             borderColor="brand.500"
-            _hover={{ 
-              bg: 'rgba(217, 70, 239, 0.2)', 
+            _hover={{
+              bg: 'rgba(217, 70, 239, 0.2)',
               borderColor: 'brand.400',
-              color: 'brand.200'
+              color: 'brand.200',
             }}
             size="sm"
             borderRadius="xl"
@@ -1234,10 +1280,10 @@ Format: Term — Definition (one per line)"
             color="green.300"
             borderWidth={1}
             borderColor="green.500"
-            _hover={{ 
-              bg: 'rgba(34, 197, 94, 0.2)', 
+            _hover={{
+              bg: 'rgba(34, 197, 94, 0.2)',
               borderColor: 'green.400',
-              color: 'green.200'
+              color: 'green.200',
             }}
             size="sm"
             borderRadius="xl"
@@ -1254,4 +1300,3 @@ Format: Term — Definition (one per line)"
     </VStack>
   )
 }
-

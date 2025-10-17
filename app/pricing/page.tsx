@@ -152,7 +152,7 @@ export default function PricingPage() {
     <Box minH="100vh" bg="#0f0f1a" py={{ base: 6, md: 12 }}>
       <Container maxW="container.xl">
         <VStack spacing={{ base: 6, md: 8 }} align="center">
-          <PageHeader 
+          <PageHeader
             title="Choose Your Plan"
             subtitle="Turn your study notes into unforgettable jingles"
           />
@@ -165,25 +165,17 @@ export default function PricingPage() {
             border="1px solid"
             borderColor="rgba(217, 70, 239, 0.2)"
           >
-            <Text
-              fontSize="md"
-              fontWeight="600"
-              color={!isYearly ? 'white' : 'whiteAlpha.600'}
-            >
+            <Text fontSize="md" fontWeight="600" color={!isYearly ? 'white' : 'whiteAlpha.600'}>
               Monthly
             </Text>
             <Switch
               size="lg"
               colorScheme="purple"
               isChecked={isYearly}
-              onChange={(e) => setIsYearly(e.target.checked)}
+              onChange={e => setIsYearly(e.target.checked)}
             />
             <HStack spacing={2}>
-              <Text
-                fontSize="md"
-                fontWeight="600"
-                color={isYearly ? 'white' : 'whiteAlpha.600'}
-              >
+              <Text fontSize="md" fontWeight="600" color={isYearly ? 'white' : 'whiteAlpha.600'}>
                 Yearly
               </Text>
               <Badge
@@ -201,12 +193,12 @@ export default function PricingPage() {
           </HStack>
 
           <SimpleGrid columns={{ base: 1, md: 2 }} spacing={8} w="full" maxW="5xl">
-            {plans.map((plan) => {
+            {plans.map(plan => {
               const isCurrentPlan = tier === plan.tier
               return (
                 <Box
                   key={plan.name}
-                  bg={isCurrentPlan ? "rgba(217, 70, 239, 0.1)" : "rgba(26, 26, 46, 0.6)"}
+                  bg={isCurrentPlan ? 'rgba(217, 70, 239, 0.1)' : 'rgba(26, 26, 46, 0.6)'}
                   borderRadius="2xl"
                   p={8}
                   border="2px solid"
@@ -214,8 +206,8 @@ export default function PricingPage() {
                     isCurrentPlan
                       ? 'brand.500'
                       : plan.popular
-                      ? 'brand.500'
-                      : 'rgba(217, 70, 239, 0.1)'
+                        ? 'brand.500'
+                        : 'rgba(217, 70, 239, 0.1)'
                   }
                   position="relative"
                   transition="all 0.3s"
@@ -258,105 +250,94 @@ export default function PricingPage() {
                     </Box>
                   )}
 
-                <VStack align="stretch" spacing={6} h="full">
-                  <VStack align="start" spacing={2}>
-                    <Heading size="xl" color="white">
-                      {plan.name}
-                    </Heading>
-                    <Text color="whiteAlpha.600" fontSize="md">
-                      {plan.description}
-                    </Text>
-                  </VStack>
+                  <VStack align="stretch" spacing={6} h="full">
+                    <VStack align="start" spacing={2}>
+                      <Heading size="xl" color="white">
+                        {plan.name}
+                      </Heading>
+                      <Text color="whiteAlpha.600" fontSize="md">
+                        {plan.description}
+                      </Text>
+                    </VStack>
 
-                  <HStack align="baseline" spacing={1}>
-                    <Heading
-                      size="3xl"
-                      bgGradient="linear(135deg, brand.300 0%, accent.300 100%)"
-                      bgClip="text"
-                    >
-                      {isYearly ? plan.yearlyPrice : plan.monthlyPrice}
-                    </Heading>
-                    <Text color="whiteAlpha.500" fontSize="lg">
-                      /{isYearly ? 'year' : 'month'}
-                    </Text>
-                  </HStack>
+                    <HStack align="baseline" spacing={1}>
+                      <Heading
+                        size="3xl"
+                        bgGradient="linear(135deg, brand.300 0%, accent.300 100%)"
+                        bgClip="text"
+                      >
+                        {isYearly ? plan.yearlyPrice : plan.monthlyPrice}
+                      </Heading>
+                      <Text color="whiteAlpha.500" fontSize="lg">
+                        /{isYearly ? 'year' : 'month'}
+                      </Text>
+                    </HStack>
 
-                  {isYearly && (
-                    <Text fontSize="sm" color="green.300" fontWeight="600">
-                      💰 Save $
-                      {plan.tier === 'basic' ? '24' : '33.60'} per year
-                    </Text>
-                  )}
+                    {isYearly && (
+                      <Text fontSize="sm" color="green.300" fontWeight="600">
+                        💰 Save ${plan.tier === 'basic' ? '24' : '33.60'} per year
+                      </Text>
+                    )}
 
-                  <List spacing={3} w="full" flex="1">
-                    {plan.features.map((feature) => (
-                      <ListItem key={feature} color="whiteAlpha.800">
-                        <HStack>
-                          <ListIcon
-                            as={CheckCircle}
-                            color="green.400"
-                            fontSize="20px"
-                          />
-                          <Text fontSize="md">{feature}</Text>
-                        </HStack>
-                      </ListItem>
-                    ))}
-                  </List>
+                    <List spacing={3} w="full" flex="1">
+                      {plan.features.map(feature => (
+                        <ListItem key={feature} color="whiteAlpha.800">
+                          <HStack>
+                            <ListIcon as={CheckCircle} color="green.400" fontSize="20px" />
+                            <Text fontSize="md">{feature}</Text>
+                          </HStack>
+                        </ListItem>
+                      ))}
+                    </List>
 
-                  <Button
-                    w="full"
-                    size="lg"
-                    h="60px"
-                    bgGradient={
-                      plan.popular
-                        ? 'linear(135deg, brand.500 0%, accent.500 100%)'
-                        : 'none'
-                    }
-                    bg={plan.popular ? undefined : 'rgba(217, 70, 239, 0.1)'}
-                    color="white"
-                    fontSize="lg"
-                    fontWeight="700"
-                    borderWidth={plan.popular ? 0 : 2}
-                    borderColor="brand.500"
-                    leftIcon={<Sparkles size={20} />}
-                    onClick={() => {
-                      if (tier === plan.tier) {
-                        // Same tier - go to portal to manage
-                        handleManageSubscription()
-                      } else if (tier === 'free') {
-                        // Free user - subscribe to this plan
-                        handleSubscribe(
-                          isYearly ? plan.yearlyPriceId : plan.monthlyPriceId,
-                          plan.name
-                        )
-                      } else {
-                        // Different tier - go to portal to upgrade/downgrade
-                        handleManageSubscription()
+                    <Button
+                      w="full"
+                      size="lg"
+                      h="60px"
+                      bgGradient={
+                        plan.popular ? 'linear(135deg, brand.500 0%, accent.500 100%)' : 'none'
                       }
-                    }}
-                    isLoading={loading === plan.name || loading === 'manage'}
-                    _hover={{
-                      transform: 'translateY(-2px)',
-                      boxShadow: '0 10px 30px rgba(217, 70, 239, 0.4)',
-                    }}
-                  >
-                    {tier === plan.tier 
-                      ? 'Manage Plan' 
-                      : tier === 'free' 
-                        ? 'Get Started' 
-                        : 'Update Plan'
-                    }
-                  </Button>
-                </VStack>
-              </Box>
+                      bg={plan.popular ? undefined : 'rgba(217, 70, 239, 0.1)'}
+                      color="white"
+                      fontSize="lg"
+                      fontWeight="700"
+                      borderWidth={plan.popular ? 0 : 2}
+                      borderColor="brand.500"
+                      leftIcon={<Sparkles size={20} />}
+                      onClick={() => {
+                        if (tier === plan.tier) {
+                          // Same tier - go to portal to manage
+                          handleManageSubscription()
+                        } else if (tier === 'free') {
+                          // Free user - subscribe to this plan
+                          handleSubscribe(
+                            isYearly ? plan.yearlyPriceId : plan.monthlyPriceId,
+                            plan.name
+                          )
+                        } else {
+                          // Different tier - go to portal to upgrade/downgrade
+                          handleManageSubscription()
+                        }
+                      }}
+                      isLoading={loading === plan.name || loading === 'manage'}
+                      _hover={{
+                        transform: 'translateY(-2px)',
+                        boxShadow: '0 10px 30px rgba(217, 70, 239, 0.4)',
+                      }}
+                    >
+                      {tier === plan.tier
+                        ? 'Manage Plan'
+                        : tier === 'free'
+                          ? 'Get Started'
+                          : 'Update Plan'}
+                    </Button>
+                  </VStack>
+                </Box>
               )
             })}
           </SimpleGrid>
-
-         
         </VStack>
       </Container>
     </Box>
   )
 }
-

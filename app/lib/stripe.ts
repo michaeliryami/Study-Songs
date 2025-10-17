@@ -34,4 +34,3 @@ export const STRIPE_PLANS = {
 
 export type PlanTier = 'basic' | 'premium'
 export type BillingInterval = 'monthly' | 'yearly'
-

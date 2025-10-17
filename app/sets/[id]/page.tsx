@@ -47,11 +47,7 @@ export default function SetPage() {
           return // Wait for auth
         }
 
-        const { data, error } = await supabase
-          .from('sets')
-          .select('*')
-          .eq('id', id)
-          .single()
+        const { data, error } = await supabase.from('sets').select('*').eq('id', id).single()
 
         if (error) throw error
 
@@ -103,4 +99,3 @@ export default function SetPage() {
     </Box>
   )
 }
-

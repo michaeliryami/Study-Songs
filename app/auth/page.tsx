@@ -54,7 +54,7 @@ export default function AuthPage() {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     // Validate password confirmation
     if (signupPassword !== signupConfirmPassword) {
       toast({
@@ -96,7 +96,7 @@ export default function AuthPage() {
         status: 'success',
         duration: 5000,
       })
-      
+
       // Clear form
       setSignupEmail('')
       setSignupPassword('')
@@ -171,8 +171,8 @@ export default function AuthPage() {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/my-sets`
-        }
+          redirectTo: `${window.location.origin}/my-sets`,
+        },
       })
 
       if (error) throw error
@@ -220,7 +220,7 @@ export default function AuthPage() {
         status: 'success',
         duration: 5000,
       })
-      
+
       setShowForgotPassword(false)
       setForgotEmail('')
     } catch (error: any) {
@@ -242,8 +242,8 @@ export default function AuthPage() {
           {/* Logo & Header */}
           <VStack spacing={4} textAlign="center">
             <Box
-              w={{ base: "50px", sm: "60px" }}
-              h={{ base: "50px", sm: "60px" }}
+              w={{ base: '50px', sm: '60px' }}
+              h={{ base: '50px', sm: '60px' }}
               bgGradient="linear(135deg, brand.500 0%, accent.500 100%)"
               borderRadius="xl"
               display="flex"
@@ -254,7 +254,7 @@ export default function AuthPage() {
               <Music size={32} color="#ffffff" strokeWidth={2.5} />
             </Box>
             <Heading
-              size={{ base: "lg", sm: "xl" }}
+              size={{ base: 'lg', sm: 'xl' }}
               fontWeight="900"
               bgGradient="linear(135deg, brand.400 0%, accent.400 100%)"
               bgClip="text"
@@ -262,7 +262,11 @@ export default function AuthPage() {
             >
               Welcome to Noomo AI
             </Heading>
-            <Text color="whiteAlpha.600" fontSize={{ base: "md", sm: "lg" }} px={{ base: 4, sm: 0 }}>
+            <Text
+              color="whiteAlpha.600"
+              fontSize={{ base: 'md', sm: 'lg' }}
+              px={{ base: 4, sm: 0 }}
+            >
               Turn study notes into memorable jingles
             </Text>
           </VStack>
@@ -278,7 +282,12 @@ export default function AuthPage() {
             boxShadow="0 10px 40px rgba(0, 0, 0, 0.3)"
           >
             {!showForgotPassword ? (
-              <Tabs index={tabIndex} onChange={setTabIndex} colorScheme="purple" variant="soft-rounded">
+              <Tabs
+                index={tabIndex}
+                onChange={setTabIndex}
+                colorScheme="purple"
+                variant="soft-rounded"
+              >
                 <TabList mb={6}>
                   <Tab
                     flex={1}
@@ -310,47 +319,55 @@ export default function AuthPage() {
                     <form onSubmit={handleSignIn}>
                       <VStack spacing={4}>
                         <FormControl isRequired>
-                          <FormLabel color="whiteAlpha.800" fontSize={{ base: "xs", sm: "sm" }} fontWeight="600">
+                          <FormLabel
+                            color="whiteAlpha.800"
+                            fontSize={{ base: 'xs', sm: 'sm' }}
+                            fontWeight="600"
+                          >
                             Email
                           </FormLabel>
                           <Input
                             type="email"
                             placeholder="your@email.com"
                             value={signinEmail}
-                            onChange={(e) => setSigninEmail(e.target.value)}
+                            onChange={e => setSigninEmail(e.target.value)}
                             bg="rgba(42, 42, 64, 0.6)"
                             borderColor="rgba(217, 70, 239, 0.2)"
                             color="white"
                             _hover={{ borderColor: 'brand.500' }}
                             _focus={{ borderColor: 'brand.500', boxShadow: '0 0 0 1px #d946ef' }}
-                            size={{ base: "md", sm: "lg" }}
-                            h={{ base: "48px", sm: "56px" }}
+                            size={{ base: 'md', sm: 'lg' }}
+                            h={{ base: '48px', sm: '56px' }}
                             fontSize="16px"
                           />
                         </FormControl>
 
                         <FormControl isRequired>
-                          <FormLabel color="whiteAlpha.800" fontSize={{ base: "xs", sm: "sm" }} fontWeight="600">
+                          <FormLabel
+                            color="whiteAlpha.800"
+                            fontSize={{ base: 'xs', sm: 'sm' }}
+                            fontWeight="600"
+                          >
                             Password
                           </FormLabel>
                           <InputGroup>
                             <Input
-                              type={showSigninPassword ? "text" : "password"}
+                              type={showSigninPassword ? 'text' : 'password'}
                               placeholder="••••••••"
                               value={signinPassword}
-                              onChange={(e) => setSigninPassword(e.target.value)}
+                              onChange={e => setSigninPassword(e.target.value)}
                               bg="rgba(42, 42, 64, 0.6)"
                               borderColor="rgba(217, 70, 239, 0.2)"
                               color="white"
                               _hover={{ borderColor: 'brand.500' }}
                               _focus={{ borderColor: 'brand.500', boxShadow: '0 0 0 1px #d946ef' }}
-                              size={{ base: "md", sm: "lg" }}
-                              h={{ base: "48px", sm: "56px" }}
+                              size={{ base: 'md', sm: 'lg' }}
+                              h={{ base: '48px', sm: '56px' }}
                               fontSize="16px"
                             />
                             <InputRightElement h="full" pr={3}>
                               <IconButton
-                                aria-label={showSigninPassword ? "Hide password" : "Show password"}
+                                aria-label={showSigninPassword ? 'Hide password' : 'Show password'}
                                 icon={showSigninPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                                 variant="ghost"
                                 color="whiteAlpha.600"
@@ -365,14 +382,14 @@ export default function AuthPage() {
                         <Button
                           type="submit"
                           w="100%"
-                          size={{ base: "md", sm: "lg" }}
-                          h={{ base: "48px", sm: "56px" }}
+                          size={{ base: 'md', sm: 'lg' }}
+                          h={{ base: '48px', sm: '56px' }}
                           bgGradient="linear(135deg, brand.500 0%, accent.500 100%)"
                           color="white"
                           fontWeight="700"
                           rightIcon={<ArrowRight size={20} />}
                           isLoading={loading}
-                            fontSize="16px"
+                          fontSize="16px"
                           _hover={{
                             bgGradient: 'linear(135deg, brand.600 0%, accent.600 100%)',
                           }}
@@ -390,13 +407,15 @@ export default function AuthPage() {
 
                         <Button
                           w="100%"
-                          size={{ base: "md", sm: "lg" }}
-                          h={{ base: "48px", sm: "56px" }}
+                          size={{ base: 'md', sm: 'lg' }}
+                          h={{ base: '48px', sm: '56px' }}
                           bg="white"
                           color="gray.800"
                           fontWeight="600"
                           leftIcon={
-                            <Text fontSize="16px" fontWeight="bold" color="#4285F4">G</Text>
+                            <Text fontSize="16px" fontWeight="bold" color="#4285F4">
+                              G
+                            </Text>
                           }
                           onClick={handleGoogleSignIn}
                           isLoading={loading}
@@ -413,7 +432,7 @@ export default function AuthPage() {
 
                         <Link
                           color="brand.300"
-                          fontSize={{ base: "xs", sm: "sm" }}
+                          fontSize={{ base: 'xs', sm: 'sm' }}
                           onClick={() => setShowForgotPassword(true)}
                           cursor="pointer"
                           _hover={{ color: 'brand.400' }}
@@ -436,7 +455,7 @@ export default function AuthPage() {
                             type="text"
                             placeholder="John Doe"
                             value={signupName}
-                            onChange={(e) => setSignupName(e.target.value)}
+                            onChange={e => setSignupName(e.target.value)}
                             bg="rgba(42, 42, 64, 0.6)"
                             borderColor="rgba(217, 70, 239, 0.2)"
                             color="white"
@@ -454,7 +473,7 @@ export default function AuthPage() {
                             type="email"
                             placeholder="your@email.com"
                             value={signupEmail}
-                            onChange={(e) => setSignupEmail(e.target.value)}
+                            onChange={e => setSignupEmail(e.target.value)}
                             bg="rgba(42, 42, 64, 0.6)"
                             borderColor="rgba(217, 70, 239, 0.2)"
                             color="white"
@@ -470,10 +489,10 @@ export default function AuthPage() {
                           </FormLabel>
                           <InputGroup>
                             <Input
-                              type={showSignupPassword ? "text" : "password"}
+                              type={showSignupPassword ? 'text' : 'password'}
                               placeholder="••••••••"
                               value={signupPassword}
-                              onChange={(e) => setSignupPassword(e.target.value)}
+                              onChange={e => setSignupPassword(e.target.value)}
                               bg="rgba(42, 42, 64, 0.6)"
                               borderColor="rgba(217, 70, 239, 0.2)"
                               color="white"
@@ -483,7 +502,7 @@ export default function AuthPage() {
                             />
                             <InputRightElement h="full" pr={3}>
                               <IconButton
-                                aria-label={showSignupPassword ? "Hide password" : "Show password"}
+                                aria-label={showSignupPassword ? 'Hide password' : 'Show password'}
                                 icon={showSignupPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                                 variant="ghost"
                                 color="whiteAlpha.600"
@@ -501,10 +520,10 @@ export default function AuthPage() {
                           </FormLabel>
                           <InputGroup>
                             <Input
-                              type={showSignupConfirmPassword ? "text" : "password"}
+                              type={showSignupConfirmPassword ? 'text' : 'password'}
                               placeholder="••••••••"
                               value={signupConfirmPassword}
-                              onChange={(e) => setSignupConfirmPassword(e.target.value)}
+                              onChange={e => setSignupConfirmPassword(e.target.value)}
                               bg="rgba(42, 42, 64, 0.6)"
                               borderColor="rgba(217, 70, 239, 0.2)"
                               color="white"
@@ -514,12 +533,22 @@ export default function AuthPage() {
                             />
                             <InputRightElement h="full" pr={3}>
                               <IconButton
-                                aria-label={showSignupConfirmPassword ? "Hide password" : "Show password"}
-                                icon={showSignupConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                aria-label={
+                                  showSignupConfirmPassword ? 'Hide password' : 'Show password'
+                                }
+                                icon={
+                                  showSignupConfirmPassword ? (
+                                    <EyeOff size={18} />
+                                  ) : (
+                                    <Eye size={18} />
+                                  )
+                                }
                                 variant="ghost"
                                 color="whiteAlpha.600"
                                 _hover={{ color: 'white', bg: 'transparent' }}
-                                onClick={() => setShowSignupConfirmPassword(!showSignupConfirmPassword)}
+                                onClick={() =>
+                                  setShowSignupConfirmPassword(!showSignupConfirmPassword)
+                                }
                                 size="sm"
                               />
                             </InputRightElement>
@@ -557,7 +586,9 @@ export default function AuthPage() {
                           color="gray.800"
                           fontWeight="600"
                           leftIcon={
-                            <Text fontSize="16px" fontWeight="bold" color="#4285F4">G</Text>
+                            <Text fontSize="16px" fontWeight="bold" color="#4285F4">
+                              G
+                            </Text>
                           }
                           onClick={handleGoogleSignIn}
                           isLoading={loading}
@@ -601,7 +632,7 @@ export default function AuthPage() {
                         type="email"
                         placeholder="your@email.com"
                         value={forgotEmail}
-                        onChange={(e) => setForgotEmail(e.target.value)}
+                        onChange={e => setForgotEmail(e.target.value)}
                         bg="rgba(42, 42, 64, 0.6)"
                         borderColor="rgba(217, 70, 239, 0.2)"
                         color="white"
@@ -645,4 +676,3 @@ export default function AuthPage() {
     </Box>
   )
 }
-

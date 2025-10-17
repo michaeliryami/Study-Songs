@@ -31,7 +31,7 @@ export default function CreatePage() {
   const toast = useToast()
   const { user, loading: authLoading } = useAuth()
   const { tier, features, loading: subscriptionLoading } = useSubscription()
-  
+
   const [subject, setSubject] = useState('')
   const [genre, setGenre] = useState('random')
   const [customGenre, setCustomGenre] = useState('')
@@ -102,7 +102,7 @@ export default function CreatePage() {
       // First, let AI intelligently extract the main terms from the notes
       setProgress(20)
       const fullNotes = subject ? `${subject}\n\n${notes}` : notes
-      
+
       const termsResponse = await fetch('/api/generate-terms', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -122,22 +122,22 @@ export default function CreatePage() {
       const jingles: any[] = []
       for (let i = 0; i < termsList.length; i++) {
         const line = termsList[i].trim()
-        
+
         // Extract term and definition from "Term — Definition" format
         const separatorMatch = line.match(/[—:-]/)
         let term = line
         let definition = line
-        
+
         if (separatorMatch) {
           const parts = line.split(separatorMatch[0])
           term = parts[0].trim()
           definition = line // Keep full line with separator for context
         }
-        
+
         // Update current term being generated
         setCurrentTermNum(i + 1)
         setCurrentTermName(term)
-        
+
         // Determine the genre to use (custom genre for premium users)
         const selectedGenre = genre === 'custom' && customGenre.trim() ? customGenre.trim() : genre
 
@@ -214,11 +214,11 @@ export default function CreatePage() {
     <Box minH="100vh" bg="#0f0f1a" py={{ base: 6, md: 12 }}>
       <Container maxW="1200px" px={{ base: 3, sm: 4, md: 8 }}>
         <VStack spacing={{ base: 6, md: 8 }} align="stretch">
-          <PageHeader 
+          <PageHeader
             title="Create Study Set"
             subtitle="Paste your notes and we'll create catchy jingles for each term"
           />
-          
+
           {/* Free user limit warning - only show when not loading and confirmed free tier */}
           {!subscriptionLoading && tier === 'free' && (
             <Box
@@ -257,11 +257,7 @@ export default function CreatePage() {
               <CardBody p={6}>
                 <VStack spacing={4} align="stretch">
                   <HStack spacing={3}>
-                    <Box
-                      p={2}
-                      bg="rgba(217, 70, 239, 0.1)"
-                      borderRadius="lg"
-                    >
+                    <Box p={2} bg="rgba(217, 70, 239, 0.1)" borderRadius="lg">
                       <BookOpen size={20} color="#d946ef" />
                     </Box>
                     <VStack align="start" spacing={1}>
@@ -273,12 +269,12 @@ export default function CreatePage() {
                       </Text>
                     </VStack>
                   </HStack>
-                  
+
                   <FormControl>
                     <Input
                       placeholder="Biology, Chemistry, History..."
                       value={subject}
-                      onChange={(e) => setSubject(e.target.value)}
+                      onChange={e => setSubject(e.target.value)}
                       bg="rgba(42, 42, 64, 0.6)"
                       borderColor="rgba(217, 70, 239, 0.2)"
                       color="white"
@@ -309,11 +305,7 @@ export default function CreatePage() {
               <CardBody p={6}>
                 <VStack spacing={4} align="stretch">
                   <HStack spacing={3}>
-                    <Box
-                      p={2}
-                      bg="rgba(217, 70, 239, 0.1)"
-                      borderRadius="lg"
-                    >
+                    <Box p={2} bg="rgba(217, 70, 239, 0.1)" borderRadius="lg">
                       <Palette size={20} color="#d946ef" />
                     </Box>
                     <VStack align="start" spacing={1}>
@@ -325,11 +317,11 @@ export default function CreatePage() {
                       </Text>
                     </VStack>
                   </HStack>
-                  
+
                   <FormControl>
                     <Select
                       value={genre}
-                      onChange={(e) => {
+                      onChange={e => {
                         setGenre(e.target.value)
                         if (e.target.value !== 'custom') {
                           setCustomGenre('')
@@ -344,15 +336,40 @@ export default function CreatePage() {
                       fontSize="16px"
                       borderRadius="xl"
                     >
-                      <option value="random" style={{ backgroundColor: '#2a2a40', color: 'white' }}>🎲 Random</option>
-                      <option value="pop" style={{ backgroundColor: '#2a2a40', color: 'white' }}>🎵 Pop</option>
-                      <option value="rnb" style={{ backgroundColor: '#2a2a40', color: 'white' }}>🎤 R&B</option>
-                      <option value="hiphop" style={{ backgroundColor: '#2a2a40', color: 'white' }}>🎤 Hip-Hop</option>
-                      <option value="rock" style={{ backgroundColor: '#2a2a40', color: 'white' }}>🎸 Rock</option>
-                      <option value="country" style={{ backgroundColor: '#2a2a40', color: 'white' }}>🤠 Country</option>
-                      <option value="electronic" style={{ backgroundColor: '#2a2a40', color: 'white' }}>🎛️ Electronic</option>
+                      <option value="random" style={{ backgroundColor: '#2a2a40', color: 'white' }}>
+                        🎲 Random
+                      </option>
+                      <option value="pop" style={{ backgroundColor: '#2a2a40', color: 'white' }}>
+                        🎵 Pop
+                      </option>
+                      <option value="rnb" style={{ backgroundColor: '#2a2a40', color: 'white' }}>
+                        🎤 R&B
+                      </option>
+                      <option value="hiphop" style={{ backgroundColor: '#2a2a40', color: 'white' }}>
+                        🎤 Hip-Hop
+                      </option>
+                      <option value="rock" style={{ backgroundColor: '#2a2a40', color: 'white' }}>
+                        🎸 Rock
+                      </option>
+                      <option
+                        value="country"
+                        style={{ backgroundColor: '#2a2a40', color: 'white' }}
+                      >
+                        🤠 Country
+                      </option>
+                      <option
+                        value="electronic"
+                        style={{ backgroundColor: '#2a2a40', color: 'white' }}
+                      >
+                        🎛️ Electronic
+                      </option>
                       {tier === 'premium' && (
-                        <option value="custom" style={{ backgroundColor: '#2a2a40', color: 'white' }}>✨ Other custom</option>
+                        <option
+                          value="custom"
+                          style={{ backgroundColor: '#2a2a40', color: 'white' }}
+                        >
+                          ✨ Other custom
+                        </option>
                       )}
                     </Select>
                   </FormControl>
@@ -365,12 +382,14 @@ export default function CreatePage() {
                           🎨 Premium Feature: Custom AI Prompts
                         </Text>
                         <Text fontSize="xs" color="whiteAlpha.600">
-                          Describe exactly how you want your jingles to sound. Be creative! Examples: "upbeat pop with electronic beats and catchy hooks" or "acoustic folk with harmonica and storytelling lyrics"
+                          Describe exactly how you want your jingles to sound. Be creative!
+                          Examples: &quot;upbeat pop with electronic beats and catchy hooks&quot; or &quot;acoustic
+                          folk with harmonica and storytelling lyrics&quot;
                         </Text>
                         <Input
                           placeholder="Describe your custom music style (min 10 characters)..."
                           value={customGenre}
-                          onChange={(e) => setCustomGenre(e.target.value)}
+                          onChange={e => setCustomGenre(e.target.value)}
                           bg="rgba(42, 42, 64, 0.6)"
                           borderColor="rgba(217, 70, 239, 0.2)"
                           color="white"
@@ -408,11 +427,7 @@ export default function CreatePage() {
               <CardBody p={6}>
                 <VStack spacing={4} align="stretch">
                   <HStack spacing={3}>
-                    <Box
-                      p={2}
-                      bg="rgba(217, 70, 239, 0.1)"
-                      borderRadius="lg"
-                    >
+                    <Box p={2} bg="rgba(217, 70, 239, 0.1)" borderRadius="lg">
                       <FileText size={20} color="#d946ef" />
                     </Box>
                     <VStack align="start" spacing={1}>
@@ -424,12 +439,12 @@ export default function CreatePage() {
                       </Text>
                     </VStack>
                   </HStack>
-                  
+
                   <FormControl>
                     <Textarea
                       placeholder="You don't need to paste in the term definition form. You could paste abstract notes, as long as it's pretty clear what the term is, and what the definitions are. Just paste your study material and we'll extract the key concepts..."
                       value={notes}
-                      onChange={(e) => setNotes(e.target.value)}
+                      onChange={e => setNotes(e.target.value)}
                       bg="rgba(42, 42, 64, 0.6)"
                       borderColor="rgba(217, 70, 239, 0.2)"
                       color="white"
@@ -469,11 +484,22 @@ export default function CreatePage() {
               }}
               transition="all 0.2s"
             >
-              {subscriptionLoading ? 'Loading...' : generating ? 'Generating...' : 'Generate Study Set'}
+              {subscriptionLoading
+                ? 'Loading...'
+                : generating
+                  ? 'Generating...'
+                  : 'Generate Study Set'}
             </Button>
 
             {generating && (
-              <VStack spacing={3} bg="rgba(42, 42, 64, 0.6)" p={4} borderRadius="xl" borderWidth={1} borderColor="rgba(217, 70, 239, 0.2)">
+              <VStack
+                spacing={3}
+                bg="rgba(42, 42, 64, 0.6)"
+                p={4}
+                borderRadius="xl"
+                borderWidth={1}
+                borderColor="rgba(217, 70, 239, 0.2)"
+              >
                 <Progress
                   value={progress}
                   size="sm"
@@ -493,4 +519,3 @@ export default function CreatePage() {
     </Box>
   )
 }
-

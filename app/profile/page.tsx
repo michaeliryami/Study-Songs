@@ -26,11 +26,11 @@ import {
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
 import { useSubscription } from '../hooks/useSubscription'
-import { 
-  User, 
-  BookOpen, 
-  FileText, 
-  TrendingUp, 
+import {
+  User,
+  BookOpen,
+  FileText,
+  TrendingUp,
   Calendar,
   Crown,
   Sparkles,
@@ -62,40 +62,40 @@ export default function ProfilePage() {
   useEffect(() => {
     async function syncSubscription() {
       if (!user?.email) return
-      
+
       // Check if we need to sync (from checkout, portal, or cancellation)
       const urlParams = new URLSearchParams(window.location.search)
       const success = urlParams.get('success')
       const canceled = urlParams.get('canceled')
       const portal = urlParams.get('portal')
-      
+
       // Handle cancellation
       if (canceled === 'true') {
         console.log('❌ Checkout was canceled')
         window.history.replaceState({}, '', '/profile')
         return
       }
-      
+
       // Handle successful checkout OR portal return (upgrade/downgrade/cancel)
       const shouldSync = (success === 'true' || portal === 'true') && !syncing
-      
+
       if (shouldSync) {
         const source = portal === 'true' ? 'portal' : 'checkout'
         console.log(`🔄 Auto-syncing subscription after ${source}...`)
-        
+
         // Clean up URL immediately to prevent re-triggering
         window.history.replaceState({}, '', '/profile')
         setSyncing(true)
-        
+
         try {
           const response = await fetch('/api/sync-subscription', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: user.email }),
           })
-          
+
           const data = await response.json()
-          
+
           if (data.success) {
             console.log('✅ Subscription synced successfully:', data)
             console.log('New tier:', data.tier)
@@ -112,7 +112,7 @@ export default function ProfilePage() {
         }
       }
     }
-    
+
     if (user && !authLoading) {
       syncSubscription()
     }
@@ -153,7 +153,7 @@ export default function ProfilePage() {
 
   const handleManageSubscription = async () => {
     if (!user?.email) return
-    
+
     setManagingSubscription(true)
     try {
       const response = await fetch('/api/create-portal-session', {
@@ -164,7 +164,7 @@ export default function ProfilePage() {
 
       const { url, error } = await response.json()
       if (error) throw new Error(error)
-      
+
       if (url) {
         window.location.href = url
       }
@@ -175,11 +175,12 @@ export default function ProfilePage() {
     }
   }
 
-
   if (authLoading || loading) {
     return (
       <Box minH="100vh" bg="#0f0f1a" display="flex" alignItems="center" justifyContent="center">
-        <Text color="white" fontSize="lg">Loading profile...</Text>
+        <Text color="white" fontSize="lg">
+          Loading profile...
+        </Text>
       </Box>
     )
   }
@@ -196,9 +197,9 @@ export default function ProfilePage() {
 
   // Use tier from useSubscription hook (source of truth) instead of stats
   const currentTier = tierColors[tier as keyof typeof tierColors] || tierColors.free
-  const joinedDate = new Date(stats.created_at).toLocaleDateString('en-US', { 
-    month: 'long', 
-    year: 'numeric' 
+  const joinedDate = new Date(stats.created_at).toLocaleDateString('en-US', {
+    month: 'long',
+    year: 'numeric',
   })
 
   return (
@@ -228,12 +229,12 @@ export default function ProfilePage() {
             <CardBody p={{ base: 4, sm: 6, md: 8 }} position="relative">
               <VStack spacing={{ base: 4, sm: 6 }} align="center">
                 <Avatar
-                  size={{ base: "xl", sm: "2xl" }}
+                  size={{ base: 'xl', sm: '2xl' }}
                   name={stats.full_name || user.email}
                   bg="linear-gradient(135deg, #d946ef 0%, #f97316 100%)"
                   color="white"
                   fontWeight="900"
-                  fontSize={{ base: "2xl", sm: "3xl" }}
+                  fontSize={{ base: '2xl', sm: '3xl' }}
                   border="4px solid"
                   borderColor="rgba(217, 70, 239, 0.3)"
                   boxShadow="0 10px 40px rgba(217, 70, 239, 0.4)"
@@ -241,7 +242,7 @@ export default function ProfilePage() {
 
                 <VStack spacing={2} textAlign="center">
                   <Heading
-                    size={{ base: "lg", sm: "xl" }}
+                    size={{ base: 'lg', sm: 'xl' }}
                     bgGradient="linear(135deg, brand.300 0%, accent.300 100%)"
                     bgClip="text"
                     fontWeight="900"
@@ -249,13 +250,17 @@ export default function ProfilePage() {
                   >
                     {stats.full_name || 'Student'}
                   </Heading>
-                  <Text color="whiteAlpha.600" fontSize={{ base: "sm", sm: "md" }} px={{ base: 4, sm: 0 }}>
+                  <Text
+                    color="whiteAlpha.600"
+                    fontSize={{ base: 'sm', sm: 'md' }}
+                    px={{ base: 4, sm: 0 }}
+                  >
                     {user.email}
                   </Text>
                   <VStack spacing={2} pt={2}>
                     <Badge
                       colorScheme={currentTier.bg}
-                      fontSize={{ base: "xs", sm: "sm" }}
+                      fontSize={{ base: 'xs', sm: 'sm' }}
                       px={{ base: 2, sm: 3 }}
                       py={1}
                       borderRadius="full"
@@ -304,21 +309,22 @@ export default function ProfilePage() {
             >
               <CardBody p={{ base: 4, sm: 6 }}>
                 <VStack align="start" spacing={{ base: 3, sm: 4 }}>
-                  <Box
-                    p={{ base: 2, sm: 3 }}
-                    bg="rgba(217, 70, 239, 0.1)"
-                    borderRadius="lg"
-                  >
+                  <Box p={{ base: 2, sm: 3 }} bg="rgba(217, 70, 239, 0.1)" borderRadius="lg">
                     <BookOpen size={24} color="#d946ef" />
                   </Box>
                   <VStack align="start" spacing={1}>
-                    <Text fontSize={{ base: "xs", sm: "sm" }} color="whiteAlpha.600" fontWeight="600" textTransform="uppercase">
+                    <Text
+                      fontSize={{ base: 'xs', sm: 'sm' }}
+                      color="whiteAlpha.600"
+                      fontWeight="600"
+                      textTransform="uppercase"
+                    >
                       Study Sets
                     </Text>
-                    <Heading size={{ base: "xl", sm: "2xl" }} color="white" fontWeight="900">
+                    <Heading size={{ base: 'xl', sm: '2xl' }} color="white" fontWeight="900">
                       {stats.sets_count}
                     </Heading>
-                    <Text fontSize={{ base: "xs", sm: "sm" }} color="whiteAlpha.500">
+                    <Text fontSize={{ base: 'xs', sm: 'sm' }} color="whiteAlpha.500">
                       Total collections created
                     </Text>
                   </VStack>
@@ -341,15 +347,16 @@ export default function ProfilePage() {
             >
               <CardBody p={6}>
                 <VStack align="start" spacing={4}>
-                  <Box
-                    p={3}
-                    bg="rgba(251, 146, 60, 0.1)"
-                    borderRadius="lg"
-                  >
+                  <Box p={3} bg="rgba(251, 146, 60, 0.1)" borderRadius="lg">
                     <FileText size={24} color="#f97316" />
                   </Box>
                   <VStack align="start" spacing={1}>
-                    <Text fontSize="sm" color="whiteAlpha.600" fontWeight="600" textTransform="uppercase">
+                    <Text
+                      fontSize="sm"
+                      color="whiteAlpha.600"
+                      fontWeight="600"
+                      textTransform="uppercase"
+                    >
                       Total Terms
                     </Text>
                     <Heading size="2xl" color="white" fontWeight="900">
@@ -378,15 +385,16 @@ export default function ProfilePage() {
             >
               <CardBody p={6}>
                 <VStack align="start" spacing={4}>
-                  <Box
-                    p={3}
-                    bg="rgba(34, 197, 94, 0.1)"
-                    borderRadius="lg"
-                  >
+                  <Box p={3} bg="rgba(34, 197, 94, 0.1)" borderRadius="lg">
                     <TrendingUp size={24} color="#22c55e" />
                   </Box>
                   <VStack align="start" spacing={1}>
-                    <Text fontSize="sm" color="whiteAlpha.600" fontWeight="600" textTransform="uppercase">
+                    <Text
+                      fontSize="sm"
+                      color="whiteAlpha.600"
+                      fontWeight="600"
+                      textTransform="uppercase"
+                    >
                       Average per Set
                     </Text>
                     <Heading size="2xl" color="white" fontWeight="900">
@@ -412,9 +420,18 @@ export default function ProfilePage() {
               <VStack align="stretch" spacing={6}>
                 <HStack justify="space-between">
                   <HStack spacing={3}>
-                    {isPremium ? <Crown size={24} color="#d946ef" /> : <CreditCard size={24} color="#d946ef" />}
+                    {isPremium ? (
+                      <Crown size={24} color="#d946ef" />
+                    ) : (
+                      <CreditCard size={24} color="#d946ef" />
+                    )}
                     <VStack align="start" spacing={0}>
-                      <Text fontSize="sm" color="whiteAlpha.600" fontWeight="600" textTransform="uppercase">
+                      <Text
+                        fontSize="sm"
+                        color="whiteAlpha.600"
+                        fontWeight="600"
+                        textTransform="uppercase"
+                      >
                         Current Plan
                       </Text>
                       <Heading size="lg" color="white" textTransform="capitalize">
@@ -466,13 +483,15 @@ export default function ProfilePage() {
                     Your Features:
                   </Text>
                   <Text color="whiteAlpha.600" fontSize="sm">
-                    ✓ {features.tokensPerMonth >= 999999 ? 'Unlimited' : features.tokensPerMonth} tokens per month
+                    ✓ {features.tokensPerMonth >= 999999 ? 'Unlimited' : features.tokensPerMonth}{' '}
+                    tokens per month
                   </Text>
                   <Text color="whiteAlpha.600" fontSize="sm">
                     {features.canDownload ? '✓' : '✗'} Download MP3s
                   </Text>
                   <Text color="whiteAlpha.600" fontSize="sm">
-                    ✓ {features.maxSetsPerMonth >= 999 ? 'Unlimited' : features.maxSetsPerMonth} study sets
+                    ✓ {features.maxSetsPerMonth >= 999 ? 'Unlimited' : features.maxSetsPerMonth}{' '}
+                    study sets
                   </Text>
                   <Text color="whiteAlpha.600" fontSize="sm">
                     ✓ Save and share jingles
@@ -512,11 +531,11 @@ export default function ProfilePage() {
           {/* Quick Actions */}
           <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={{ base: 3, sm: 4 }}>
             <Button
-              h={{ base: "50px", sm: "60px" }}
+              h={{ base: '50px', sm: '60px' }}
               bgGradient="linear(135deg, brand.500 0%, accent.500 100%)"
               color="white"
               fontWeight="700"
-              fontSize={{ base: "md", sm: "lg" }}
+              fontSize={{ base: 'md', sm: 'lg' }}
               leftIcon={<Sparkles size={20} />}
               onClick={() => router.push('/create')}
               _hover={{
@@ -528,11 +547,11 @@ export default function ProfilePage() {
               Create New Study Set
             </Button>
             <Button
-              h={{ base: "50px", sm: "60px" }}
+              h={{ base: '50px', sm: '60px' }}
               bg="rgba(217, 70, 239, 0.1)"
               color="brand.300"
               fontWeight="700"
-              fontSize={{ base: "md", sm: "lg" }}
+              fontSize={{ base: 'md', sm: 'lg' }}
               leftIcon={<Music size={20} />}
               borderWidth={2}
               borderColor="brand.500"
@@ -551,4 +570,3 @@ export default function ProfilePage() {
     </Box>
   )
 }
-

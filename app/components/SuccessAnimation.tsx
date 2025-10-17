@@ -26,9 +26,9 @@ interface SuccessAnimationProps {
 
 export default function SuccessAnimation({ count, subject }: SuccessAnimationProps) {
   return (
-    <VStack 
-      spacing={6} 
-      py={12} 
+    <VStack
+      spacing={6}
+      py={12}
       animation={`${fadeIn} 0.5s ease-out`}
       bg="rgba(26, 26, 46, 0.6)"
       borderRadius="2xl"
@@ -41,13 +41,28 @@ export default function SuccessAnimation({ count, subject }: SuccessAnimationPro
       <Box position="absolute" top="20%" left="10%" animation={`${float} 3s ease-in-out infinite`}>
         <Sparkles size={24} color="#22c55e" opacity={0.6} />
       </Box>
-      <Box position="absolute" top="30%" right="15%" animation={`${float} 2.5s ease-in-out infinite 0.5s`}>
+      <Box
+        position="absolute"
+        top="30%"
+        right="15%"
+        animation={`${float} 2.5s ease-in-out infinite 0.5s`}
+      >
         <Music size={28} color="#d946ef" opacity={0.6} />
       </Box>
-      <Box position="absolute" bottom="25%" left="20%" animation={`${float} 2.8s ease-in-out infinite 1s`}>
+      <Box
+        position="absolute"
+        bottom="25%"
+        left="20%"
+        animation={`${float} 2.8s ease-in-out infinite 1s`}
+      >
         <Zap size={20} color="#f97316" opacity={0.6} />
       </Box>
-      <Box position="absolute" bottom="30%" right="10%" animation={`${float} 3.2s ease-in-out infinite 1.5s`}>
+      <Box
+        position="absolute"
+        bottom="30%"
+        right="10%"
+        animation={`${float} 3.2s ease-in-out infinite 1.5s`}
+      >
         <Sparkles size={20} color="#22c55e" opacity={0.6} />
       </Box>
 
@@ -66,8 +81,8 @@ export default function SuccessAnimation({ count, subject }: SuccessAnimationPro
       </Box>
 
       <VStack spacing={2}>
-        <Heading 
-          fontSize="3xl" 
+        <Heading
+          fontSize="3xl"
           fontWeight="900"
           bgGradient="linear(135deg, success.400 0%, brand.400 100%)"
           bgClip="text"
@@ -91,4 +106,3 @@ export default function SuccessAnimation({ count, subject }: SuccessAnimationPro
     </VStack>
   )
 }
-

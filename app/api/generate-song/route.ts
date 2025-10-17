@@ -11,17 +11,14 @@ export async function POST(request: NextRequest) {
     // Deduct token for any generation/regeneration when a userId is provided
     if (userId) {
       console.log('🪙 Deducting token for user:', userId)
-      
+
       // Create Supabase client for token deduction
       const { createClient } = await import('@supabase/supabase-js')
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
       const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-      
+
       if (!supabaseUrl || !supabaseServiceKey) {
-        return NextResponse.json(
-          { error: 'Missing Supabase configuration' },
-          { status: 500 }
-        )
+        return NextResponse.json({ error: 'Missing Supabase configuration' }, { status: 500 })
       }
 
       const supabase = createClient(supabaseUrl, supabaseServiceKey)
@@ -35,10 +32,7 @@ export async function POST(request: NextRequest) {
 
       if (fetchError || !profile) {
         console.error('Error fetching profile:', fetchError)
-        return NextResponse.json(
-          { error: 'Failed to fetch user profile' },
-          { status: 500 }
-        )
+        return NextResponse.json({ error: 'Failed to fetch user profile' }, { status: 500 })
       }
 
       // Check if user has tokens (premium users have unlimited)
@@ -53,17 +47,14 @@ export async function POST(request: NextRequest) {
         // Deduct 1 token
         const { error: updateError } = await supabase
           .from('profiles')
-          .update({ 
-            current_tokens: profile.current_tokens - 1 
+          .update({
+            current_tokens: profile.current_tokens - 1,
           })
           .eq('id', userId)
 
         if (updateError) {
           console.error('Error updating tokens:', updateError)
-          return NextResponse.json(
-            { error: 'Failed to deduct token' },
-            { status: 500 }
-          )
+          return NextResponse.json({ error: 'Failed to deduct token' }, { status: 500 })
         }
 
         console.log('✅ Token deducted. Remaining:', profile.current_tokens - 1)
@@ -74,14 +65,16 @@ export async function POST(request: NextRequest) {
 
     // Map user-selected genre to music style with detailed production specs
     const genreMap: Record<string, string> = {
-      'pop': 'synth-pop, electronic, pop, synthesizer, drums, bass, piano, 128 BPM, energetic, uplifting, modern, catchy educational jingle, clear vocals',
-      'rnb': 'R&B, soul, smooth bass, electric piano, drums, 90 BPM, groovy, relaxed, warm, educational jingle, clear vocals, melodic',
-      'hiphop': 'hip-hop, rap beat, 808 bass, snare, hi-hats, 95 BPM, rhythmic, bouncy, modern, educational jingle, clear enunciation, punchy',
-      'kids': 'kids pop, playful, xylophone, ukulele, light percussion, 120 BPM, cheerful, fun, bright, educational jingle, simple melody, happy',
-      'commercial': 'commercial jingle, advertising pop, catchy hook, piano, guitar, drums, 125 BPM, energetic, memorable, polished, ultra-catchy, repetitive',
-      'jazz': 'jazz, swing, piano, upright bass, brushed drums, saxophone, 110 BPM, smooth, sophisticated, relaxed, educational jingle, melodic vocals',
-      'rock': 'pop rock, electric guitar, bass guitar, drums, 130 BPM, energetic, driving, anthemic, educational jingle, powerful vocals, catchy',
-      'folk': 'folk pop, acoustic guitar, light percussion, 100 BPM, warm, organic, simple, educational jingle, clear vocals, memorable melody',
+      pop: 'synth-pop, electronic, pop, synthesizer, drums, bass, piano, 128 BPM, energetic, uplifting, modern, catchy educational jingle, clear vocals',
+      rnb: 'R&B, soul, smooth bass, electric piano, drums, 90 BPM, groovy, relaxed, warm, educational jingle, clear vocals, melodic',
+      hiphop:
+        'hip-hop, rap beat, 808 bass, snare, hi-hats, 95 BPM, rhythmic, bouncy, modern, educational jingle, clear enunciation, punchy',
+      kids: 'kids pop, playful, xylophone, ukulele, light percussion, 120 BPM, cheerful, fun, bright, educational jingle, simple melody, happy',
+      commercial:
+        'commercial jingle, advertising pop, catchy hook, piano, guitar, drums, 125 BPM, energetic, memorable, polished, ultra-catchy, repetitive',
+      jazz: 'jazz, swing, piano, upright bass, brushed drums, saxophone, 110 BPM, smooth, sophisticated, relaxed, educational jingle, melodic vocals',
+      rock: 'pop rock, electric guitar, bass guitar, drums, 130 BPM, energetic, driving, anthemic, educational jingle, powerful vocals, catchy',
+      folk: 'folk pop, acoustic guitar, light percussion, 100 BPM, warm, organic, simple, educational jingle, clear vocals, memorable melody',
     }
 
     // If user selected random or no genre specified, pick randomly
@@ -106,25 +99,28 @@ export async function POST(request: NextRequest) {
 
       if (!apiKey) {
         return NextResponse.json(
-          { error: 'API key not configured. Please add OPENAI_API_KEY or ANTHROPIC_API_KEY to .env.local' },
+          {
+            error:
+              'API key not configured. Please add OPENAI_API_KEY or ANTHROPIC_API_KEY to .env.local',
+          },
           { status: 500 }
         )
       }
 
       if (provider === 'openai' || process.env.OPENAI_API_KEY) {
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-        },
-        body: JSON.stringify({
-          model: 'gpt-4o-mini',
-          temperature: 0.7,
-          messages: [
-            {
-              role: 'system',
-              content: `You are an assistant that creates catchy, memorable jingles to help users memorize academic or conceptual material.
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+          },
+          body: JSON.stringify({
+            model: 'gpt-4o-mini',
+            temperature: 0.7,
+            messages: [
+              {
+                role: 'system',
+                content: `You are an assistant that creates catchy, memorable jingles to help users memorize academic or conceptual material.
 
 CRITICAL REQUIREMENTS:
 - Your jingle should be 4-6 lines long (aim for shorter - 4 or 5 lines if you can fit all the info)
@@ -152,40 +148,40 @@ The output should be only the jingle itself (4-6 lines), without commentary or e
 Here are the notes you must base your jingle on:
 
 ${studyNotes}`,
-            },
-            {
-              role: 'user',
-              content: `Create a 4-6 line jingle using ALL the information from the notes above. Make sure it rhymes and includes the key facts.`,
-            },
-          ],
-          max_tokens: 500,
-        }),
-      })
+              },
+              {
+                role: 'user',
+                content: `Create a 4-6 line jingle using ALL the information from the notes above. Make sure it rhymes and includes the key facts.`,
+              },
+            ],
+            max_tokens: 500,
+          }),
+        })
 
-      if (!response.ok) {
-        const error = await response.json()
-        console.error('OpenAI API error:', error)
-        return NextResponse.json(
-          { error: `OpenAI API Error: ${error.error?.message || 'Unknown error'}` },
-          { status: response.status }
-        )
-      }
+        if (!response.ok) {
+          const error = await response.json()
+          console.error('OpenAI API error:', error)
+          return NextResponse.json(
+            { error: `OpenAI API Error: ${error.error?.message || 'Unknown error'}` },
+            { status: response.status }
+          )
+        }
 
-      const data = await response.json()
-      lyrics = data.choices[0].message.content.trim()
-    } else if (provider === 'anthropic' || process.env.ANTHROPIC_API_KEY) {
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': process.env.ANTHROPIC_API_KEY!,
-          'anthropic-version': '2023-06-01',
-        },
-        body: JSON.stringify({
-          model: 'claude-3-5-sonnet-20241022',
-          max_tokens: 500,
-          temperature: 0.7,
-          system: `You are an assistant that creates catchy, memorable jingles to help users memorize academic or conceptual material.
+        const data = await response.json()
+        lyrics = data.choices[0].message.content.trim()
+      } else if (provider === 'anthropic' || process.env.ANTHROPIC_API_KEY) {
+        const response = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': process.env.ANTHROPIC_API_KEY!,
+            'anthropic-version': '2023-06-01',
+          },
+          body: JSON.stringify({
+            model: 'claude-3-5-sonnet-20241022',
+            max_tokens: 500,
+            temperature: 0.7,
+            system: `You are an assistant that creates catchy, memorable jingles to help users memorize academic or conceptual material.
 
 CRITICAL REQUIREMENTS:
 - Your jingle should be 4-6 lines long (aim for shorter - 4 or 5 lines if you can fit all the info)
@@ -212,64 +208,67 @@ The output should be only the jingle itself (4-6 lines prefer 4 lines unless nec
 Here are the notes you must base your jingle on:
 
 ${studyNotes}`,
-          messages: [
-            {
-              role: 'user',
-              content: `Create a 4-6 line jingle using ALL the information from the notes above. Make sure it rhymes and includes the key facts.`,
-            },
-          ],
-        }),
-      })
+            messages: [
+              {
+                role: 'user',
+                content: `Create a 4-6 line jingle using ALL the information from the notes above. Make sure it rhymes and includes the key facts.`,
+              },
+            ],
+          }),
+        })
 
-      if (!response.ok) {
-        const error = await response.json()
-        console.error('Anthropic API error:', error)
-        return NextResponse.json(
-          { error: `Anthropic API Error: ${error.error?.message || 'Unknown error'}` },
-          { status: response.status }
-        )
+        if (!response.ok) {
+          const error = await response.json()
+          console.error('Anthropic API error:', error)
+          return NextResponse.json(
+            { error: `Anthropic API Error: ${error.error?.message || 'Unknown error'}` },
+            { status: response.status }
+          )
+        }
+
+        const data = await response.json()
+        lyrics = data.content[0].text.trim()
       }
 
-      const data = await response.json()
-      lyrics = data.content[0].text.trim()
-    }
+      // Clean up
+      lyrics = lyrics.replace(/^Line \d+:\s*/gim, '')
+      lyrics = lyrics.replace(/^[\d]+\.\s*/gim, '')
 
-    // Clean up
-    lyrics = lyrics.replace(/^Line \d+:\s*/gim, '')
-    lyrics = lyrics.replace(/^[\d]+\.\s*/gim, '')
-    
-    // Remove wrapping quotes if present (LLM sometimes wraps entire output)
-    lyrics = lyrics.trim()
-    if ((lyrics.startsWith('"') && lyrics.endsWith('"')) || (lyrics.startsWith("'") && lyrics.endsWith("'"))) {
-      lyrics = lyrics.slice(1, -1).trim()
-    }
-    // Also remove quotes that might be at the end with punctuation like !"
-    lyrics = lyrics.replace(/!["']\s*$/g, '!')
-    lyrics = lyrics.replace(/\.["']\s*$/g, '.')
-    lyrics = lyrics.replace(/\?["']\s*$/g, '?')
-    
-    // Convert slashes to actual newlines (LLM sometimes uses / instead of line breaks)
-    lyrics = lyrics.replace(/\s*\/\s*/g, '\n')
-    
-    // Remove title if present (usually all caps first line)
-    let lines = lyrics.split('\n').filter(l => l.trim())
-    if (lines.length > 0 && lines[0] === lines[0].toUpperCase() && lines[0].length < 50) {
-      // First line is likely a title, remove it
-      lines = lines.slice(1)
-    }
-    
-    // Minimal cleanup - just fix obvious formatting issues
-    lines = lines.map(line => {
-      let trimmed = line.trim()
-      // Clean up quotes at end with punctuation
-      trimmed = trimmed.replace(/!["']\s*$/g, '!')
-      trimmed = trimmed.replace(/\.["']\s*$/g, '.')
-      trimmed = trimmed.replace(/\?["']\s*$/g, '?')
-      // Remove double punctuation
-      trimmed = trimmed.replace(/[!.?]{2,}$/g, (match) => match[0])
-      return trimmed
-    })
-    
+      // Remove wrapping quotes if present (LLM sometimes wraps entire output)
+      lyrics = lyrics.trim()
+      if (
+        (lyrics.startsWith('"') && lyrics.endsWith('"')) ||
+        (lyrics.startsWith("'") && lyrics.endsWith("'"))
+      ) {
+        lyrics = lyrics.slice(1, -1).trim()
+      }
+      // Also remove quotes that might be at the end with punctuation like !"
+      lyrics = lyrics.replace(/!["']\s*$/g, '!')
+      lyrics = lyrics.replace(/\.["']\s*$/g, '.')
+      lyrics = lyrics.replace(/\?["']\s*$/g, '?')
+
+      // Convert slashes to actual newlines (LLM sometimes uses / instead of line breaks)
+      lyrics = lyrics.replace(/\s*\/\s*/g, '\n')
+
+      // Remove title if present (usually all caps first line)
+      let lines = lyrics.split('\n').filter(l => l.trim())
+      if (lines.length > 0 && lines[0] === lines[0].toUpperCase() && lines[0].length < 50) {
+        // First line is likely a title, remove it
+        lines = lines.slice(1)
+      }
+
+      // Minimal cleanup - just fix obvious formatting issues
+      lines = lines.map(line => {
+        let trimmed = line.trim()
+        // Clean up quotes at end with punctuation
+        trimmed = trimmed.replace(/!["']\s*$/g, '!')
+        trimmed = trimmed.replace(/\.["']\s*$/g, '.')
+        trimmed = trimmed.replace(/\?["']\s*$/g, '?')
+        // Remove double punctuation
+        trimmed = trimmed.replace(/[!.?]{2,}$/g, match => match[0])
+        return trimmed
+      })
+
       // If we have at least some lines, use them
       if (lines.length === 0) {
         lyrics = 'Error: No lyrics generated'
@@ -285,13 +284,13 @@ ${studyNotes}`,
     if (lyrics.length < 80) {
       musicLyrics = lyrics + '\n\n' + lyrics
     }
-    
+
     // Skip audio generation if requested (for faster initial load)
     if (skipAudio) {
       console.log('Skipping audio generation')
       return NextResponse.json({ lyrics, audioUrl: null })
     }
-    
+
     console.log('Generating music...')
 
     const replicateApiKey = process.env.REPLICATE_API_KEY
@@ -316,10 +315,10 @@ ${studyNotes}`,
         prompt: `${genre}, educational study jingle, repetitive refrain, simple singable melody, clear pronunciation, upbeat tempo, 30-60 seconds duration`,
       }
 
-      const output = await replicate.run('minimax/music-1.5', { input: musicInput }) as any
+      const output = (await replicate.run('minimax/music-1.5', { input: musicInput })) as any
       console.log('🎵 Replicate output type:', typeof output)
       console.log('🎵 Replicate output:', output)
-      
+
       // Handle different Replicate output formats
       let replicateAudioUrl: string
       if (typeof output === 'string') {
@@ -352,7 +351,10 @@ ${studyNotes}`,
 
         // Create a unique filename
         const timestamp = Date.now()
-        const sanitizedTerm = (studyNotes || existingLyrics || 'study-term').split(':')[0].replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()
+        const sanitizedTerm = (studyNotes || existingLyrics || 'study-term')
+          .split(':')[0]
+          .replace(/[^a-zA-Z0-9]/g, '_')
+          .toLowerCase()
         const fileName = `${timestamp}_${sanitizedTerm}.mp3`
         const filePath = fileName // Upload directly to root of bucket
         console.log('📝 File path:', filePath)
@@ -361,12 +363,12 @@ ${studyNotes}`,
         const { createClient } = await import('@supabase/supabase-js')
         const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
         const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-        
+
         console.log('🔑 Checking Supabase credentials...')
         console.log('  - URL exists:', !!supabaseUrl)
         console.log('  - Service key exists:', !!supabaseServiceKey)
         console.log('  - Service key length:', supabaseServiceKey?.length || 0)
-        
+
         if (!supabaseUrl || !supabaseServiceKey) {
           throw new Error('Missing Supabase environment variables')
         }
@@ -390,36 +392,39 @@ ${studyNotes}`,
         console.log('✅ Upload successful:', uploadData)
 
         // Get the public URL for the uploaded file
-        const { data: urlData } = supabase.storage
-          .from('audio-files')
-          .getPublicUrl(filePath)
+        const { data: urlData } = supabase.storage.from('audio-files').getPublicUrl(filePath)
 
         if (!urlData?.publicUrl) {
           throw new Error('Failed to get public URL for uploaded file')
         }
 
         console.log('🎉 Audio uploaded to Supabase:', urlData.publicUrl)
-        
-        return NextResponse.json({ 
-          lyrics, 
-          audioUrl: urlData.publicUrl
+
+        return NextResponse.json({
+          lyrics,
+          audioUrl: urlData.publicUrl,
         })
       } catch (uploadError) {
         console.error('❌ Error uploading to Supabase:', uploadError)
-        throw new Error(`Supabase upload failed: ${uploadError instanceof Error ? uploadError.message : 'Unknown error'}`)
+        throw new Error(
+          `Supabase upload failed: ${uploadError instanceof Error ? uploadError.message : 'Unknown error'}`
+        )
       }
     } catch (musicError) {
       console.error('Error generating music:', musicError)
       return NextResponse.json({
         lyrics,
         audioUrl: null,
-        error: `Music generation failed: ${musicError instanceof Error ? musicError.message : 'Unknown error'}`
+        error: `Music generation failed: ${musicError instanceof Error ? musicError.message : 'Unknown error'}`,
       })
     }
   } catch (error) {
     console.error('Error in generate-song route:', error)
-    return NextResponse.json({ 
-      error: `Server Error: ${error instanceof Error ? error.message : 'Unknown error'}` 
-    }, { status: 500 })
+    return NextResponse.json(
+      {
+        error: `Server Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      },
+      { status: 500 }
+    )
   }
 }

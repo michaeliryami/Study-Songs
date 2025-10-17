@@ -45,7 +45,8 @@ export default function ShareButton({ term, lyrics, audioUrl }: ShareButtonProps
     if (!features.canDownload) {
       toast({
         title: 'Upgrade Required',
-        description: 'Download MP3s is a premium feature. Upgrade to Basic or Premium to unlock downloads.',
+        description:
+          'Download MP3s is a premium feature. Upgrade to Basic or Premium to unlock downloads.',
         status: 'warning',
         duration: 5000,
       })
@@ -56,7 +57,7 @@ export default function ShareButton({ term, lyrics, audioUrl }: ShareButtonProps
     if (!audioUrl) {
       toast({
         title: 'No audio available',
-        description: 'This jingle doesn\'t have audio to download',
+        description: "This jingle doesn't have audio to download",
         status: 'error',
         duration: 3000,
       })
@@ -74,7 +75,7 @@ export default function ShareButton({ term, lyrics, audioUrl }: ShareButtonProps
       a.click()
       window.URL.revokeObjectURL(url)
       document.body.removeChild(a)
-      
+
       toast({
         title: 'Downloaded!',
         description: 'Your jingle is ready to go',
@@ -109,7 +110,11 @@ export default function ShareButton({ term, lyrics, audioUrl }: ShareButtonProps
       >
         Share
       </MenuButton>
-      <MenuList bg="rgba(26, 26, 46, 0.95)" borderColor="rgba(217, 70, 239, 0.2)" backdropFilter="blur(10px)">
+      <MenuList
+        bg="rgba(26, 26, 46, 0.95)"
+        borderColor="rgba(217, 70, 239, 0.2)"
+        backdropFilter="blur(10px)"
+      >
         <MenuItem
           icon={<Twitter size={18} />}
           onClick={handleTwitterShare}
@@ -152,4 +157,3 @@ export default function ShareButton({ term, lyrics, audioUrl }: ShareButtonProps
     </Menu>
   )
 }
-

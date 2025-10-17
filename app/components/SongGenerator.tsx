@@ -14,7 +14,23 @@ import {
   IconButton,
   Progress,
 } from '@chakra-ui/react'
-import { Music, ChevronLeft, ChevronRight, Save, Trash2, Plus, Sparkles, BookOpen, FileText, Target, Folder, Calendar, Play, AlertCircle, Zap } from 'lucide-react'
+import {
+  Music,
+  ChevronLeft,
+  ChevronRight,
+  Save,
+  Trash2,
+  Plus,
+  Sparkles,
+  BookOpen,
+  FileText,
+  Target,
+  Folder,
+  Calendar,
+  Play,
+  AlertCircle,
+  Zap,
+} from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import ShareButton from './ShareButton'
@@ -80,8 +96,8 @@ export default function SongGenerator({ currentView, onViewChange }: SongGenerat
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
-          subject: notes.trim() ? `${subject}\n\nStudy Notes:\n${notes}` : subject 
+        body: JSON.stringify({
+          subject: notes.trim() ? `${subject}\n\nStudy Notes:\n${notes}` : subject,
         }),
       })
 
@@ -154,8 +170,11 @@ export default function SongGenerator({ currentView, onViewChange }: SongGenerat
       return
     }
 
-    const termList = newTerms.split('\n').filter(t => t.trim()).slice(0, 10)
-    
+    const termList = newTerms
+      .split('\n')
+      .filter(t => t.trim())
+      .slice(0, 10)
+
     if (termList.length === 0) {
       toast({
         title: 'Please enter terms',
@@ -170,7 +189,7 @@ export default function SongGenerator({ currentView, onViewChange }: SongGenerat
     // Check for duplicates
     const existingTerms = jingles.map(j => j.term.toLowerCase())
     const duplicates = termList.filter(t => existingTerms.includes(t.toLowerCase()))
-    
+
     if (duplicates.length > 0) {
       toast({
         title: 'Duplicate terms found',
@@ -281,10 +300,7 @@ export default function SongGenerator({ currentView, onViewChange }: SongGenerat
     }
 
     try {
-      const { error } = await supabase
-        .from('sets')
-        .delete()
-        .eq('id', setId)
+      const { error } = await supabase.from('sets').delete().eq('id', setId)
 
       if (error) throw error
 
@@ -329,8 +345,11 @@ export default function SongGenerator({ currentView, onViewChange }: SongGenerat
       return
     }
 
-    const termList = terms.split('\n').filter(t => t.trim()).slice(0, 10)
-    
+    const termList = terms
+      .split('\n')
+      .filter(t => t.trim())
+      .slice(0, 10)
+
     if (termList.length === 0) {
       toast({
         title: 'Please enter terms',
@@ -358,7 +377,7 @@ export default function SongGenerator({ currentView, onViewChange }: SongGenerat
         if (notes.trim()) {
           studyNotes += `\n\nContext from study notes:\n${notes}`
         }
-        
+
         const response = await fetch('/api/generate-song', {
           method: 'POST',
           headers: {
@@ -396,7 +415,7 @@ export default function SongGenerator({ currentView, onViewChange }: SongGenerat
     setLoading(false)
     setGenerationProgress({ current: 0, total: 0 })
     setCurrentSetId(null) // Reset since this is a new set
-    
+
     // Show success animation
     setShowSuccess(true)
     setTimeout(() => {
@@ -404,7 +423,7 @@ export default function SongGenerator({ currentView, onViewChange }: SongGenerat
       // Automatically switch to My Study Sets view and show the generated set
       onViewChange('my-sets')
     }, 3000)
-    
+
     // Clear the create form after animation
     setTimeout(() => {
       setSubject('')
@@ -436,7 +455,8 @@ export default function SongGenerator({ currentView, onViewChange }: SongGenerat
     if (!supabase) {
       toast({
         title: 'Supabase not configured',
-        description: 'Please add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to .env.local and restart the server',
+        description:
+          'Please add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to .env.local and restart the server',
         status: 'error',
         duration: 5000,
         isClosable: true,
@@ -498,7 +518,13 @@ export default function SongGenerator({ currentView, onViewChange }: SongGenerat
 
       if (isSection) {
         return (
-          <Text key={index} fontWeight="bold" fontSize="lg" color="brand.300" mt={index > 0 ? 4 : 0}>
+          <Text
+            key={index}
+            fontWeight="bold"
+            fontSize="lg"
+            color="brand.300"
+            mt={index > 0 ? 4 : 0}
+          >
             {line}
           </Text>
         )
@@ -521,211 +547,261 @@ export default function SongGenerator({ currentView, onViewChange }: SongGenerat
         {currentView === 'create' && (
           <>
             <Box textAlign="center" mb={2}>
-              <Heading 
-                as="h1" 
-                fontSize={{base: "3xl", md: "5xl"}} 
-                fontWeight="900" 
-                mb={4} 
+              <Heading
+                as="h1"
+                fontSize={{ base: '3xl', md: '5xl' }}
+                fontWeight="900"
+                mb={4}
                 letterSpacing="-0.03em"
                 bgGradient="linear(135deg, brand.400 0%, accent.400 100%)"
                 bgClip="text"
               >
                 Turn Study Notes Into Viral Jingles
               </Heading>
-              <Text fontSize={{base: "md", md: "xl"}} color="whiteAlpha.700" fontWeight="500" maxW="2xl" mx="auto">
-                Create catchy, educational songs that stick in your brain. Study smarter, not harder.
+              <Text
+                fontSize={{ base: 'md', md: 'xl' }}
+                color="whiteAlpha.700"
+                fontWeight="500"
+                maxW="2xl"
+                mx="auto"
+              >
+                Create catchy, educational songs that stick in your brain. Study smarter, not
+                harder.
               </Text>
             </Box>
-          <VStack spacing={6} align="stretch" bg="rgba(26, 26, 46, 0.6)" p={8} borderRadius="2xl" border="1px solid" borderColor="rgba(217, 70, 239, 0.1)">
-            <Box>
-              <HStack mb={3} spacing={2}>
-                <BookOpen size={16} color="rgba(217, 70, 239, 0.8)" />
-                <Text fontWeight="600" fontSize="sm" color="whiteAlpha.800" textTransform="uppercase" letterSpacing="wide">
-                  Subject
-                </Text>
-              </HStack>
-              <Input
-                placeholder="e.g., Biology, Calculus, World History"
-                value={subject}
-                onChange={e => setSubject(e.target.value)}
-                size="lg"
-                bg="rgba(42, 42, 64, 0.6)"
-                border="2px solid"
-                borderColor="transparent"
-                borderRadius="xl"
-                color="white"
-                fontWeight="500"
-                fontSize="lg"
-                h="60px"
-                _placeholder={{ color: 'whiteAlpha.400' }}
-                _hover={{ bg: 'rgba(50, 53, 74, 0.8)', borderColor: 'rgba(217, 70, 239, 0.3)' }}
-                _focus={{ 
-                  bg: 'rgba(50, 53, 74, 0.8)', 
-                  outline: 'none', 
-                  borderColor: 'brand.500',
-                  boxShadow: '0 0 0 3px rgba(217, 70, 239, 0.1)'
-                }}
-              />
-            </Box>
-
-            <Box>
-              <HStack mb={3} spacing={2}>
-                <FileText size={16} color="rgba(217, 70, 239, 0.8)" />
-                <Text fontWeight="600" fontSize="sm" color="whiteAlpha.800" textTransform="uppercase" letterSpacing="wide">
-                  Study Notes <Text as="span" color="whiteAlpha.500" textTransform="none" fontWeight="400">(optional)</Text>
-                </Text>
-              </HStack>
-              <Textarea
-                placeholder="Paste your study notes here for more accurate and contextual jingles..."
-                value={notes}
-                onChange={e => setNotes(e.target.value)}
-                size="lg"
-                bg="rgba(42, 42, 64, 0.6)"
-                border="2px solid"
-                borderColor="transparent"
-                borderRadius="xl"
-                color="white"
-                fontWeight="500"
-                minHeight="150px"
-                resize="vertical"
-                _placeholder={{ color: 'whiteAlpha.400' }}
-                _hover={{ bg: 'rgba(50, 53, 74, 0.8)', borderColor: 'rgba(217, 70, 239, 0.3)' }}
-                _focus={{ 
-                  bg: 'rgba(50, 53, 74, 0.8)', 
-                  outline: 'none', 
-                  borderColor: 'brand.500',
-                  boxShadow: '0 0 0 3px rgba(217, 70, 239, 0.1)'
-                }}
-              />
-            </Box>
-
-            <Box>
-              <HStack justify="space-between" mb={3}>
-                <HStack spacing={2}>
-                  <Target size={16} color="rgba(217, 70, 239, 0.8)" />
-                  <Text fontWeight="600" fontSize="sm" color="whiteAlpha.800" textTransform="uppercase" letterSpacing="wide">
-                    Terms (one per line, max 10)
+            <VStack
+              spacing={6}
+              align="stretch"
+              bg="rgba(26, 26, 46, 0.6)"
+              p={8}
+              borderRadius="2xl"
+              border="1px solid"
+              borderColor="rgba(217, 70, 239, 0.1)"
+            >
+              <Box>
+                <HStack mb={3} spacing={2}>
+                  <BookOpen size={16} color="rgba(217, 70, 239, 0.8)" />
+                  <Text
+                    fontWeight="600"
+                    fontSize="sm"
+                    color="whiteAlpha.800"
+                    textTransform="uppercase"
+                    letterSpacing="wide"
+                  >
+                    Subject
                   </Text>
                 </HStack>
-                <Button
-                  size="sm"
-                  bgGradient="linear(135deg, purple.500 0%, pink.500 100%)"
-                  color="white"
-                  leftIcon={<Sparkles size={16} />}
-                  onClick={generateTerms}
-                  isLoading={generatingTerms}
-                  loadingText="Generating..."
-                  isDisabled={!subject.trim() || loading}
-                  _hover={{
-                    bgGradient: "linear(135deg, purple.600 0%, pink.600 100%)",
-                    transform: "translateY(-2px)",
-                    boxShadow: "0 8px 25px rgba(147, 51, 234, 0.3)"
-                  }}
-                  transition="all 0.2s"
-                >
-                  AI Generate
-                </Button>
-              </HStack>
-              <Textarea
-                placeholder={'mitochondria\nchloroplast\ncell membrane\nribosome\nendoplasmic reticulum'}
-                value={terms}
-                onChange={e => setTerms(e.target.value)}
-                size="lg"
-                bg="rgba(42, 42, 64, 0.6)"
-                border="2px solid"
-                borderColor="transparent"
-                borderRadius="xl"
-                color="white"
-                fontWeight="500"
-                minHeight="200px"
-                resize="vertical"
-                _placeholder={{ color: 'whiteAlpha.400' }}
-                _hover={{ bg: 'rgba(50, 53, 74, 0.8)', borderColor: 'rgba(217, 70, 239, 0.3)' }}
-                _focus={{ 
-                  bg: 'rgba(50, 53, 74, 0.8)', 
-                  outline: 'none', 
-                  borderColor: 'brand.500',
-                  boxShadow: '0 0 0 3px rgba(217, 70, 239, 0.1)'
-                }}
-              />
-            </Box>
-
-            <Button
-              bgGradient="linear(135deg, brand.500 0%, accent.500 100%)"
-              color="white"
-              size="lg"
-              onClick={generateStudySet}
-              isLoading={loading}
-              loadingText={`Generating ${generationProgress.current}/${generationProgress.total}...`}
-              h="70px"
-              fontSize="lg"
-              fontWeight="700"
-              leftIcon={<Music size={24} />}
-              _hover={{
-                bgGradient: "linear(135deg, brand.600 0%, accent.600 100%)",
-                transform: "translateY(-3px)",
-                boxShadow: "0 15px 50px rgba(217, 70, 239, 0.4)"
-              }}
-              _active={{
-                transform: "translateY(0)"
-              }}
-              transition="all 0.2s"
-              boxShadow="0 10px 40px rgba(217, 70, 239, 0.3)"
-            >
-              Generate My Study Set
-            </Button>
-
-            {loading && (
-              <VStack spacing={4} bg="rgba(26, 26, 46, 0.8)" p={6} borderRadius="xl" border="1px solid" borderColor="rgba(217, 70, 239, 0.2)">
-                <Progress
-                  value={(generationProgress.current / generationProgress.total) * 100}
-                  size="md"
-                  colorScheme="purple"
-                  w="100%"
-                  borderRadius="full"
+                <Input
+                  placeholder="e.g., Biology, Calculus, World History"
+                  value={subject}
+                  onChange={e => setSubject(e.target.value)}
+                  size="lg"
                   bg="rgba(42, 42, 64, 0.6)"
-                  sx={{
-                    '& > div': {
-                      bgGradient: 'linear(to-r, brand.500, accent.500)',
-                    }
+                  border="2px solid"
+                  borderColor="transparent"
+                  borderRadius="xl"
+                  color="white"
+                  fontWeight="500"
+                  fontSize="lg"
+                  h="60px"
+                  _placeholder={{ color: 'whiteAlpha.400' }}
+                  _hover={{ bg: 'rgba(50, 53, 74, 0.8)', borderColor: 'rgba(217, 70, 239, 0.3)' }}
+                  _focus={{
+                    bg: 'rgba(50, 53, 74, 0.8)',
+                    outline: 'none',
+                    borderColor: 'brand.500',
+                    boxShadow: '0 0 0 3px rgba(217, 70, 239, 0.1)',
                   }}
                 />
-                <HStack justify="center" spacing={2}>
-                  <Zap size={18} color="rgba(217, 70, 239, 0.8)" />
-                  <Text fontSize="md" color="whiteAlpha.800" textAlign="center" fontWeight="600">
-                    Creating magic... Jingle {generationProgress.current} of {generationProgress.total}
+              </Box>
+
+              <Box>
+                <HStack mb={3} spacing={2}>
+                  <FileText size={16} color="rgba(217, 70, 239, 0.8)" />
+                  <Text
+                    fontWeight="600"
+                    fontSize="sm"
+                    color="whiteAlpha.800"
+                    textTransform="uppercase"
+                    letterSpacing="wide"
+                  >
+                    Study Notes{' '}
+                    <Text as="span" color="whiteAlpha.500" textTransform="none" fontWeight="400">
+                      (optional)
+                    </Text>
                   </Text>
                 </HStack>
-                <Text fontSize="sm" color="whiteAlpha.500" textAlign="center">
-                  This takes ~30 seconds per term. Hang tight!
-                </Text>
-              </VStack>
+                <Textarea
+                  placeholder="Paste your study notes here for more accurate and contextual jingles..."
+                  value={notes}
+                  onChange={e => setNotes(e.target.value)}
+                  size="lg"
+                  bg="rgba(42, 42, 64, 0.6)"
+                  border="2px solid"
+                  borderColor="transparent"
+                  borderRadius="xl"
+                  color="white"
+                  fontWeight="500"
+                  minHeight="150px"
+                  resize="vertical"
+                  _placeholder={{ color: 'whiteAlpha.400' }}
+                  _hover={{ bg: 'rgba(50, 53, 74, 0.8)', borderColor: 'rgba(217, 70, 239, 0.3)' }}
+                  _focus={{
+                    bg: 'rgba(50, 53, 74, 0.8)',
+                    outline: 'none',
+                    borderColor: 'brand.500',
+                    boxShadow: '0 0 0 3px rgba(217, 70, 239, 0.1)',
+                  }}
+                />
+              </Box>
+
+              <Box>
+                <HStack justify="space-between" mb={3}>
+                  <HStack spacing={2}>
+                    <Target size={16} color="rgba(217, 70, 239, 0.8)" />
+                    <Text
+                      fontWeight="600"
+                      fontSize="sm"
+                      color="whiteAlpha.800"
+                      textTransform="uppercase"
+                      letterSpacing="wide"
+                    >
+                      Terms (one per line, max 10)
+                    </Text>
+                  </HStack>
+                  <Button
+                    size="sm"
+                    bgGradient="linear(135deg, purple.500 0%, pink.500 100%)"
+                    color="white"
+                    leftIcon={<Sparkles size={16} />}
+                    onClick={generateTerms}
+                    isLoading={generatingTerms}
+                    loadingText="Generating..."
+                    isDisabled={!subject.trim() || loading}
+                    _hover={{
+                      bgGradient: 'linear(135deg, purple.600 0%, pink.600 100%)',
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0 8px 25px rgba(147, 51, 234, 0.3)',
+                    }}
+                    transition="all 0.2s"
+                  >
+                    AI Generate
+                  </Button>
+                </HStack>
+                <Textarea
+                  placeholder={
+                    'mitochondria\nchloroplast\ncell membrane\nribosome\nendoplasmic reticulum'
+                  }
+                  value={terms}
+                  onChange={e => setTerms(e.target.value)}
+                  size="lg"
+                  bg="rgba(42, 42, 64, 0.6)"
+                  border="2px solid"
+                  borderColor="transparent"
+                  borderRadius="xl"
+                  color="white"
+                  fontWeight="500"
+                  minHeight="200px"
+                  resize="vertical"
+                  _placeholder={{ color: 'whiteAlpha.400' }}
+                  _hover={{ bg: 'rgba(50, 53, 74, 0.8)', borderColor: 'rgba(217, 70, 239, 0.3)' }}
+                  _focus={{
+                    bg: 'rgba(50, 53, 74, 0.8)',
+                    outline: 'none',
+                    borderColor: 'brand.500',
+                    boxShadow: '0 0 0 3px rgba(217, 70, 239, 0.1)',
+                  }}
+                />
+              </Box>
+
+              <Button
+                bgGradient="linear(135deg, brand.500 0%, accent.500 100%)"
+                color="white"
+                size="lg"
+                onClick={generateStudySet}
+                isLoading={loading}
+                loadingText={`Generating ${generationProgress.current}/${generationProgress.total}...`}
+                h="70px"
+                fontSize="lg"
+                fontWeight="700"
+                leftIcon={<Music size={24} />}
+                _hover={{
+                  bgGradient: 'linear(135deg, brand.600 0%, accent.600 100%)',
+                  transform: 'translateY(-3px)',
+                  boxShadow: '0 15px 50px rgba(217, 70, 239, 0.4)',
+                }}
+                _active={{
+                  transform: 'translateY(0)',
+                }}
+                transition="all 0.2s"
+                boxShadow="0 10px 40px rgba(217, 70, 239, 0.3)"
+              >
+                Generate My Study Set
+              </Button>
+
+              {loading && (
+                <VStack
+                  spacing={4}
+                  bg="rgba(26, 26, 46, 0.8)"
+                  p={6}
+                  borderRadius="xl"
+                  border="1px solid"
+                  borderColor="rgba(217, 70, 239, 0.2)"
+                >
+                  <Progress
+                    value={(generationProgress.current / generationProgress.total) * 100}
+                    size="md"
+                    colorScheme="purple"
+                    w="100%"
+                    borderRadius="full"
+                    bg="rgba(42, 42, 64, 0.6)"
+                    sx={{
+                      '& > div': {
+                        bgGradient: 'linear(to-r, brand.500, accent.500)',
+                      },
+                    }}
+                  />
+                  <HStack justify="center" spacing={2}>
+                    <Zap size={18} color="rgba(217, 70, 239, 0.8)" />
+                    <Text fontSize="md" color="whiteAlpha.800" textAlign="center" fontWeight="600">
+                      Creating magic... Jingle {generationProgress.current} of{' '}
+                      {generationProgress.total}
+                    </Text>
+                  </HStack>
+                  <Text fontSize="sm" color="whiteAlpha.500" textAlign="center">
+                    This takes ~30 seconds per term. Hang tight!
+                  </Text>
+                </VStack>
               )}
             </VStack>
           </>
         )}
 
         {/* Success Animation */}
-        {showSuccess && (
-          <SuccessAnimation count={jingles.length} subject={subject} />
-        )}
+        {showSuccess && <SuccessAnimation count={jingles.length} subject={subject} />}
 
         {/* MY STUDY SETS VIEW */}
         {currentView === 'my-sets' && !showSuccess && (
           <>
             <Box textAlign="center" mb={2}>
-              <Heading 
-                as="h1" 
-                fontSize={{base: "3xl", md: "5xl"}} 
-                fontWeight="900" 
-                mb={4} 
+              <Heading
+                as="h1"
+                fontSize={{ base: '3xl', md: '5xl' }}
+                fontWeight="900"
+                mb={4}
                 letterSpacing="-0.03em"
                 bgGradient="linear(135deg, brand.400 0%, accent.400 100%)"
                 bgClip="text"
               >
                 My Study Sets
               </Heading>
-              <Text fontSize={{base: "md", md: "xl"}} color="whiteAlpha.700" fontWeight="500" maxW="2xl" mx="auto">
+              <Text
+                fontSize={{ base: 'md', md: 'xl' }}
+                color="whiteAlpha.700"
+                fontWeight="500"
+                maxW="2xl"
+                mx="auto"
+              >
                 Review your jingles and ace that exam!
               </Text>
             </Box>
@@ -741,10 +817,7 @@ export default function SongGenerator({ currentView, onViewChange }: SongGenerat
                     <Text fontSize="lg" color="whiteAlpha.600" mb={4}>
                       You haven&apos;t created any study sets yet.
                     </Text>
-                    <Button
-                      colorScheme="brand"
-                      onClick={() => onViewChange('create')}
-                    >
+                    <Button colorScheme="brand" onClick={() => onViewChange('create')}>
                       Create Your First Study Set
                     </Button>
                   </Box>
@@ -756,7 +829,7 @@ export default function SongGenerator({ currentView, onViewChange }: SongGenerat
                         Your Collections ({savedSets.length})
                       </Text>
                     </HStack>
-                    {savedSets.map((set) => (
+                    {savedSets.map(set => (
                       <Box
                         key={set.id}
                         bg="rgba(26, 26, 46, 0.6)"
@@ -766,17 +839,27 @@ export default function SongGenerator({ currentView, onViewChange }: SongGenerat
                         borderColor="rgba(217, 70, 239, 0.1)"
                         transition="all 0.3s"
                         _hover={{
-                          borderColor: "rgba(217, 70, 239, 0.4)",
-                          transform: "translateY(-4px)",
-                          boxShadow: "0 20px 60px rgba(217, 70, 239, 0.2)"
+                          borderColor: 'rgba(217, 70, 239, 0.4)',
+                          transform: 'translateY(-4px)',
+                          boxShadow: '0 20px 60px rgba(217, 70, 239, 0.2)',
                         }}
                       >
                         <HStack justify="space-between" align="start" mb={4}>
                           <VStack align="start" spacing={2} flex={1}>
-                            <Heading size="md" fontWeight="700" bgGradient="linear(135deg, brand.300 0%, accent.300 100%)" bgClip="text">
+                            <Heading
+                              size="md"
+                              fontWeight="700"
+                              bgGradient="linear(135deg, brand.300 0%, accent.300 100%)"
+                              bgClip="text"
+                            >
                               {set.subject}
                             </Heading>
-                            <HStack spacing={3} color="whiteAlpha.600" fontSize="sm" fontWeight="500">
+                            <HStack
+                              spacing={3}
+                              color="whiteAlpha.600"
+                              fontSize="sm"
+                              fontWeight="500"
+                            >
                               <HStack spacing={1}>
                                 <Music size={14} />
                                 <Text>{set.jingles.length} jingles</Text>
@@ -829,9 +912,9 @@ export default function SongGenerator({ currentView, onViewChange }: SongGenerat
                             fontWeight="600"
                             onClick={() => loadStudySet(set)}
                             _hover={{
-                              bgGradient: "linear(135deg, brand.600 0%, accent.600 100%)",
-                              transform: "translateY(-2px)",
-                              boxShadow: "0 10px 30px rgba(217, 70, 239, 0.3)"
+                              bgGradient: 'linear(135deg, brand.600 0%, accent.600 100%)',
+                              transform: 'translateY(-2px)',
+                              boxShadow: '0 10px 30px rgba(217, 70, 239, 0.3)',
                             }}
                             leftIcon={<Play size={18} />}
                           >
@@ -845,8 +928,8 @@ export default function SongGenerator({ currentView, onViewChange }: SongGenerat
                             border="1px solid"
                             borderColor="rgba(239, 68, 68, 0.3)"
                             _hover={{
-                              bg: "rgba(239, 68, 68, 0.2)",
-                              borderColor: "red.500"
+                              bg: 'rgba(239, 68, 68, 0.2)',
+                              borderColor: 'red.500',
                             }}
                             onClick={() => deleteStudySet(set.id, set.subject)}
                           />
@@ -943,7 +1026,8 @@ export default function SongGenerator({ currentView, onViewChange }: SongGenerat
                           borderRadius="full"
                         />
                         <Text fontSize="sm" color="whiteAlpha.600" textAlign="center">
-                          Generating jingle {generationProgress.current} of {generationProgress.total}...
+                          Generating jingle {generationProgress.current} of{' '}
+                          {generationProgress.total}...
                         </Text>
                       </VStack>
                     )}
@@ -959,7 +1043,7 @@ export default function SongGenerator({ currentView, onViewChange }: SongGenerat
                     colorScheme="brand"
                     size="lg"
                   />
-                  
+
                   <Text fontSize="md" fontWeight="600" minW="100px" textAlign="center">
                     {currentIndex + 1} / {jingles.length}
                   </Text>
@@ -976,14 +1060,27 @@ export default function SongGenerator({ currentView, onViewChange }: SongGenerat
 
                 {currentJingle && (
                   <VStack spacing={6} align="stretch">
-                    <Box textAlign="center" py={6} bg="rgba(26, 26, 46, 0.6)" borderRadius="2xl" border="2px solid" borderColor="rgba(217, 70, 239, 0.2)">
-                      <Text fontSize="sm" fontWeight="600" color="whiteAlpha.600" textTransform="uppercase" mb={2}>
+                    <Box
+                      textAlign="center"
+                      py={6}
+                      bg="rgba(26, 26, 46, 0.6)"
+                      borderRadius="2xl"
+                      border="2px solid"
+                      borderColor="rgba(217, 70, 239, 0.2)"
+                    >
+                      <Text
+                        fontSize="sm"
+                        fontWeight="600"
+                        color="whiteAlpha.600"
+                        textTransform="uppercase"
+                        mb={2}
+                      >
                         Now Playing
                       </Text>
-                      <Heading 
-                        fontSize={{base: "2xl", md: "3xl"}} 
-                        fontWeight="900" 
-                        bgGradient="linear(135deg, brand.400 0%, accent.400 100%)" 
+                      <Heading
+                        fontSize={{ base: '2xl', md: '3xl' }}
+                        fontWeight="900"
+                        bgGradient="linear(135deg, brand.400 0%, accent.400 100%)"
                         bgClip="text"
                       >
                         {currentJingle.term}
@@ -1006,9 +1103,9 @@ export default function SongGenerator({ currentView, onViewChange }: SongGenerat
                     </Box>
 
                     {currentJingle.audioUrl && (
-                      <Box 
-                        bg="rgba(26, 26, 46, 0.8)" 
-                        borderRadius="2xl" 
+                      <Box
+                        bg="rgba(26, 26, 46, 0.8)"
+                        borderRadius="2xl"
                         p={6}
                         border="2px solid"
                         borderColor="rgba(217, 70, 239, 0.2)"
@@ -1059,10 +1156,10 @@ export default function SongGenerator({ currentView, onViewChange }: SongGenerat
                     )}
 
                     {!currentJingle.audioUrl && (
-                      <Box 
-                        bg="rgba(251, 146, 60, 0.1)" 
-                        borderRadius="xl" 
-                        p={6} 
+                      <Box
+                        bg="rgba(251, 146, 60, 0.1)"
+                        borderRadius="xl"
+                        p={6}
                         textAlign="center"
                         border="1px solid"
                         borderColor="rgba(251, 146, 60, 0.3)"
@@ -1081,7 +1178,7 @@ export default function SongGenerator({ currentView, onViewChange }: SongGenerat
 
                     {/* Share Button */}
                     <HStack justify="center" pt={4}>
-                      <ShareButton 
+                      <ShareButton
                         term={currentJingle.term}
                         lyrics={currentJingle.lyrics}
                         audioUrl={currentJingle.audioUrl || undefined}

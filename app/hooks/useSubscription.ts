@@ -31,7 +31,7 @@ export type SubscriptionTier = 'free' | 'basic' | 'premium'
 export function useSubscription() {
   const { user } = useAuth()
   const [tier, setTier] = useState<SubscriptionTier>('free')
-  const [currentTokens, setCurrentTokens] = useState<number>(30)
+  const [currentTokens, setCurrentTokens] = useState<number>(0)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -53,7 +53,8 @@ export function useSubscription() {
           table: 'profiles',
           filter: `id=eq.${user.id}`,
         },
-        () => {
+        (payload) => {
+          console.log('🔄 Real-time profile change detected:', payload)
           loadTier()
         }
       )
@@ -75,21 +76,29 @@ export function useSubscription() {
         .single()
 
       if (error) throw error
-      
+
       // If user has a subscription tier but no subscription ID, validate with Stripe
-      if ((data?.subscription_tier === 'basic' || data?.subscription_tier === 'premium') && 
-          data?.stripe_subscription_id && 
-          data?.email) {
+      if (
+        (data?.subscription_tier === 'basic' || data?.subscription_tier === 'premium') &&
+        data?.stripe_subscription_id &&
+        data?.email
+      ) {
         // Validate subscription exists in background
         validateSubscription(data.email, data.stripe_subscription_id, data.subscription_tier)
       }
+
+      console.log('🔍 Loading subscription data:', {
+        subscription_tier: data?.subscription_tier,
+        current_tokens: data?.current_tokens,
+        user_id: user.id
+      })
       
       setTier((data?.subscription_tier as SubscriptionTier) || 'free')
-      setCurrentTokens(data?.current_tokens || 30)
+      setCurrentTokens(data?.current_tokens || 0)
     } catch (error) {
       console.error('Error loading tier:', error)
       setTier('free')
-      setCurrentTokens(30)
+      setCurrentTokens(0)
     } finally {
       setLoading(false)
     }
@@ -103,9 +112,9 @@ export function useSubscription() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, subscriptionId: subId, currentTier }),
       })
-      
+
       const result = await response.json()
-      
+
       if (!result.valid) {
         console.log('⚠️ Subscription invalid, syncing...')
         // Subscription is invalid, trigger sync
@@ -114,7 +123,7 @@ export function useSubscription() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email }),
         })
-        
+
         const syncData = await syncResponse.json()
         if (syncData.success) {
           console.log('✅ Subscription synced, reloading...')
@@ -131,6 +140,12 @@ export function useSubscription() {
   const isBasic = tier === 'basic'
   const isFree = tier === 'free'
 
+  // Force refresh tokens from database
+  const refreshTokens = async () => {
+    console.log('🔄 Manually refreshing tokens...')
+    await loadTier()
+  }
+
   return {
     tier,
     features,
@@ -141,6 +156,6 @@ export function useSubscription() {
     isFree,
     hasUnlimited: isPremium,
     refresh: loadTier,
+    refreshTokens,
   }
 }
-

@@ -1,7 +1,31 @@
 'use client'
 
-import { Box, Container, Flex, Heading, HStack, Button, Text, Menu, MenuButton, MenuList, MenuItem, Avatar, Badge, Image } from '@chakra-ui/react'
-import { Music, Library, Sparkles, LogOut, User as UserIcon, BarChart3, DollarSign, Coins } from 'lucide-react'
+import {
+  Box,
+  Container,
+  Flex,
+  Heading,
+  HStack,
+  Button,
+  Text,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  Avatar,
+  Badge,
+  Image,
+} from '@chakra-ui/react'
+import {
+  Music,
+  Library,
+  Sparkles,
+  LogOut,
+  User as UserIcon,
+  BarChart3,
+  DollarSign,
+  Coins,
+} from 'lucide-react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useAuth } from '../contexts/AuthContext'
@@ -11,7 +35,7 @@ export default function Navbar() {
   const pathname = usePathname()
   const router = useRouter()
   const { user, signOut } = useAuth()
-  const { currentTokens, tier, loading: subscriptionLoading } = useSubscription()
+  const { currentTokens, tier, loading: subscriptionLoading, refreshTokens } = useSubscription()
   const isCreatePage = pathname === '/create'
   const isMySetsPage = pathname === '/my-sets'
   const isProfilePage = pathname === '/profile'
@@ -22,11 +46,11 @@ export default function Navbar() {
   }
 
   return (
-    <Box 
-      bg="rgba(15, 15, 26, 0.95)" 
+    <Box
+      bg="rgba(15, 15, 26, 0.95)"
       backdropFilter="blur(20px)"
-      borderBottom="1px solid" 
-      borderColor="rgba(217, 70, 239, 0.15)" 
+      borderBottom="1px solid"
+      borderColor="rgba(217, 70, 239, 0.15)"
       py={4}
       position="sticky"
       top={0}
@@ -36,9 +60,9 @@ export default function Navbar() {
       <Container maxW="container.xl" px={{ base: 3, sm: 4, md: 8 }}>
         <Flex justify="space-between" align="center">
           <Link href="/">
-            <Flex 
-              align="center" 
-              gap={{ base: 2, sm: 3 }} 
+            <Flex
+              align="center"
+              gap={{ base: 2, sm: 3 }}
               cursor="pointer"
               transition="all 0.2s"
               _hover={{ transform: 'translateY(-1px)' }}
@@ -46,21 +70,27 @@ export default function Navbar() {
               <Image
                 src="/logo.png"
                 alt="Noomo AI Logo"
-                w={{ base: "50px", sm: "60px" }}
-                h={{ base: "50px", sm: "60px" }}
+                w={{ base: '50px', sm: '60px' }}
+                h={{ base: '50px', sm: '60px' }}
                 objectFit="contain"
               />
               <Box display={{ base: 'none', sm: 'block' }}>
-                <Heading 
-                  size={{ base: "md", sm: "lg" }} 
-                  fontWeight="900" 
-                  bgGradient="linear(135deg, brand.300 0%, accent.300 100%)" 
+                <Heading
+                  size={{ base: 'md', sm: 'lg' }}
+                  fontWeight="900"
+                  bgGradient="linear(135deg, brand.300 0%, accent.300 100%)"
                   bgClip="text"
                   letterSpacing="tight"
                 >
                   Noomo AI
                 </Heading>
-                <Text fontSize="2xs" color="whiteAlpha.500" fontWeight="600" textTransform="uppercase" letterSpacing="wider">
+                <Text
+                  fontSize="2xs"
+                  color="whiteAlpha.500"
+                  fontWeight="600"
+                  textTransform="uppercase"
+                  letterSpacing="wider"
+                >
                   AI Mnemonics
                 </Text>
               </Box>
@@ -204,7 +234,7 @@ export default function Navbar() {
                     transition="all 0.2s"
                   >
                     <Avatar
-                      size={{ base: "sm", sm: "md" }}
+                      size={{ base: 'sm', sm: 'md' }}
                       name={user.email}
                       bg="linear-gradient(135deg, #d946ef 0%, #f97316 100%)"
                       color="white"
@@ -220,34 +250,66 @@ export default function Navbar() {
                     boxShadow="0 10px 40px rgba(0, 0, 0, 0.5)"
                     borderRadius="xl"
                     py={2}
-                    minW={{ base: "200px", sm: "220px" }}
-                    maxW={{ base: "90vw", sm: "none" }}
+                    minW={{ base: '200px', sm: '220px' }}
+                    maxW={{ base: '90vw', sm: 'none' }}
                   >
-                    <Box px={3} py={2} borderBottom="1px solid" borderColor="rgba(217, 70, 239, 0.15)" mb={2}>
-                      <Text fontSize="xs" color="whiteAlpha.500" fontWeight="600" textTransform="uppercase" mb={1}>
+                    <Box
+                      px={3}
+                      py={2}
+                      borderBottom="1px solid"
+                      borderColor="rgba(217, 70, 239, 0.15)"
+                      mb={2}
+                    >
+                      <Text
+                        fontSize="xs"
+                        color="whiteAlpha.500"
+                        fontWeight="600"
+                        textTransform="uppercase"
+                        mb={1}
+                      >
                         Signed in as
                       </Text>
                       <Text fontSize="sm" color="white" fontWeight="600" isTruncated>
                         {user.email}
                       </Text>
                     </Box>
-                    
+
                     {/* Tokens Display */}
                     {!subscriptionLoading && (
-                      <Box px={3} py={2} borderBottom="1px solid" borderColor="rgba(217, 70, 239, 0.15)" mb={2}>
-                        <HStack spacing={2} align="center">
-                          <Coins size={16} color="#d946ef" />
-                          <Text fontSize="sm" color="white" fontWeight="600">
-                            {currentTokens >= 999999 ? '∞' : currentTokens} tokens
-                          </Text>
-                          <Badge 
-                            colorScheme={tier === 'premium' ? 'purple' : tier === 'basic' ? 'blue' : 'gray'} 
-                            variant="subtle"
-                            fontSize="xs"
-                            textTransform="capitalize"
+                      <Box
+                        px={3}
+                        py={2}
+                        borderBottom="1px solid"
+                        borderColor="rgba(217, 70, 239, 0.15)"
+                        mb={2}
+                      >
+                        <HStack spacing={2} align="center" justify="space-between">
+                          <HStack spacing={2} align="center">
+                            <Coins size={16} color="#d946ef" />
+                            <Text fontSize="sm" color="white" fontWeight="600">
+                              {currentTokens >= 999999 ? '∞' : currentTokens} tokens
+                            </Text>
+                            <Badge
+                              colorScheme={
+                                tier === 'premium' ? 'purple' : tier === 'basic' ? 'blue' : 'gray'
+                              }
+                              variant="subtle"
+                              fontSize="xs"
+                              textTransform="capitalize"
+                            >
+                              {tier}
+                            </Badge>
+                          </HStack>
+                          <Button
+                            size="xs"
+                            variant="ghost"
+                            color="whiteAlpha.600"
+                            _hover={{ color: "white", bg: "rgba(217, 70, 239, 0.1)" }}
+                            onClick={refreshTokens}
+                            title="Refresh tokens"
                           >
-                            {tier}
-                          </Badge>
+                            ↻
+                          </Button>
                         </HStack>
                       </Box>
                     )}
@@ -286,7 +348,7 @@ export default function Navbar() {
                     variant="ghost"
                     color="whiteAlpha.700"
                     fontWeight="600"
-                    size={{ base: "sm", sm: "md" }}
+                    size={{ base: 'sm', sm: 'md' }}
                     _hover={{
                       bg: 'rgba(217, 70, 239, 0.1)',
                       color: 'white',
@@ -302,7 +364,7 @@ export default function Navbar() {
                     bgGradient="linear(135deg, brand.500 0%, accent.500 100%)"
                     color="white"
                     fontWeight="700"
-                    size={{ base: "sm", sm: "md" }}
+                    size={{ base: 'sm', sm: 'md' }}
                     px={{ base: 4, sm: 6 }}
                     boxShadow="0 4px 15px rgba(217, 70, 239, 0.3)"
                     _hover={{

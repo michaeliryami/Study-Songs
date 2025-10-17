@@ -12,10 +12,7 @@ export async function POST(request: NextRequest) {
     const provider = process.env.LLM_PROVIDER || 'openai'
 
     if (!apiKey) {
-      return NextResponse.json(
-        { error: 'API key not configured' },
-        { status: 500 }
-      )
+      return NextResponse.json({ error: 'API key not configured' }, { status: 500 })
     }
 
     let terms = ''
@@ -132,7 +129,12 @@ ${subject}`,
     // Clean up the terms - remove any numbers, bullets, or extra formatting
     const cleanedTerms = terms
       .split('\n')
-      .map(line => line.replace(/^\d+[\.\)]\s*/, '').replace(/^[-•*]\s*/, '').trim())
+      .map(line =>
+        line
+          .replace(/^\d+[\.\)]\s*/, '')
+          .replace(/^[-•*]\s*/, '')
+          .trim()
+      )
       .filter(line => line.length > 0)
       .join('\n')
 
@@ -145,4 +147,3 @@ ${subject}`,
     )
   }
 }
-
