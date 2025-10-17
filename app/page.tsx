@@ -389,7 +389,7 @@ export default function Home() {
                   Actually Enjoyable
                 </Heading>
                 <Text color="whiteAlpha.700" fontSize="md" lineHeight="tall" flex="1">
-                  Choose from Pop, R&B, Hip-Hop, and more. Turn tedious memorization into an experience you&apos;ll actually look forward to.
+                  Choose from Pop, R&B, Hip-Hop, and more. Premium users can even create custom AI prompts for truly personalized jingles. Turn tedious memorization into an experience you&apos;ll actually look forward to.
                 </Text>
                 <HStack mt={6} spacing={2}>
                   <CheckCircle size={18} color="#10b981" />
@@ -750,6 +750,10 @@ export default function Home() {
                     <HStack>
                       <Box color="green.400">✓</Box>
                       <Text color="whiteAlpha.800" fontSize="sm" fontWeight="600">All genres</Text>
+                    </HStack>
+                    <HStack>
+                      <Box color="green.400">✓</Box>
+                      <Text color="whiteAlpha.800" fontSize="sm" fontWeight="600">🎨 Custom AI prompts</Text>
                     </HStack>
                     <HStack>
                       <Box color="green.400">✓</Box>

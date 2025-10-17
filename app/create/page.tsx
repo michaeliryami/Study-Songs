@@ -83,35 +83,7 @@ export default function CreatePage() {
       return
     }
 
-    // Check if free user already has a set (only if subscription data is loaded)
-    if (!subscriptionLoading && tier === 'free' && supabase) {
-      const { data: existingSets, error } = await supabase
-        .from('sets')
-        .select('id')
-        .eq('created_by', user.id)
-
-      if (error) {
-        console.error('Error checking existing sets:', error)
-        toast({
-          title: 'Error',
-          description: 'Failed to check existing sets',
-          status: 'error',
-          duration: 3000,
-        })
-        return
-      }
-
-      if (existingSets && existingSets.length >= 1) {
-        toast({
-          title: 'Set Limit Reached',
-          description: 'Free users can only create 1 study set. Upgrade to create unlimited sets.',
-          status: 'warning',
-          duration: 5000,
-        })
-        router.push('/pricing')
-        return
-      }
-    }
+    // No set limits for any subscription tier
 
     if (!supabase) {
       toast({
@@ -262,7 +234,7 @@ export default function CreatePage() {
                 ⚠️ Free Plan Limit
               </Text>
               <Text fontSize="xs" color="whiteAlpha.700">
-                You can create 1 study set with 10 tokens. Upgrade for unlimited sets and more tokens.
+                You have 10 tokens to create jingles. Upgrade for more tokens and premium features.
               </Text>
             </Box>
           )}
@@ -388,24 +360,32 @@ export default function CreatePage() {
                   {/* Custom genre input for premium users */}
                   {tier === 'premium' && genre === 'custom' && (
                     <FormControl>
-                      <Input
-                        placeholder="Describe your custom music style (min 10 characters)..."
-                        value={customGenre}
-                        onChange={(e) => setCustomGenre(e.target.value)}
-                        bg="rgba(42, 42, 64, 0.6)"
-                        borderColor="rgba(217, 70, 239, 0.2)"
-                        color="white"
-                        _hover={{ borderColor: 'brand.500' }}
-                        _focus={{ borderColor: 'brand.500', boxShadow: '0 0 0 1px #d946ef' }}
-                        h="48px"
-                        fontSize="16px"
-                        borderRadius="xl"
-                      />
-                      {customGenre.length > 0 && customGenre.length < 10 && (
-                        <Text fontSize="xs" color="red.400" mt={1}>
-                          Minimum 10 characters required
+                      <VStack spacing={2} align="stretch">
+                        <Text fontSize="sm" color="brand.300" fontWeight="600">
+                          🎨 Premium Feature: Custom AI Prompts
                         </Text>
-                      )}
+                        <Text fontSize="xs" color="whiteAlpha.600">
+                          Describe exactly how you want your jingles to sound. Be creative! Examples: "upbeat pop with electronic beats and catchy hooks" or "acoustic folk with harmonica and storytelling lyrics"
+                        </Text>
+                        <Input
+                          placeholder="Describe your custom music style (min 10 characters)..."
+                          value={customGenre}
+                          onChange={(e) => setCustomGenre(e.target.value)}
+                          bg="rgba(42, 42, 64, 0.6)"
+                          borderColor="rgba(217, 70, 239, 0.2)"
+                          color="white"
+                          _hover={{ borderColor: 'brand.500' }}
+                          _focus={{ borderColor: 'brand.500', boxShadow: '0 0 0 1px #d946ef' }}
+                          h="48px"
+                          fontSize="16px"
+                          borderRadius="xl"
+                        />
+                        {customGenre.length > 0 && customGenre.length < 10 && (
+                          <Text fontSize="xs" color="red.400" mt={1}>
+                            Minimum 10 characters required
+                          </Text>
+                        )}
+                      </VStack>
                     </FormControl>
                   )}
                 </VStack>

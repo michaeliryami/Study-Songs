@@ -495,6 +495,9 @@ export default function ProfilePage() {
                       ✨ Unlimited terms
                     </Text>
                     <Text color="whiteAlpha.700" fontSize="sm">
+                      🎨 Custom AI prompts for personalized jingles
+                    </Text>
+                    <Text color="whiteAlpha.700" fontSize="sm">
                       ✨ Premium support
                     </Text>
                     <Text color="whiteAlpha.700" fontSize="sm">
