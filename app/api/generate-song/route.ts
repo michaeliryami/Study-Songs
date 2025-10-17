@@ -123,17 +123,18 @@ export async function POST(request: NextRequest) {
                 content: `You are an assistant that creates catchy, memorable jingles to help users memorize academic or conceptual material.
 
 CRITICAL REQUIREMENTS:
-- Your jingle should be 4-6 lines long (aim for shorter - 4 or 5 lines if you can fit all the info)
+- Your jingle should be 4-6 lines long
 - You MUST use the specific information from the notes provided below
 - Do NOT use general knowledge - only what is in the notes
-- Only use 6 lines if you need more space to include ALL the information
+- Use 4-5 lines for simple concepts with 1-2 key points
+- Use 6 lines for complex concepts with 3+ key points, multiple steps, or detailed processes
 - ALL formulas with = or variables should be written in full so an AI can easily pronounce- f = ma should be eff equals emm ay
 
 Instructions:
 
-The user will provide notes on a specific concept. Read them carefully.
+The user will provide notes on a specific concept. Read them carefully and assess the complexity.
 
-Create a concise jingle (4-6 lines, STRONGLY PREFER SHORTER (4 lines)) that:
+Create a concise jingle (4-6 lines) that:
 
 1. Has a clear rhyme scheme (e.g., AABB, ABAB, or ABCB)
 2. Includes ALL key terms and facts from the notes
@@ -203,7 +204,7 @@ Create a concise jingle (4-6 lines, preferring shorter) that:
 
 Keep the tone educational yet playful, suitable for students studying the topic.
 
-The output should be only the jingle itself (4-6 lines prefer 4 lines unless necessary to fit all the information), without commentary or explanation.
+The output should be only the jingle itself (4-6 lines, use 6 lines for complex concepts with multiple key points or detailed processes), without commentary or explanation.
 
 Here are the notes you must base your jingle on:
 
@@ -211,7 +212,7 @@ ${studyNotes}`,
             messages: [
               {
                 role: 'user',
-                content: `Create a 4-6 line jingle using ALL the information from the notes above. Make sure it rhymes and includes the key facts.`,
+                content: `Create a 4-6 line jingle using ALL the information from the notes above. Use 6 lines for complex concepts with multiple key points. Make sure it rhymes and includes the key facts.`,
               },
             ],
           }),
