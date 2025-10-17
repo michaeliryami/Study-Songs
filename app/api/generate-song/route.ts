@@ -69,12 +69,9 @@ export async function POST(request: NextRequest) {
       rnb: 'R&B, soul, smooth bass, electric piano, drums, 90 BPM, groovy, relaxed, warm, educational jingle, clear vocals, melodic',
       hiphop:
         'hip-hop, rap beat, 808 bass, snare, hi-hats, 95 BPM, rhythmic, bouncy, modern, educational jingle, clear enunciation, punchy',
-      kids: 'kids pop, playful, xylophone, ukulele, light percussion, 120 BPM, cheerful, fun, bright, educational jingle, simple melody, happy',
-      commercial:
-        'commercial jingle, advertising pop, catchy hook, piano, guitar, drums, 125 BPM, energetic, memorable, polished, ultra-catchy, repetitive',
-      jazz: 'jazz, swing, piano, upright bass, brushed drums, saxophone, 110 BPM, smooth, sophisticated, relaxed, educational jingle, melodic vocals',
       rock: 'pop rock, electric guitar, bass guitar, drums, 130 BPM, energetic, driving, anthemic, educational jingle, powerful vocals, catchy',
-      folk: 'folk pop, acoustic guitar, light percussion, 100 BPM, warm, organic, simple, educational jingle, clear vocals, memorable melody',
+      country: 'country pop, acoustic guitar, steel guitar, fiddle, drums, 110 BPM, warm, twangy, storytelling, educational jingle, clear vocals, memorable',
+      electronic: 'electronic, synth-pop, synthesizer, electronic drums, bass, 120 BPM, modern, digital, futuristic, educational jingle, clear vocals, catchy',
     }
 
     // If user selected random or no genre specified, pick randomly
