@@ -442,7 +442,7 @@ export default function CreatePage() {
 
                   <FormControl>
                     <Textarea
-                      placeholder="You don't need to paste in the term definition form. You could paste abstract notes, as long as it's pretty clear what the term is, and what the definitions are. Just paste your study material and we'll extract the key concepts..."
+                        placeholder="Paste your study material in any format - we'll extract the key concepts! For best results, use clear term-definition pairs (e.g., 'Photosynthesis - the process by which plants convert sunlight into energy'). We're smart enough to work with your notes however you write them."
                       value={notes}
                       onChange={e => setNotes(e.target.value)}
                       bg="rgba(42, 42, 64, 0.6)"
