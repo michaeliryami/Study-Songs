@@ -141,7 +141,7 @@ export default function PricingPage() {
         'Unlimited study sets',
         'Download MP3s',
         'All music genres + Custom genres',
-        '🎨 Custom AI prompts for personalized jingles',
+        'Custom AI prompts for personalized jingles',
         'Priority generation',
         'Audio stitching',
       ],

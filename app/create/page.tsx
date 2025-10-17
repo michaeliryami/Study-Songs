@@ -379,7 +379,7 @@ export default function CreatePage() {
                     <FormControl>
                       <VStack spacing={2} align="stretch">
                         <Text fontSize="sm" color="brand.300" fontWeight="600">
-                          🎨 Premium Feature: Custom AI Prompts
+                          Premium Feature: Custom AI Prompts
                         </Text>
                         <Text fontSize="xs" color="whiteAlpha.600">
                           Describe exactly how you want your jingles to sound. Be creative!
