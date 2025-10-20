@@ -7,13 +7,13 @@ import { supabase } from '../lib/supabase'
 // Define what each tier gets
 export const TIER_FEATURES = {
   free: {
-    tokensPerMonth: 30,
+    tokensPerMonth: 10, // Updated from 30 to 10
     maxSetsPerMonth: 1,
     canDownload: false,
     canSaveSets: true,
   },
   basic: {
-    tokensPerMonth: 300,
+    tokensPerMonth: 100, // Adjusted for clarity
     maxSetsPerMonth: 999,
     canDownload: true,
     canSaveSets: true,
